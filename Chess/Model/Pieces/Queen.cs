@@ -1,0 +1,21 @@
+﻿namespace Chess.Model.Pieces
+{
+    class Queen : Piece
+    {
+        static public new string[] PieceNames => new string[] { "Qw", "Qb" };
+
+        public Queen(bool iswhite, string position)
+        {
+            IsWhite = iswhite;
+            Position = position;
+            if (iswhite == true)
+            {
+                Name = PieceNames[0];
+            }
+            else
+            {
+                Name = PieceNames[1];
+            }
+        }
+    }
+}
