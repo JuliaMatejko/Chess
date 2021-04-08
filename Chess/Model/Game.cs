@@ -3,7 +3,6 @@ using Chess.Model.Pieces;
 using Chess.View;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Chess.Model
 {
@@ -52,11 +51,11 @@ namespace Chess.Model
         {
             for (int i = 0; i < Board.boardSize; i++)
             {
-                Fields[Board.Columns[i] + "2"].Content = new Pawn(true, Fields[Board.Columns[i] + "2"].Name);  // set white pawns
+                Fields[Board.Columns[i] + "2"].Content = new Pawn(true, Board.Columns[i] + "2");  // set white pawns
             }
             for (int i = 0; i < Board.boardSize; i++)
             {
-                Fields[Board.Columns[i] + "7"].Content = new Pawn(false, Fields[Board.Columns[i] + "7"].Name);  // set black pawns
+                Fields[Board.Columns[i] + "7"].Content = new Pawn(false, Board.Columns[i] + "7");  // set black pawns
             }
             Fields["a1"].Content = new Rook(true, "a1");        // set white rooks
             Fields["h1"].Content = new Rook(true, "h1");

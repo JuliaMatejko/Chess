@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Chess.Model
+﻿namespace Chess.Model
 {
     class GameState
     {

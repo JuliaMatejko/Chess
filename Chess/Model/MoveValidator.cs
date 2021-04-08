@@ -2,7 +2,7 @@
 
 namespace Chess
 {
-    class MoveValidator
+    class MoveValidator // service which role is validating moves 
     {
         public static bool MoveIsPossible(Move move) // ograniczyć rucszanie nie swoimi bierkami
         {

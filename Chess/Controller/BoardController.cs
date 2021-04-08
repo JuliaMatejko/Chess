@@ -1,8 +1,5 @@
 ﻿using Chess.Model;
-using Chess.Model.Pieces;
-using Chess.View;
 using System;
-using System.Collections.Generic;
 
 namespace Chess.Controller
 {
