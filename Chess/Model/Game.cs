@@ -51,11 +51,11 @@ namespace Chess.Model
         {
             for (int i = 0; i < Board.boardSize; i++)
             {
-                Fields[Board.Columns[i] + "2"].Content = new Pawn(true, Board.Columns[i] + "2");  // set white pawns
+                Fields[Board.Files[i] + "2"].Content = new Pawn(true, Board.Files[i] + "2");  // set white pawns
             }
             for (int i = 0; i < Board.boardSize; i++)
             {
-                Fields[Board.Columns[i] + "7"].Content = new Pawn(false, Board.Columns[i] + "7");  // set black pawns
+                Fields[Board.Files[i] + "7"].Content = new Pawn(false, Board.Files[i] + "7");  // set black pawns
             }
             Fields["a1"].Content = new Rook(true, "a1");        // set white rooks
             Fields["h1"].Content = new Rook(true, "h1");
@@ -100,7 +100,7 @@ namespace Chess.Model
             {
                 for (int j = 0; j < Board.boardSize; j++)
                 {
-                    fieldnames[count] = Board.Columns[i] + Board.Rows[j];
+                    fieldnames[count] = Board.Files[i] + Board.Ranks[j];
                     count++;
                 }
             }
