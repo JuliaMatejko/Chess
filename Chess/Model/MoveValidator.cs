@@ -1,31 +1,42 @@
 ﻿using Chess.Model;
+using Chess.Model.Pieces;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Chess
 {
     class MoveValidator // service which role is validating moves 
     {
-        public static bool MoveIsPossible(Move move) // ograniczyć rucszanie nie swoimi bierkami
+        public static bool MoveIsPossible(Move move)//, Piece piece) // ograniczyć rucszanie nie swoimi bierkami
         {
-            if (true)//MoveIsValid(move) && MoveIsLegal(move))
+            if (true)//(MoveIsValid(move) && MoveIsLegal(move, piece))
             {
                 return true;
             }
             return false;
         }
 
-        /*
-        bool MoveIsLegal(Move move)
+        static bool MoveIsLegal(Move move, Piece piece)
         {
-            if (MoveIsPrinciplePieceMove(move) && !ChosenPieceProtectsKingCheck(move))
+            if (MoveIsPrinciplePieceMove(move, piece) && !AbsolutePin(move))
             {
                 return true;
             }
             return false;
         }
 
-        bool MoveIsPrinciplePieceMove(Move move) //! .... TO DO
+        static bool MoveIsValid(Move move)
         {
-            if (NextAvailablePositions.Contains(move.field))
+            if (ChosenPieceIsValid(move.PieceName) && ChosenFieldIsValid(move.NewPosition))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        static bool MoveIsPrinciplePieceMove(Move move, Piece piece) //! .... TO DO
+        {
+            if (piece.NextAvailablePositions.Contains(move.NewPosition))
             {
                 return true;
             }
@@ -33,45 +44,25 @@ namespace Chess
             //return true;
         }
 
-        void ReturnAvailablePieceMoves(Move move)
-        {
-            List<string> availablePieceMoves = new List<string>();
-            //pawn
-            //MoveOneForward();
-            //MoveTwoForward();
-
-
-        }
-
-        bool ChosenPieceProtectsKingCheck(Move move) //! .... TO DO
+        static bool AbsolutePin(Move move) //! .... TO DO the pinned piece cannot legally move out of the line of attack (as moving it would expose the king to check).
         {
                 if (true)
                 {
                     return true;
                 }
                 return false;
-                return false;
             }
 
-        bool MoveIsValid(Move move)
+        static bool ChosenFieldIsValid(string field) // chosen field is on the board
         {
-            if (ChosenPieceIsValid(Convert.ToString(move.PieceName)) && ChosenFieldIsValid(Convert.ToString(move.NewField)))
+            if (Game.Positions.Contains(field))
             {
                 return true;
             }
             return false;
         }
 
-        bool ChosenFieldIsValid(string field) // chosen field is on the board
-        {
-            if (Positions.Contains(field))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        bool ChosenPieceIsValid(string piece) // chosen piece is a chess piece
+        static bool ChosenPieceIsValid(string piece) // chosen piece is a chess piece
         {
             if (Piece.PieceNames.Contains(piece))
             {
@@ -79,8 +70,5 @@ namespace Chess
             }
             return false;
         }
-        */
-        //to do end
-
     }
 }

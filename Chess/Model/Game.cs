@@ -9,15 +9,13 @@ namespace Chess.Model
     class Game
     {
         static Board board = new Board();
-        public static Dictionary<string, Field> Fields => SetFieldDictionary(board); // fields -> Piece
+        public static Dictionary<string, Field> Fields => SetFieldDictionary(board);
         static public string[] Positions => CreatePositionNames();
-        //przenieść inicjalizację maina
+
         public static void StartGame()
         {
             Console.WriteLine("Let's play chess!");
             Console.WriteLine("");
-            // program start
-
             Board.CreateBoard(board);
             SetStartingBoard(board);
             BoardView.PrintBoard(board);
