@@ -10,37 +10,39 @@ namespace Chess.Model
     {
         static Board board = new Board();
         public static Dictionary<string, Field> Fields => SetFieldDictionary(board);
-        static public string[] Positions => CreatePositionNames();
+        static public string[] Positions => CreatePositionNames(); //przenieść?do board
 
         public static void StartGame()
         {
             Console.WriteLine("Let's play chess!");
             Console.WriteLine("");
-            Board.CreateBoard(board);
+            Board.CreateABoard(board);
             SetStartingBoard(board);
             BoardView.PrintBoard(board);
             Console.WriteLine(" To make a move, type a piece, current piece position and new piece position separated by a space, ex. 'pw e2 e4'");
 
-            while (!(GameState.IsAWin || GameState.IsADraw))
+            while (!GameState.IsAWin && !GameState.IsADraw)
             {
                 BoardController.MakeAMove();
                 BoardView.PrintBoard(board);
                 GameState.WinConditionMet();
                 GameState.DrawConditionMet();
-            }
-            if (!(GameState.IsAWin || GameState.IsADraw))
-            {
-                GameState.ChangeTurns();
-            }
-            else
-            {
-                if (GameState.IsAWin)
+
+                if (!GameState.IsAWin && !GameState.IsADraw)
                 {
-                    Console.WriteLine($" '{GameState.CurrentPlayer}' won the game!");
+                    GameState.ChangeTurns();
+                    Console.WriteLine($"{GameState.CurrentPlayer}");
                 }
-                else if (GameState.IsADraw)
+                else
                 {
-                    Console.WriteLine(" It's a draw!");
+                    if (GameState.IsAWin)
+                    {
+                        Console.WriteLine($" {GameState.CurrentPlayer} won the game!");
+                    }
+                    else if (GameState.IsADraw)
+                    {
+                        Console.WriteLine(" It's a draw!");
+                    }
                 }
             }
         }

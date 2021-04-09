@@ -10,7 +10,7 @@ namespace Chess.Model.Pieces
         public List<string> NextAvailablePositions { get; set; }     // fields available for piece to move in ongoing round
         static public string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "kw", "kb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb"};
 
-        static void ReturnAvailablePieceMoves(Move move)
+        public  virtual void ReturnAvailablePieceMoves(Move move)
         {
             List<string> availablePieceMoves = new List<string>();
             //pawn

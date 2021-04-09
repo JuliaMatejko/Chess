@@ -8,16 +8,18 @@ namespace Chess.Controller
     {
         public static void MakeAMove()
         {
-            Console.Write(" Make a move: ");
+            Console.Write($"{GameState.CurrentPlayer} turn, make a move: ");
             string chosenMove = Console.ReadLine();
 
             Move move = StringToMove(chosenMove);
-            //Piece piece = FindPiece(move);
+            Piece piece = FindPiece(move.PieceName, move.CurrentPosition);
 
-            while (!MoveValidator.MoveIsPossible(move))//, piece))
+            while (!MoveValidator.MoveIsPossible(piece, move))
             {
-                Console.WriteLine($" It's not a valid move. Choose a differnt piece or/and field: "); //to do --> more specific?
+                Console.Write($" It's not a valid move. Choose a differnt piece or/and field: "); //to do --> more specific? uzyj zmiennej w miejsce komunikatu o bledzie
                 chosenMove = Console.ReadLine();
+                move = StringToMove(chosenMove);
+                piece = FindPiece(move.PieceName, move.CurrentPosition);
             }
             Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
             Game.Fields[move.CurrentPosition].Content = null;
@@ -29,14 +31,19 @@ namespace Chess.Controller
             return new Move(substrings[0], substrings[1], substrings[2]);
         }
 
-        /*
-        static Piece FindPiece(Move move)
+        static Piece FindPiece(string piecename, string currentposition)
         {
-            if (Game.Fields.TryGetValue(move.CurrentPosition,))
+            Piece piece = Game.Fields[currentposition].Content;
+            
+            if (piece == null) // empty field
             {
-
+                return null;
             }
-            return piece;
-        }*/
+            else if (piece.Name == piecename) // found piece
+            {
+                return piece;
+            }
+            return null; // found different piece on chosen position
+        }
     }     
 }

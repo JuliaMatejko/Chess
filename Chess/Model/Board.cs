@@ -23,7 +23,7 @@ namespace Chess.Model
         static public string[] Ranks => new string[boardSize] { "1", "2", "3", "4", "5", "6", "7", "8" };
         
 
-        static public void CreateBoard(Board board)
+        static public void CreateABoard(Board board)
         {
             for (int i = 0; i < boardSize; i++)
             {

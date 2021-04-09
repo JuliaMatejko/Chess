@@ -6,16 +6,16 @@ using System.Linq;
 namespace Chess
 {
     class MoveValidator // service which role is validating moves 
-    {
-        public static bool MoveIsPossible(Move move)//, Piece piece) // ograniczyć rucszanie nie swoimi bierkami
+    { 
+        public static bool MoveIsPossible(Piece piece, Move move) // ograniczyć rucszanie nie swoimi bierkami
         {
-            if (true)//(MoveIsValid(move) && MoveIsLegal(move, piece))
+            if (PieceOnChosenPositionDoesExist(piece) && ChosenPieceIsCurrentPlayersPiece(piece))// && MoveIsLegal(move, piece))
             {
                 return true;
             }
             return false;
         }
-
+        /*
         static bool MoveIsLegal(Move move, Piece piece)
         {
             if (MoveIsPrinciplePieceMove(move, piece) && !AbsolutePin(move))
@@ -27,7 +27,7 @@ namespace Chess
 
         static bool MoveIsValid(Move move)
         {
-            if (ChosenPieceIsValid(move.PieceName) && ChosenFieldIsValid(move.NewPosition))
+            if (ChosenPieceNameIsValid(move.PieceName) && ChosenPositionIsValid(move.NewPosition))
             {
                 return true;
             }
@@ -52,23 +52,43 @@ namespace Chess
                 }
                 return false;
             }
-
-        static bool ChosenFieldIsValid(string field) // chosen field is on the board
+        */
+        static bool ChosenPieceIsCurrentPlayersPiece(Piece piece)
         {
-            if (Game.Positions.Contains(field))
+            if (piece.IsWhite && GameState.CurrentPlayer == GameState.Sides.White)
+            {
+                return true;
+            }
+            else if (!(piece.IsWhite) && GameState.CurrentPlayer == GameState.Sides.Black)
+            {
+                return true;
+            }
+            return false;
+        }
+        static bool PieceOnChosenPositionDoesExist(Piece piece)
+        {
+            if (piece != null)
             {
                 return true;
             }
             return false;
         }
 
-        static bool ChosenPieceIsValid(string piece) // chosen piece is a chess piece
-        {
-            if (Piece.PieceNames.Contains(piece))
-            {
-                return true;
-            }
-            return false;
-        }
+        /*
+            Sprawdzani ruchów:
+            - przyjmij string (pw e2 e4)
+            - przekształć na obiekt Move ( piecename, currentPosition, newposition) ? czy Piece(Field.Content), Piece.Position(Field.Content.Position), newposition <string>
+            - prześlij do MoveValidatora
+                - sprawdź czy piece o podanej nazwie i pozycji istnieje na planszy ( albo piece o podanych właściwościach Piece.Position, Piece.Name)
+                - sprawdź czy figura którą chce ruszyć gracz należy do niego
+                - sprawdź czy piece nie musi chronić króla ( absolute pin) więc nie może się ruszyć)
+                - sprawdź czy ruch jest legalny:
+                   - tutaj wejdą różne metody zależne od figury ( będą dodawały możliwe ruchy do piece.NextAvailablePositions  lub odejmowały z niego)
+                        ...
+                
+                - sprawdź czy możliwy jest ruch na newposition ( czy piece.NextAvailablePositions zawiera newposition) (move is possible) END
+                
+
+         */
     }
 }
