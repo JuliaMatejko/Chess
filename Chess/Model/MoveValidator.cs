@@ -9,31 +9,16 @@ namespace Chess
     { 
         public static bool MoveIsPossible(Piece piece, Move move) // ograniczyć rucszanie nie swoimi bierkami
         {
-            if (PieceOnChosenPositionDoesExist(piece) && ChosenPieceIsCurrentPlayersPiece(piece))// && MoveIsLegal(move, piece))
+            if (PieceOnChosenPositionDoesExist(piece) && ChosenPieceIsCurrentPlayersPiece(piece))
             {
-                return true;
+                //if (piece.NextAvailablePositions.Contains(move.NewPosition))
+                //{
+                    return true;
+                //}  
             }
             return false;
         }
         /*
-        static bool MoveIsLegal(Move move, Piece piece)
-        {
-            if (MoveIsPrinciplePieceMove(move, piece) && !AbsolutePin(move))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        static bool MoveIsValid(Move move)
-        {
-            if (ChosenPieceNameIsValid(move.PieceName) && ChosenPositionIsValid(move.NewPosition))
-            {
-                return true;
-            }
-            return false;
-        }
-
         static bool MoveIsPrinciplePieceMove(Move move, Piece piece) //! .... TO DO
         {
             if (piece.NextAvailablePositions.Contains(move.NewPosition))
@@ -76,16 +61,15 @@ namespace Chess
 
         /*
             Sprawdzani ruchów:
-            - przyjmij string (pw e2 e4)
-            - przekształć na obiekt Move ( piecename, currentPosition, newposition) ? czy Piece(Field.Content), Piece.Position(Field.Content.Position), newposition <string>
+            - przyjmij string (pw e2 e4) v
+            - przekształć na obiekt Move ( piecename, currentPosition, newposition) v
             - prześlij do MoveValidatora
-                - sprawdź czy piece o podanej nazwie i pozycji istnieje na planszy ( albo piece o podanych właściwościach Piece.Position, Piece.Name)
-                - sprawdź czy figura którą chce ruszyć gracz należy do niego
-                - sprawdź czy piece nie musi chronić króla ( absolute pin) więc nie może się ruszyć)
+                - sprawdź czy piece o podanej nazwie i pozycji istnieje na planszy ( albo piece o podanych właściwościach Piece.Position, Piece.Name) v
+                - sprawdź czy figura którą chce ruszyć gracz należy do niego v
                 - sprawdź czy ruch jest legalny:
                    - tutaj wejdą różne metody zależne od figury ( będą dodawały możliwe ruchy do piece.NextAvailablePositions  lub odejmowały z niego)
                         ...
-                
+                - sprawdź czy piece nie musi chronić króla ( absolute pin) więc nie może się ruszyć)
                 - sprawdź czy możliwy jest ruch na newposition ( czy piece.NextAvailablePositions zawiera newposition) (move is possible) END
                 
 

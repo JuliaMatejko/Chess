@@ -1,4 +1,7 @@
-﻿namespace Chess.Model.Pieces
+﻿using System;
+using System.Collections.Generic;
+
+namespace Chess.Model.Pieces
 {
     class Bishop : Piece
     {
@@ -17,5 +20,7 @@
                 Name = PieceNames[1];
             }
         }
+
+       
     }
 }

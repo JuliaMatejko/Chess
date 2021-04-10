@@ -9,7 +9,7 @@ namespace Chess.Controller
         public static void MakeAMove()
         {
             Console.Write($"{GameState.CurrentPlayer} turn, make a move: ");
-            string chosenMove = Console.ReadLine();
+            string chosenMove = Console.ReadLine(); //to do: validate string (only take format 'piece current position next position'
 
             Move move = StringToMove(chosenMove);
             Piece piece = FindPiece(move.PieceName, move.CurrentPosition);
@@ -21,12 +21,24 @@ namespace Chess.Controller
                 move = StringToMove(chosenMove);
                 piece = FindPiece(move.PieceName, move.CurrentPosition);
             }
+            if (piece.GetType() == typeof(Pawn)) //works?
+            {
+                Pawn pawn = (Pawn)piece;
+                if (pawn.IsFirstMove)
+                {
+                    pawn.IsFirstMove = false;
+                }
+            }
             Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
             Game.Fields[move.CurrentPosition].Content = null;
         }
 
         static Move StringToMove(string str)
         {
+            if (string.IsNullOrEmpty(str))
+            {
+
+            }
             string[] substrings = str.Split(" ");
             return new Move(substrings[0], substrings[1], substrings[2]);
         }

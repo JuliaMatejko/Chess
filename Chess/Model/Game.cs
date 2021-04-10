@@ -8,7 +8,7 @@ namespace Chess.Model
 {
     class Game
     {
-        static Board board = new Board();
+        public static Board board = new Board();
         public static Dictionary<string, Field> Fields => SetFieldDictionary(board);
         static public string[] Positions => CreatePositionNames(); //przenieść?do board
 

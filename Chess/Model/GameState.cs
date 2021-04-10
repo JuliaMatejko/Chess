@@ -24,7 +24,7 @@
             {
                 IsAWin = true;
             }
-            if (PlayerResign())
+            if (PlayerResigned())
             {
                 IsAWin = true;
             }
@@ -36,7 +36,7 @@
             return false; // todo: implement the logic
         }
 
-        static bool PlayerResign()
+        static bool PlayerResigned()
         {
             return false; // todo: implement the logic
         }
