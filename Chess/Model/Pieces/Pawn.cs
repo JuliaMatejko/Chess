@@ -5,21 +5,14 @@ namespace Chess.Model.Pieces
 {
     class Pawn : Piece
     {
-        static public new string[] PieceNames => new string[] { "pw", "pb" };
+        public static new string[] PieceNames => new string[] { "pw", "pb" };
         public bool IsFirstMove { get; set; } = true;
 
         public Pawn(bool iswhite, string position)
         {
             IsWhite = iswhite;
             Position = position;
-            if (iswhite == true)
-            {
-                Name = PieceNames[0];
-            }
-            else
-            {
-                Name = PieceNames[1];
-            }
+            Name = iswhite == true ? Name = PieceNames[0] : Name = PieceNames[1];
             NextAvailablePositions = ReturnAvailablePieceMoves(Position, Game.board);
         }
 
@@ -27,11 +20,11 @@ namespace Chess.Model.Pieces
         {
             List<string> positions = new List<string>();
             positions.AddRange(StandardPawnMove(currentposition, board));
-            //positions.AddRange(PawnCapturesPieceMove(currentposition, board));
-            /*foreach (var item in positions)
+            positions.AddRange(PawnCapturesPieceMove(currentposition, board));
+            foreach (var item in positions)
             {
                 Console.WriteLine(item);
-            }*/
+            }
             return positions;
            
         }
@@ -72,7 +65,7 @@ namespace Chess.Model.Pieces
             string r = Convert.ToString(currentposition[1]);
             int file = Array.IndexOf(Board.Files, f);
             int rank = Array.IndexOf(Board.Ranks, r);
-            //for white works (almost) but for black?
+
             if (IsWhite == true)
             {
                 if (IsFirstMove == true && rank < Board.boardSize - 2)
@@ -112,85 +105,133 @@ namespace Chess.Model.Pieces
                     }
                 }
                 return positions;
-            }
-            
+            }  
         }
-        /*
-        List<string> PawnCapturesPieceMove(string currentposition, Board board) // zwraca listę ruchów. Co z nią zroboić?
+        
+        List<string> PawnCapturesPieceMove(string currentposition, Board board)
         {
             List<string> positions = new List<string>();
-
-            string f = Convert.ToString(currentposition[0]);
-            string r = Convert.ToString(currentposition[1]);
-            int file = Array.IndexOf(Board.Files, f);
-            int rank = Array.IndexOf(Board.Ranks, r);
+            int file = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
+            int rank = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
             string newposition;
+            Field field;
 
-            if (rank < Board.boardSize)
+            if (IsWhite == true)
             {
-                if (file == 0)
+                if (rank < Board.boardSize) // to nie bedzie potrzebne jeśli najpierw zrobię walidację ruchu TODO: walidacja, TODO: opisać ładnie działanie kodu = dokumentacja
                 {
-                    newposition = Board.Files[file + 1] + Board.Ranks[rank + 1];
-                    if (board[file + 1][rank + 1].Content != null)
+                    if (file == 0)
                     {
-                        if ((board[file + 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.White))
-                        {
-                            positions.Add(newposition);
-                        }
-                        else if (!(board[file + 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.Black))
-                        {
-                            positions.Add(newposition);
-                        }
+                        MoveOneForwardDiagonallyRight(); // to do: można jeszcze bardziej uogólnic i wykorzystać tą funkcję dla innych figur
+                    }
+                    else if (file == 7)
+                    {
+                        MoveOneForwardDiagonallyLeft();
+                    }
+                    else
+                    {
+                        MoveOneForwardDiagonallyRight();
+                        MoveOneForwardDiagonallyLeft();
                     }
                 }
-                else if (file == 7)
+                return positions;
+            }
+            else
+            {
+                if (rank > 1)
                 {
-                    newposition = Board.Files[file - 1] + Board.Ranks[rank + 1];
-                    if (board[file - 1][rank + 1].Content != null)
+                    if (file == 0)
                     {
-                        if ((board[file - 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.White))
-                        {
-                            positions.Add(newposition);
-                        }
-                        else if (!(board[file - 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.Black))
-                        {
-                            positions.Add(newposition);
-                        }
+                        MoveOneForwardDiagonallyLeft();
+                    }
+                    else if (file == 7)
+                    {
+                        MoveOneForwardDiagonallyRight();
+                    }
+                    else
+                    {
+                        MoveOneForwardDiagonallyLeft();
+                        MoveOneForwardDiagonallyRight();
                     }
                 }
-                else
+                return positions;
+            }
+            /*
+            void WhiteMoveOneForwardDiagonallyRight()
+            {
+                field = board[file + 1][rank + 1];
+                if (field.Content != null && !(field.Content.IsWhite))
                 {
                     newposition = Board.Files[file + 1] + Board.Ranks[rank + 1];
-                    if (board[file + 1][rank + 1].Content != null)
-                    {
-                        if ((board[file + 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.White))
-                        {
-                            positions.Add(newposition);
-                        }
-                        else if (!(board[file + 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.Black))
-                        {
-                            positions.Add(newposition);
-                        }
-                    }
+                    positions.Add(newposition);
+                }
+            }
+
+            void WhiteMoveOneForwardDiagonallyLeft()
+            {
+                field = board[file - 1][rank + 1];
+                if (field.Content != null && !(field.Content.IsWhite))
+                {
                     newposition = Board.Files[file - 1] + Board.Ranks[rank + 1];
-                    if (board[file - 1][rank + 1].Content != null)
+                    positions.Add(newposition);
+                }
+            }
+
+            void BlackMoveOneForwardDiagonallyRight()
+            {
+                field = board[file + 1][rank - 1];
+                if (field.Content != null && field.Content.IsWhite)
+                {
+                    newposition = Board.Files[file + 1] + Board.Ranks[rank - 1];
+                    positions.Add(newposition);
+                }
+            }
+
+            void BlackMoveOneForwardDiagonallyLeft() //można jeszcze uprościć i połączyć funkcje
+            {
+                field = board[file - 1][rank - 1];
+                if (field.Content != null && field.Content.IsWhite)
+                {
+                    newposition = Board.Files[file - 1] + Board.Ranks[rank - 1];
+                    positions.Add(newposition);
+                }
+            }*/
+
+            void MoveOneForwardDiagonallyRight() //from the 'piece position of view'
+            {
+                int x = IsWhite == true ? 1 : -1;
+                int y = IsWhite == true ? 1 : -1;
+                field = board[file + x][rank + y];
+                if (field.Content != null)
+                {
+                    bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
+                    if (z)
                     {
-                        if ((board[file - 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.White))
-                        {
-                            positions.Add(newposition);
-                        }
-                        else if (!(board[file - 1][rank + 1].Content.IsWhite) && (GameState.CurrentPlayer == GameState.Sides.Black))
-                        {
-                            positions.Add(newposition);
-                        }
+                        newposition = Board.Files[file + x] + Board.Ranks[rank + y];
+                        positions.Add(newposition);
                     }
                 }
             }
-            return positions;
-        }*/
+
+            void MoveOneForwardDiagonallyLeft() //from the 'piece position of view'
+            {
+                int x = IsWhite == true ? -1 : 1;
+                int y = IsWhite == true ? 1 : -1;
+                field = board[file + x][rank + y];
+                if (field.Content != null)
+                {
+                    bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
+                    if (z)
+                    {
+                        newposition = Board.Files[file + x] + Board.Ranks[rank + y];
+                        positions.Add(newposition);
+                    }
+                }
+            }
+        }   
+    }
         //TODO :
         // test and implement ^ v !
         //EnPassantCaptureMove()
         //PromotionMove()
-    }
 }

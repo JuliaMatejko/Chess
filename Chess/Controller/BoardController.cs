@@ -21,7 +21,7 @@ namespace Chess.Controller
                 move = StringToMove(chosenMove);
                 piece = FindPiece(move.PieceName, move.CurrentPosition);
             }
-            if (piece.GetType() == typeof(Pawn)) //works?
+            if (piece.GetType() == typeof(Pawn)) //works? yup
             {
                 Pawn pawn = (Pawn)piece;
                 if (pawn.IsFirstMove)
