@@ -11,10 +11,10 @@ namespace Chess
         {
             if (PieceOnChosenPositionDoesExist(piece) && ChosenPieceIsCurrentPlayersPiece(piece))
             {
-                //if (piece.NextAvailablePositions.Contains(move.NewPosition))
-                //{
+                if (piece.NextAvailablePositions.Contains(move.NewPosition))
+                {
                     return true;
-                //}  
+                }  
             }
             return false;
         }

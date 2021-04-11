@@ -7,7 +7,7 @@ namespace Chess.Model.Pieces
     {
         static public new string[] PieceNames => new string[] { "pw", "pb" };
         public bool IsFirstMove { get; set; } = true;
-        override public List<string> NextAvailablePositions => ReturnAvailablePieceMoves(Position, Game.board);
+
         public Pawn(bool iswhite, string position)
         {
             IsWhite = iswhite;
@@ -23,15 +23,15 @@ namespace Chess.Model.Pieces
             NextAvailablePositions = ReturnAvailablePieceMoves(Position, Game.board);
         }
 
-        List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
+        public override List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
         {
             List<string> positions = new List<string>();
             positions.AddRange(StandardPawnMove(currentposition, board));
             //positions.AddRange(PawnCapturesPieceMove(currentposition, board));
-            foreach (var item in positions)
+            /*foreach (var item in positions)
             {
                 Console.WriteLine(item);
-            }
+            }*/
             return positions;
            
         }
@@ -72,25 +72,48 @@ namespace Chess.Model.Pieces
             string r = Convert.ToString(currentposition[1]);
             int file = Array.IndexOf(Board.Files, f);
             int rank = Array.IndexOf(Board.Ranks, r);
-            //string newposition;
-
-            if (IsFirstMove == true && rank < Board.boardSize - 2)
+            //for white works (almost) but for black?
+            if (IsWhite == true)
             {
-                string newposition = Board.Files[file] + Board.Ranks[rank + 2];
-                if (board[file][rank + 2].Content == null)
+                if (IsFirstMove == true && rank < Board.boardSize - 2)
                 {
-                    positions.Add(newposition);
+                    string newposition = Board.Files[file] + Board.Ranks[rank + 2];
+                    if (board[file][rank + 2].Content == null)
+                    {
+                        positions.Add(newposition);
+                    }
                 }
+                if (rank < Board.boardSize)
+                {
+                    string newposition = Board.Files[file] + Board.Ranks[rank + 1];
+                    if (board[file][rank + 1].Content == null)
+                    {
+                        positions.Add(newposition);
+                    }
+                }
+                return positions;
             }
-            if (rank < Board.boardSize)
+            else
             {
-                string newposition = Board.Files[file] + Board.Ranks[rank + 1];
-                if (board[file][rank + 1].Content == null)
+                if (IsFirstMove == true && rank > 2)
                 {
-                    positions.Add(newposition);
+                    string newposition = Board.Files[file] + Board.Ranks[rank - 2];
+                    if (board[file][rank - 2].Content == null)
+                    {
+                        positions.Add(newposition);
+                    }
                 }
+                if (rank > 1)
+                {
+                    string newposition = Board.Files[file] + Board.Ranks[rank - 1];
+                    if (board[file][rank - 1].Content == null)
+                    {
+                        positions.Add(newposition);
+                    }
+                }
+                return positions;
             }
-            return positions;
+            
         }
         /*
         List<string> PawnCapturesPieceMove(string currentposition, Board board) // zwraca listę ruchów. Co z nią zroboić?

@@ -8,7 +8,7 @@ namespace Chess.Controller
     {
         public static void MakeAMove()
         {
-            Console.Write($"{GameState.CurrentPlayer} turn, make a move: ");
+            Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
             string chosenMove = Console.ReadLine(); //to do: validate string (only take format 'piece current position next position'
 
             Move move = StringToMove(chosenMove);
@@ -29,16 +29,16 @@ namespace Chess.Controller
                     pawn.IsFirstMove = false;
                 }
             }
+            //changing piece.Position // jakos to zautomatyzowac? funkcja? referencja? jak? TODO
+            piece.Position = move.NewPosition;
+
+            //changing field content
             Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
             Game.Fields[move.CurrentPosition].Content = null;
         }
 
         static Move StringToMove(string str)
         {
-            if (string.IsNullOrEmpty(str))
-            {
-
-            }
             string[] substrings = str.Split(" ");
             return new Move(substrings[0], substrings[1], substrings[2]);
         }

@@ -14,12 +14,13 @@ namespace Chess.Model
 
         public static void StartGame()
         {
-            Console.WriteLine("Let's play chess!");
+            Console.WriteLine(" Let's play chess!");
             Console.WriteLine("");
+            Console.WriteLine(" To make a move, type a piece, current piece position and new piece position separated by a space, ex. 'pw e2 e4'");
             Board.CreateABoard(board);
             SetStartingBoard(board);
             BoardView.PrintBoard(board);
-            Console.WriteLine(" To make a move, type a piece, current piece position and new piece position separated by a space, ex. 'pw e2 e4'");
+
 
             while (!GameState.IsAWin && !GameState.IsADraw)
             {
@@ -31,7 +32,6 @@ namespace Chess.Model
                 if (!GameState.IsAWin && !GameState.IsADraw)
                 {
                     GameState.ChangeTurns();
-                    Console.WriteLine($"{GameState.CurrentPlayer}");
                 }
                 else
                 {
@@ -55,7 +55,7 @@ namespace Chess.Model
             }
             for (int i = 0; i < Board.boardSize; i++)
             {
-                Fields[Board.Files[i] + "7"].Content = new Pawn(false, Board.Files[i] + "7");  // set black pawns
+                Fields[Board.Files[i] + "7"].Content = new Pawn(false, Board.Files[i] + "7");  // set black pawns 
             }
             Fields["a1"].Content = new Rook(true, "a1");        // set white rooks
             Fields["h1"].Content = new Rook(true, "h1");

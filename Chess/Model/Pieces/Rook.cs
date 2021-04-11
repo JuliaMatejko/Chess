@@ -1,4 +1,7 @@
-﻿namespace Chess.Model.Pieces
+﻿using System;
+using System.Collections.Generic;
+
+namespace Chess.Model.Pieces
 {
     class Rook : Piece
     {
@@ -16,6 +19,19 @@
             {
                 Name = PieceNames[1];
             }
+        }
+
+        public override List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
+        {
+            List<string> positions = new List<string>();
+            //positions.AddRange(StandardPawnMove(currentposition, board));
+            //positions.AddRange(PawnCapturesPieceMove(currentposition, board));
+            foreach (var item in positions)
+            {
+                Console.WriteLine(item);
+            }
+            return positions;
+
         }
     }
 }

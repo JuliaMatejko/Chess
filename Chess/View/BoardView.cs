@@ -7,6 +7,7 @@ namespace Chess.View
     {
         public static void PrintBoard(Board board)
         {
+            Console.WriteLine("");
             Console.WriteLine("   +---------------------------------------+");
             for (int j = 7; j >= 0; j--)
             {
@@ -46,6 +47,7 @@ namespace Chess.View
                     Console.WriteLine("     a    b    c    d    e    f    g    h   ");
                 }
             }
+            Console.WriteLine("");
         }
 
         public static void PrintBoardLayout()
