@@ -1,6 +1,7 @@
 ﻿using Chess.Model;
 using Chess.Model.Pieces;
 using System;
+using System.Linq;
 
 namespace Chess.Controller
 {
@@ -9,8 +10,13 @@ namespace Chess.Controller
         public static void MakeAMove()
         {
             Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
-            string chosenMove = Console.ReadLine(); //to do: validate string (only take format 'piece current position next position'
+            string chosenMove = Console.ReadLine();
 
+            while (!UserInputIsValid(chosenMove))
+            {
+                Console.Write($" It's not a valid move. Choose a differnt piece or/and field: ");
+                chosenMove = Console.ReadLine();
+            }
             Move move = StringToMove(chosenMove);
             Piece piece = FindPiece(move.PieceName, move.CurrentPosition);
 
@@ -37,6 +43,22 @@ namespace Chess.Controller
             Game.Fields[move.CurrentPosition].Content = null;
         }
 
+        static bool UserInputIsValid(string chosenmove)
+        {
+
+            if (chosenmove.Length == 8 && chosenmove[2] == ' ' && chosenmove[5] == ' ')
+            {
+                Move move = StringToMove(chosenmove);
+
+                if (Piece.PieceNames.Contains(move.PieceName)
+                    && Board.Positions.Contains(move.CurrentPosition)
+                    && Board.Positions.Contains(move.CurrentPosition))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
         static Move StringToMove(string str)
         {
             string[] substrings = str.Split(" ");

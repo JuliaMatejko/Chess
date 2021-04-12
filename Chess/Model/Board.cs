@@ -21,7 +21,7 @@ namespace Chess.Model
         public const int boardSize = 8;
         static public string[] Files => new string[boardSize] { "a", "b", "c", "d", "e", "f", "g", "h" };
         static public string[] Ranks => new string[boardSize] { "1", "2", "3", "4", "5", "6", "7", "8" };
-        
+        static public string[] Positions => CreatePositionNames();
 
         static public void CreateABoard(Board board)
         {
@@ -34,6 +34,21 @@ namespace Chess.Model
                     board[i].Add(new Field(Files[i], Ranks[j], null));   // creates fields in the column, ex. a1, a2,..., a8
                 }
             } 
+        }
+
+        static string[] CreatePositionNames()
+        {
+            string[] fieldnames = new string[boardSize * boardSize];
+            int count = 0;
+            for (int i = 0; i < boardSize; i++)
+            {
+                for (int j = 0; j < boardSize; j++)
+                {
+                    fieldnames[count] = Files[i] + Ranks[j];
+                    count++;
+                }
+            }
+            return fieldnames;
         }
     }
 }

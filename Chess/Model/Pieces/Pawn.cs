@@ -19,19 +19,28 @@ namespace Chess.Model.Pieces
         public override List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
         {
             List<string> positions = new List<string>();
-            positions.AddRange(StandardPawnMove(currentposition, board));
-            positions.AddRange(PawnCapturesPieceMove(currentposition, board));
-            foreach (var item in positions)
-            {
-                Console.WriteLine(item);
-            }
+            positions.AddRange(CorrectPawnMove(currentposition, board, positions));
+            /* foreach (var item in positions)
+             {
+                 Console.WriteLine(item);
+             }*/
             return positions;
            
         }
 
-        /*
-        void CorrectPawnMove(string currentposition, Board board)
+
+        List<string> CorrectPawnMove(string currentposition, Board board, List<string> positions)
         {
+            int file = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
+            int rank = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
+            Field field = null;
+
+            ForwardPawnMove(positions, file, rank, field, board);
+            DiagonalForwardPawnMove(positions, file, rank, field, board);
+            //EnPassantPawnMove(); TODO
+            //PromotionPawnMove(); TODO
+            //validacja ruchów (stringa) dla wszystkich figur => Move Validator
+            return positions;
             /*
              * Pawns have the most complex rules of movement:
               1.  A pawn moves straight forward one square, if that square is vacant.    a2 -> a3
@@ -53,36 +62,20 @@ namespace Chess.Model.Pieces
             Ad 1. Ad 2. obecna pozycja +1 if its first move, obecna pozycja +1 lub +2 (granicą jest boardSize)
 
              
-            StandardPawnMove(currentposition, board);
+            */
         }
-    */
 
-        List<string> StandardPawnMove(string currentposition, Board board) //zwraca listę ruchów
-        {
-            List<string> positions = new List<string>();
-
-            string f = Convert.ToString(currentposition[0]);
-            string r = Convert.ToString(currentposition[1]);
-            int file = Array.IndexOf(Board.Files, f);
-            int rank = Array.IndexOf(Board.Ranks, r);
-
+        List<string> ForwardPawnMove(List<string> positions, int file, int rank, Field field, Board board)
+        {   
             if (IsWhite == true)
             {
                 if (IsFirstMove == true && rank < Board.boardSize - 2)
                 {
-                    string newposition = Board.Files[file] + Board.Ranks[rank + 2];
-                    if (board[file][rank + 2].Content == null)
-                    {
-                        positions.Add(newposition);
-                    }
+                    MoveTwoForward();
                 }
                 if (rank < Board.boardSize)
                 {
-                    string newposition = Board.Files[file] + Board.Ranks[rank + 1];
-                    if (board[file][rank + 1].Content == null)
-                    {
-                        positions.Add(newposition);
-                    }
+                    MoveOneForward();
                 }
                 return positions;
             }
@@ -90,39 +83,45 @@ namespace Chess.Model.Pieces
             {
                 if (IsFirstMove == true && rank > 2)
                 {
-                    string newposition = Board.Files[file] + Board.Ranks[rank - 2];
-                    if (board[file][rank - 2].Content == null)
-                    {
-                        positions.Add(newposition);
-                    }
+                    MoveTwoForward();
                 }
                 if (rank > 1)
                 {
-                    string newposition = Board.Files[file] + Board.Ranks[rank - 1];
-                    if (board[file][rank - 1].Content == null)
-                    {
-                        positions.Add(newposition);
-                    }
+                    MoveOneForward();
                 }
                 return positions;
-            }  
+            }
+
+            void MoveOneForward()
+            {
+                int y = IsWhite == true ? 1 : -1;
+                field = board[file][rank + y];
+                if (field.Content == null)
+                {
+                    positions.Add(Board.Files[file] + Board.Ranks[rank + y]);
+                }
+            }
+
+            void MoveTwoForward()
+            {
+                int y = IsWhite == true ? 2 : -2;
+                field = board[file][rank + y];
+                if (field.Content == null)
+                {
+                    positions.Add(Board.Files[file] + Board.Ranks[rank + y]);
+                }
+            }
         }
         
-        List<string> PawnCapturesPieceMove(string currentposition, Board board)
+        List<string> DiagonalForwardPawnMove(List<string> positions, int file, int rank, Field field, Board board)
         {
-            List<string> positions = new List<string>();
-            int file = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
-            int rank = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
-            string newposition;
-            Field field;
-
             if (IsWhite == true)
             {
                 if (rank < Board.boardSize) // to nie bedzie potrzebne jeśli najpierw zrobię walidację ruchu TODO: walidacja, TODO: opisać ładnie działanie kodu = dokumentacja
                 {
                     if (file == 0)
                     {
-                        MoveOneForwardDiagonallyRight(); // to do: można jeszcze bardziej uogólnic i wykorzystać tą funkcję dla innych figur
+                        MoveOneForwardDiagonallyRight(); // to do: można jeszcze bardziej uogólnic i wykorzystać tą funkcję dla innych figur?
                     }
                     else if (file == 7)
                     {
@@ -156,48 +155,8 @@ namespace Chess.Model.Pieces
                 }
                 return positions;
             }
-            /*
-            void WhiteMoveOneForwardDiagonallyRight()
-            {
-                field = board[file + 1][rank + 1];
-                if (field.Content != null && !(field.Content.IsWhite))
-                {
-                    newposition = Board.Files[file + 1] + Board.Ranks[rank + 1];
-                    positions.Add(newposition);
-                }
-            }
 
-            void WhiteMoveOneForwardDiagonallyLeft()
-            {
-                field = board[file - 1][rank + 1];
-                if (field.Content != null && !(field.Content.IsWhite))
-                {
-                    newposition = Board.Files[file - 1] + Board.Ranks[rank + 1];
-                    positions.Add(newposition);
-                }
-            }
-
-            void BlackMoveOneForwardDiagonallyRight()
-            {
-                field = board[file + 1][rank - 1];
-                if (field.Content != null && field.Content.IsWhite)
-                {
-                    newposition = Board.Files[file + 1] + Board.Ranks[rank - 1];
-                    positions.Add(newposition);
-                }
-            }
-
-            void BlackMoveOneForwardDiagonallyLeft() //można jeszcze uprościć i połączyć funkcje
-            {
-                field = board[file - 1][rank - 1];
-                if (field.Content != null && field.Content.IsWhite)
-                {
-                    newposition = Board.Files[file - 1] + Board.Ranks[rank - 1];
-                    positions.Add(newposition);
-                }
-            }*/
-
-            void MoveOneForwardDiagonallyRight() //from the 'piece position of view'
+            void MoveOneForwardDiagonallyRight() // from the 'piece position of view' - black moves left on the board view
             {
                 int x = IsWhite == true ? 1 : -1;
                 int y = IsWhite == true ? 1 : -1;
@@ -207,13 +166,12 @@ namespace Chess.Model.Pieces
                     bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
                     if (z)
                     {
-                        newposition = Board.Files[file + x] + Board.Ranks[rank + y];
-                        positions.Add(newposition);
+                        positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
                     }
                 }
             }
 
-            void MoveOneForwardDiagonallyLeft() //from the 'piece position of view'
+            void MoveOneForwardDiagonallyLeft() // from the 'piece position of view' - black moves right on the board view
             {
                 int x = IsWhite == true ? -1 : 1;
                 int y = IsWhite == true ? 1 : -1;
@@ -223,15 +181,56 @@ namespace Chess.Model.Pieces
                     bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
                     if (z)
                     {
-                        newposition = Board.Files[file + x] + Board.Ranks[rank + y];
-                        positions.Add(newposition);
+                        positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
                     }
                 }
             }
         }   
     }
-        //TODO :
-        // test and implement ^ v !
-        //EnPassantCaptureMove()
-        //PromotionMove()
+    //TODO :
+    // test and implement ^ v !
+    //EnPassantCaptureMove()
+    //PromotionMove()
+
+    /* ARCHIVE
+void WhiteMoveOneForwardDiagonallyRight()
+{
+    field = board[file + 1][rank + 1];
+    if (field.Content != null && !(field.Content.IsWhite))
+    {
+        newposition = Board.Files[file + 1] + Board.Ranks[rank + 1];
+        positions.Add(newposition);
+    }
+}
+
+void WhiteMoveOneForwardDiagonallyLeft()
+{
+    field = board[file - 1][rank + 1];
+    if (field.Content != null && !(field.Content.IsWhite))
+    {
+        newposition = Board.Files[file - 1] + Board.Ranks[rank + 1];
+        positions.Add(newposition);
+    }
+}
+
+void BlackMoveOneForwardDiagonallyRight()
+{
+    field = board[file + 1][rank - 1];
+    if (field.Content != null && field.Content.IsWhite)
+    {
+        newposition = Board.Files[file + 1] + Board.Ranks[rank - 1];
+        positions.Add(newposition);
+    }
+}
+
+void BlackMoveOneForwardDiagonallyLeft() //można jeszcze uprościć i połączyć funkcje
+{
+    field = board[file - 1][rank - 1];
+    if (field.Content != null && field.Content.IsWhite)
+    {
+        newposition = Board.Files[file - 1] + Board.Ranks[rank - 1];
+        positions.Add(newposition);
+    }
+}*/
+
 }

@@ -10,7 +10,6 @@ namespace Chess.Model
     {
         public static Board board = new Board();
         public static Dictionary<string, Field> Fields => SetFieldDictionary(board);
-        static public string[] Positions => CreatePositionNames(); //przenieść?do board
 
         public static void StartGame()
         {
@@ -75,7 +74,7 @@ namespace Chess.Model
             Fields["e8"].Content = new King(false, "e8");       // set black king
         }
 
-        static Dictionary<string, Field> SetFieldDictionary(Board board)
+        static Dictionary<string, Field> SetFieldDictionary(Board board)    // przenieść do board?
         {
             Dictionary<string, Field> dictionary = new Dictionary<string, Field>();
 
@@ -84,27 +83,11 @@ namespace Chess.Model
             {
                 for (int j = 0; j < Board.boardSize; j++)
                 {
-                    dictionary.Add(Positions[count], board[i][j]);
+                    dictionary.Add(Board.Positions[count], board[i][j]);
                     count++;
                 }
             }
             return dictionary;
-        }
-
-        static string[] CreatePositionNames()
-        {
-            string[] fieldnames = new string[Board.boardSize * Board.boardSize];
-
-            int count = 0;
-            for (int i = 0; i < Board.boardSize; i++)
-            {
-                for (int j = 0; j < Board.boardSize; j++)
-                {
-                    fieldnames[count] = Board.Files[i] + Board.Ranks[j];
-                    count++;
-                }
-            }
-            return fieldnames;
         }
     }
 }

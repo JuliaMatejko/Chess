@@ -13,7 +13,6 @@ namespace Chess.Model.Pieces
             get => ReturnAvailablePieceMoves(Position, Game.board);    // fields available for piece to move in ongoing round
         }
         private List<string> nextAvailablePositions;
-
         public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "kw", "kb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb"};
 
         public abstract List<string> ReturnAvailablePieceMoves(string currentposition, Board board);

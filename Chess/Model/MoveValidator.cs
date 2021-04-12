@@ -14,7 +14,7 @@ namespace Chess
                 if (piece.NextAvailablePositions.Contains(move.NewPosition))
                 {
                     return true;
-                }  
+                }
             }
             return false;
         }
@@ -52,11 +52,7 @@ namespace Chess
         }
         static bool PieceOnChosenPositionDoesExist(Piece piece)
         {
-            if (piece != null)
-            {
-                return true;
-            }
-            return false;
+            return piece != null;
         }
 
         /*
