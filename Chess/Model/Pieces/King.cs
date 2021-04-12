@@ -21,12 +21,12 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field field, Board board, List<string> positions)
+        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
         {
             //type of moves: vertical, horizontal, diagonal, not in line of attack,special: castle
-            VerticalKingMove(positions, fileIndex, rankIndex, field, board);
-            HorizontalKingMove(positions, fileIndex, rankIndex, field, board);
-            DiagonalKingMove(positions, fileIndex, rankIndex, field, board);
+            VerticalKingMove(positions, fileIndex, rankIndex, newField, board);
+            //HorizontalKingMove(positions, fileIndex, rankIndex, field, board);
+            //DiagonalKingMove(positions, fileIndex, rankIndex, field, board);
             //Move validation! not in line of attack();
             //CastleKingRookMove(); czy powinien byc w tej klasie?
 
@@ -34,30 +34,69 @@ namespace Chess.Model.Pieces
 
         }
 
-        List<string> DiagonalKingMove(List<string> positions, int fileIndex, int rankIndex, Field field, Board board)
+        List<string> DiagonalKingMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {
             throw new NotImplementedException();
         }
 
-        List<string> HorizontalKingMove(List<string> positions, int fileIndex, int rankIndex, Field field, Board board)
+        List<string> HorizontalKingMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {
             throw new NotImplementedException();
         }
 
-        List<string> VerticalKingMove(List<string> positions, int fileIndex, int rankIndex, Field field, Board board)
+        List<string> VerticalKingMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {
-            //IsWhite == true   nie wiem czy musze dla czarnego pisac inny kod, na razie pisze dla bialego
-            if (rankIndex > 0 && rankIndex < Board.boardSize - 1)
+            if (rankIndex < Board.boardSize - 1)
             {
-                field = board[fileIndex][rankIndex + 1];
+                if (IsWhite == true)
+                {
+                    MoveOneForward();
+                }
+                else
+                {
+                    MoveOneBackwards();
+                }
+            }
+            if (rankIndex > 0)
+            {
+                if (IsWhite == true)
+                {
+                    MoveOneBackwards();
+                }
+                else
+                {
+                    MoveOneForward();
+                }
             }
             return positions;
-
-            void MoveOneForward()
-            {
+            
+            void MoveOneForward()       // TODO : królnie powinien móc się ruszyć na pole które jest atakowane przez figurę przeciwnika 
+            {                           // ( jeśli NextAvailable moves którejś z figur przeciwnika zawiera pole na które chce się ruszyć król)
                 int y = IsWhite == true ? 1 : -1;
-                field = board[fileIndex][rankIndex + y];
-                if (field.Content == null)
+                newField = board[fileIndex][rankIndex + y];
+                if (PlayerControlledFields.Contains(newField.Name))
+                {
+
+                }
+                if (newField.Content == null)
+                {
+                    positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                }
+                if (newField.Content != null && newField.Content.GetType() != typeof(King))
+                {
+                    positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                }
+            }
+
+            void MoveOneBackwards()
+            {
+                int y = IsWhite == true ? -1 : 1;
+                newField = board[fileIndex][rankIndex + y];
+                if (newField.Content == null)
+                {
+                    positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                }
+                if (newField.Content != null && newField.Content.GetType() != typeof(King))
                 {
                     positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
                 }

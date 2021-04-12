@@ -11,6 +11,7 @@
         static public bool IsAWin { get; set; } = false;
         static public bool IsADraw { get; set; } = false;
 
+
         public static void ChangeTurns() // ograniczyć mozliwosc ruszania bierek przeciwnika
         {
             CurrentPlayer = CurrentPlayer == Sides.White ? CurrentPlayer = Sides.Black

@@ -16,10 +16,10 @@ namespace Chess.Model.Pieces
             NextAvailablePositions = ReturnAvailablePieceMoves(Position, Game.board);
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field field, Board board, List<string> positions)
+        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
         {
-            ForwardPawnMove(positions, fileIndex, rankIndex, field, board);
-            DiagonalForwardPawnMove(positions, fileIndex, rankIndex, field, board);
+            ForwardPawnMove(positions, fileIndex, rankIndex, newField, board);
+            DiagonalForwardPawnMove(positions, fileIndex, rankIndex, newField, board);
             //EnPassantPawnMove(); TODO
             //PromotionPawnMove(); TODO
             return positions;
@@ -47,7 +47,7 @@ namespace Chess.Model.Pieces
             */
         }
 
-        List<string> ForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field field, Board board)
+        List<string> ForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {   
             if (IsWhite == true)
             {
@@ -77,8 +77,8 @@ namespace Chess.Model.Pieces
             void MoveOneForward()
             {
                 int y = IsWhite == true ? 1 : -1;
-                field = board[fileIndex][rankIndex + y];
-                if (field.Content == null)
+                newField = board[fileIndex][rankIndex + y];
+                if (newField.Content == null)
                 {
                     positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
                 }
@@ -87,15 +87,15 @@ namespace Chess.Model.Pieces
             void MoveTwoForward()
             {
                 int y = IsWhite == true ? 2 : -2;
-                field = board[fileIndex][rankIndex + y];
-                if (field.Content == null)
+                newField = board[fileIndex][rankIndex + y];
+                if (newField.Content == null)
                 {
                     positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
                 }
             }
         }
         
-        List<string> DiagonalForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field field, Board board)
+        List<string> DiagonalForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {
             if (IsWhite == true)
             {
@@ -142,10 +142,10 @@ namespace Chess.Model.Pieces
             {
                 int x = IsWhite == true ? 1 : -1;
                 int y = IsWhite == true ? 1 : -1;
-                field = board[fileIndex + x][rankIndex + y];
-                if (field.Content != null && field.Content.GetType() != typeof(King))
+                newField = board[fileIndex + x][rankIndex + y];
+                if (newField.Content != null && newField.Content.GetType() != typeof(King))
                 {
-                    bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
+                    bool z = IsWhite == true ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
                     if (z)
                     {
                         positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
@@ -157,10 +157,10 @@ namespace Chess.Model.Pieces
             {
                 int x = IsWhite == true ? -1 : 1;
                 int y = IsWhite == true ? 1 : -1;
-                field = board[fileIndex + x][rankIndex + y];
-                if (field.Content != null && field.Content.GetType() != typeof(King))
+                newField = board[fileIndex + x][rankIndex + y];
+                if (newField.Content != null && newField.Content.GetType() != typeof(King))
                 {
-                    bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
+                    bool z = IsWhite == true ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
                     if (z)
                     {
                         positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);

@@ -18,11 +18,11 @@ namespace Chess.Model.Pieces
 
         protected List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
         {
-            int file = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
-            int rank = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
-            Field field = null;
+            int fileIndex = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
+            int rankIndex = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
+            Field newField = null;
             List<string> positions = new List<string>();
-            positions.AddRange(ReturnCorrectPieceMoves(file, rank, field, board, positions));
+            positions.AddRange(ReturnCorrectPieceMoves(fileIndex, rankIndex, newField, board, positions));
             /* foreach (var item in positions)
              {
                  Console.WriteLine(item);
@@ -31,7 +31,7 @@ namespace Chess.Model.Pieces
 
         }
 
-        protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field field, Board board, List<string> positions);
+        protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions);
 
     }
 }
