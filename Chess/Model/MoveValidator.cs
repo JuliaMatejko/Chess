@@ -7,28 +7,20 @@ namespace Chess
 {
     class MoveValidator // service which role is validating moves 
     { 
-        public static bool MoveIsPossible(Piece piece, Move move) // ograniczyć rucszanie nie swoimi bierkami
+        public static bool MoveIsPossible(Piece piece, Move move)
         {
             if (PieceOnChosenPositionDoesExist(piece) && ChosenPieceIsCurrentPlayersPiece(piece))
             {
-                if (piece.NextAvailablePositions.Contains(move.NewPosition))
-                {
-                    return true;
-                }
+                return MoveIsCorrectPieceMove(piece, move);
             }
             return false;
+        }
+        
+        static bool MoveIsCorrectPieceMove(Piece piece, Move move)
+        {
+            return piece.NextAvailablePositions.Contains(move.NewPosition);
         }
         /*
-        static bool MoveIsPrinciplePieceMove(Move move, Piece piece) //! .... TO DO
-        {
-            if (piece.NextAvailablePositions.Contains(move.NewPosition))
-            {
-                return true;
-            }
-            return false;
-            //return true;
-        }
-
         static bool AbsolutePin(Move move) //! .... TO DO the pinned piece cannot legally move out of the line of attack (as moving it would expose the king to check).
         {
                 if (true)

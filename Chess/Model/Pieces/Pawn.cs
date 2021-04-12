@@ -16,30 +16,12 @@ namespace Chess.Model.Pieces
             NextAvailablePositions = ReturnAvailablePieceMoves(Position, Game.board);
         }
 
-        public override List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
+        protected override List<string> ReturnCorrectPieceMoves(int file, int rank, Field field, Board board, List<string> positions)
         {
-            List<string> positions = new List<string>();
-            positions.AddRange(CorrectPawnMove(currentposition, board, positions));
-            /* foreach (var item in positions)
-             {
-                 Console.WriteLine(item);
-             }*/
-            return positions;
-           
-        }
-
-
-        List<string> CorrectPawnMove(string currentposition, Board board, List<string> positions)
-        {
-            int file = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
-            int rank = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
-            Field field = null;
-
             ForwardPawnMove(positions, file, rank, field, board);
             DiagonalForwardPawnMove(positions, file, rank, field, board);
             //EnPassantPawnMove(); TODO
             //PromotionPawnMove(); TODO
-            //validacja ruchów (stringa) dla wszystkich figur => Move Validator
             return positions;
             /*
              * Pawns have the most complex rules of movement:

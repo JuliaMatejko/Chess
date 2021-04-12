@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Chess.Model.Pieces
 {
@@ -15,7 +16,22 @@ namespace Chess.Model.Pieces
         private List<string> nextAvailablePositions;
         public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "kw", "kb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb"};
 
-        public abstract List<string> ReturnAvailablePieceMoves(string currentposition, Board board);
+        protected List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
+        {
+            int file = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
+            int rank = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
+            Field field = null;
+            List<string> positions = new List<string>();
+            positions.AddRange(ReturnCorrectPieceMoves(file, rank, field, board, positions));
+            /* foreach (var item in positions)
+             {
+                 Console.WriteLine(item);
+             }*/
+            return positions;
+
+        }
+
+        protected abstract List<string> ReturnCorrectPieceMoves(int file, int rank, Field field, Board board, List<string> positions);
 
     }
 }

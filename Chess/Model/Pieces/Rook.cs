@@ -5,31 +5,23 @@ namespace Chess.Model.Pieces
 {
     class Rook : Piece
     {
-        static public new string[] PieceNames => new string[] { "Rw", "Rb" };
-
         public Rook(bool iswhite, string position)
         {
             IsWhite = iswhite;
             Position = position;
             if (iswhite == true)
             {
-                Name = PieceNames[0];
+                Name = PieceNames[2];
             }
             else
             {
-                Name = PieceNames[1];
+                Name = PieceNames[3];
             }
         }
 
-        public override List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
+        protected override List<string> ReturnCorrectPieceMoves(int file, int rank, Field field, Board board, List<string> positions)
         {
-            List<string> positions = new List<string>();
-            //positions.AddRange(StandardPawnMove(currentposition, board));
-            //positions.AddRange(PawnCapturesPieceMove(currentposition, board));
-            foreach (var item in positions)
-            {
-                Console.WriteLine(item);
-            }
+
             return positions;
 
         }

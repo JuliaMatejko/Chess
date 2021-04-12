@@ -21,15 +21,9 @@ namespace Chess.Model.Pieces
             }
         }
 
-        public override List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
+        protected override List<string> ReturnCorrectPieceMoves(int file, int rank, Field field, Board board, List<string> positions)
         {
-            List<string> positions = new List<string>();
-            //positions.AddRange(StandardPawnMove(currentposition, board));
-            //positions.AddRange(PawnCapturesPieceMove(currentposition, board));
-            foreach (var item in positions)
-            {
-                Console.WriteLine(item);
-            }
+
             return positions;
 
         }
