@@ -11,14 +11,7 @@ namespace Chess.Model.Pieces
         {
             IsWhite = iswhite;
             Position = position;
-            if (iswhite == true)
-            {
-                Name = PieceNames[0];
-            }
-            else
-            {
-                Name = PieceNames[1];
-            }
+            Name = iswhite == true ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
         protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
@@ -36,7 +29,8 @@ namespace Chess.Model.Pieces
 
         List<string> DiagonalKingMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {
-            throw new NotImplementedException();
+
+            return positions;
         }
 
         List<string> HorizontalKingMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
@@ -48,7 +42,7 @@ namespace Chess.Model.Pieces
         {
             if (rankIndex < Board.boardSize - 1)
             {
-                if (IsWhite == true)
+                if (IsWhite)
                 {
                     MoveOneForward();
                 }
@@ -59,7 +53,7 @@ namespace Chess.Model.Pieces
             }
             if (rankIndex > 0)
             {
-                if (IsWhite == true)
+                if (IsWhite)
                 {
                     MoveOneBackwards();
                 }
@@ -70,14 +64,10 @@ namespace Chess.Model.Pieces
             }
             return positions;
             
-            void MoveOneForward()       // TODO : królnie powinien móc się ruszyć na pole które jest atakowane przez figurę przeciwnika 
-            {                           // ( jeśli NextAvailable moves którejś z figur przeciwnika zawiera pole na które chce się ruszyć król)
-                int y = IsWhite == true ? 1 : -1;
+            void MoveOneForward()       // TODO : król nie powinien móc się ruszyć na pole które jest atakowane przez figurę przeciwnika 
+            {                           // ( jeśli NextAvailablePositions którejś z figur przeciwnika zawiera pole na które chce się ruszyć król)
+                int y = IsWhite ? 1 : -1;
                 newField = board[fileIndex][rankIndex + y];
-                if (PlayerControlledFields.Contains(newField.Name))
-                {
-
-                }
                 if (newField.Content == null)
                 {
                     positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
@@ -90,7 +80,7 @@ namespace Chess.Model.Pieces
 
             void MoveOneBackwards()
             {
-                int y = IsWhite == true ? -1 : 1;
+                int y = IsWhite ? -1 : 1;
                 newField = board[fileIndex][rankIndex + y];
                 if (newField.Content == null)
                 {

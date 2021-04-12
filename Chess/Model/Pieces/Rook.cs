@@ -9,14 +9,7 @@ namespace Chess.Model.Pieces
         {
             IsWhite = iswhite;
             Position = position;
-            if (iswhite == true)
-            {
-                Name = PieceNames[2];
-            }
-            else
-            {
-                Name = PieceNames[3];
-            }
+            Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
         protected override List<string> ReturnCorrectPieceMoves(int file, int rank, Field field, Board board, List<string> positions)

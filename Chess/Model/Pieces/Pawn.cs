@@ -12,7 +12,7 @@ namespace Chess.Model.Pieces
         {
             IsWhite = iswhite;
             Position = position;
-            Name = iswhite == true ? Name = PieceNames[0] : Name = PieceNames[1];
+            Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
             NextAvailablePositions = ReturnAvailablePieceMoves(Position, Game.board);
         }
 
@@ -49,9 +49,9 @@ namespace Chess.Model.Pieces
 
         List<string> ForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {   
-            if (IsWhite == true)
+            if (IsWhite)
             {
-                if (IsFirstMove == true)
+                if (IsFirstMove)
                 {
                     MoveTwoForward();
                 }
@@ -63,7 +63,7 @@ namespace Chess.Model.Pieces
             }
             else
             {
-                if (IsFirstMove == true)
+                if (IsFirstMove)
                 {
                     MoveTwoForward();
                 }
@@ -76,7 +76,7 @@ namespace Chess.Model.Pieces
 
             void MoveOneForward()
             {
-                int y = IsWhite == true ? 1 : -1;
+                int y = IsWhite ? 1 : -1;
                 newField = board[fileIndex][rankIndex + y];
                 if (newField.Content == null)
                 {
@@ -86,7 +86,7 @@ namespace Chess.Model.Pieces
 
             void MoveTwoForward()
             {
-                int y = IsWhite == true ? 2 : -2;
+                int y = IsWhite ? 2 : -2;
                 newField = board[fileIndex][rankIndex + y];
                 if (newField.Content == null)
                 {
@@ -97,7 +97,7 @@ namespace Chess.Model.Pieces
         
         List<string> DiagonalForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {
-            if (IsWhite == true)
+            if (IsWhite)
             {
                 if (rankIndex < Board.boardSize - 1)
                 {
@@ -140,12 +140,12 @@ namespace Chess.Model.Pieces
 
             void MoveOneForwardDiagonallyRight() // from the 'piece position of view' - black moves left on the board view
             {
-                int x = IsWhite == true ? 1 : -1;
-                int y = IsWhite == true ? 1 : -1;
+                int x = IsWhite ? 1 : -1;
+                int y = IsWhite ? 1 : -1;
                 newField = board[fileIndex + x][rankIndex + y];
                 if (newField.Content != null && newField.Content.GetType() != typeof(King))
                 {
-                    bool z = IsWhite == true ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
                     if (z)
                     {
                         positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
@@ -155,12 +155,12 @@ namespace Chess.Model.Pieces
 
             void MoveOneForwardDiagonallyLeft() // from the 'piece position of view' - black moves right on the board view
             {
-                int x = IsWhite == true ? -1 : 1;
-                int y = IsWhite == true ? 1 : -1;
+                int x = IsWhite ? -1 : 1;
+                int y = IsWhite ? 1 : -1;
                 newField = board[fileIndex + x][rankIndex + y];
                 if (newField.Content != null && newField.Content.GetType() != typeof(King))
                 {
-                    bool z = IsWhite == true ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
                     if (z)
                     {
                         positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
