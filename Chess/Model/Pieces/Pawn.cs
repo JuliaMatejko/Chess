@@ -16,10 +16,10 @@ namespace Chess.Model.Pieces
             NextAvailablePositions = ReturnAvailablePieceMoves(Position, Game.board);
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int file, int rank, Field field, Board board, List<string> positions)
+        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field field, Board board, List<string> positions)
         {
-            ForwardPawnMove(positions, file, rank, field, board);
-            DiagonalForwardPawnMove(positions, file, rank, field, board);
+            ForwardPawnMove(positions, fileIndex, rankIndex, field, board);
+            DiagonalForwardPawnMove(positions, fileIndex, rankIndex, field, board);
             //EnPassantPawnMove(); TODO
             //PromotionPawnMove(); TODO
             return positions;
@@ -47,15 +47,15 @@ namespace Chess.Model.Pieces
             */
         }
 
-        List<string> ForwardPawnMove(List<string> positions, int file, int rank, Field field, Board board)
+        List<string> ForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field field, Board board)
         {   
             if (IsWhite == true)
             {
-                if (IsFirstMove == true && rank < Board.boardSize - 2)
+                if (IsFirstMove == true)
                 {
                     MoveTwoForward();
                 }
-                if (rank < Board.boardSize)
+                if (rankIndex < Board.boardSize - 1)
                 {
                     MoveOneForward();
                 }
@@ -63,11 +63,11 @@ namespace Chess.Model.Pieces
             }
             else
             {
-                if (IsFirstMove == true && rank > 2)
+                if (IsFirstMove == true)
                 {
                     MoveTwoForward();
                 }
-                if (rank > 1)
+                if (rankIndex > 0)
                 {
                     MoveOneForward();
                 }
@@ -77,35 +77,35 @@ namespace Chess.Model.Pieces
             void MoveOneForward()
             {
                 int y = IsWhite == true ? 1 : -1;
-                field = board[file][rank + y];
+                field = board[fileIndex][rankIndex + y];
                 if (field.Content == null)
                 {
-                    positions.Add(Board.Files[file] + Board.Ranks[rank + y]);
+                    positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
                 }
             }
 
             void MoveTwoForward()
             {
                 int y = IsWhite == true ? 2 : -2;
-                field = board[file][rank + y];
+                field = board[fileIndex][rankIndex + y];
                 if (field.Content == null)
                 {
-                    positions.Add(Board.Files[file] + Board.Ranks[rank + y]);
+                    positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
                 }
             }
         }
         
-        List<string> DiagonalForwardPawnMove(List<string> positions, int file, int rank, Field field, Board board)
+        List<string> DiagonalForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field field, Board board)
         {
             if (IsWhite == true)
             {
-                if (rank < Board.boardSize) // to nie bedzie potrzebne jeśli najpierw zrobię walidację ruchu TODO: walidacja, TODO: opisać ładnie działanie kodu = dokumentacja
+                if (rankIndex < Board.boardSize - 1)
                 {
-                    if (file == 0)
+                    if (fileIndex == 0)
                     {
                         MoveOneForwardDiagonallyRight(); // to do: można jeszcze bardziej uogólnic i wykorzystać tą funkcję dla innych figur?
                     }
-                    else if (file == 7)
+                    else if (fileIndex == 7)
                     {
                         MoveOneForwardDiagonallyLeft();
                     }
@@ -119,13 +119,13 @@ namespace Chess.Model.Pieces
             }
             else
             {
-                if (rank > 1)
+                if (rankIndex > 0)
                 {
-                    if (file == 0)
+                    if (fileIndex == 0)
                     {
                         MoveOneForwardDiagonallyLeft();
                     }
-                    else if (file == 7)
+                    else if (fileIndex == 7)
                     {
                         MoveOneForwardDiagonallyRight();
                     }
@@ -142,13 +142,13 @@ namespace Chess.Model.Pieces
             {
                 int x = IsWhite == true ? 1 : -1;
                 int y = IsWhite == true ? 1 : -1;
-                field = board[file + x][rank + y];
-                if (field.Content != null)
+                field = board[fileIndex + x][rankIndex + y];
+                if (field.Content != null && field.Content.GetType() != typeof(King))
                 {
                     bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
                     if (z)
                     {
-                        positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
+                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
                     }
                 }
             }
@@ -157,13 +157,13 @@ namespace Chess.Model.Pieces
             {
                 int x = IsWhite == true ? -1 : 1;
                 int y = IsWhite == true ? 1 : -1;
-                field = board[file + x][rank + y];
-                if (field.Content != null)
+                field = board[fileIndex + x][rankIndex + y];
+                if (field.Content != null && field.Content.GetType() != typeof(King))
                 {
                     bool z = IsWhite == true ? !(field.Content.IsWhite) : field.Content.IsWhite;
                     if (z)
                     {
-                        positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
+                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
                     }
                 }
             }

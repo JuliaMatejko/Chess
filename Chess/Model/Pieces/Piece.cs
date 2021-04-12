@@ -31,7 +31,7 @@ namespace Chess.Model.Pieces
 
         }
 
-        protected abstract List<string> ReturnCorrectPieceMoves(int file, int rank, Field field, Board board, List<string> positions);
+        protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field field, Board board, List<string> positions);
 
     }
 }
