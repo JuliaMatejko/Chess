@@ -37,14 +37,14 @@ namespace Chess.Model.Pieces
                     {
                         MoveOneForwardDiagonallyRight();
                     }
-                    if (fileIndex == 7)
+                    else if (fileIndex == 7)
                     {
                         MoveOneForwardDiagonallyLeft();
                     }
                     else
                     {
-                        MoveOneForwardDiagonallyRight();
                         MoveOneForwardDiagonallyLeft();
+                        MoveOneForwardDiagonallyRight();
                     }
                 }
                 else
@@ -52,8 +52,9 @@ namespace Chess.Model.Pieces
                     if (fileIndex == 0)
                     {
                         MoveOneBackwardsDiagonallyLeft();
+
                     }
-                    if (fileIndex == 7)
+                    else if (fileIndex == 7)
                     {
                         MoveOneBackwardsDiagonallyRight();
                     }
@@ -63,39 +64,40 @@ namespace Chess.Model.Pieces
                         MoveOneBackwardsDiagonallyRight();
                     }
                 }
-                if (rankIndex > 0)
+            }
+            if (rankIndex > 0)
+            {
+                if (IsWhite)
                 {
-                    if (IsWhite)
+                    if (fileIndex == 0)
                     {
-                        if (fileIndex == 0)
-                        {
-                            MoveOneBackwardsDiagonallyRight();
-                        }
-                        if (fileIndex == 7)
-                        {
-                            MoveOneBackwardsDiagonallyLeft();
-                        }
-                        else
-                        {
-                            MoveOneBackwardsDiagonallyLeft();
-                            MoveOneBackwardsDiagonallyRight();
-                        }
+                        MoveOneBackwardsDiagonallyLeft();
+                    }
+                    else if (fileIndex == 7)
+                    {
+                        MoveOneBackwardsDiagonallyRight();
                     }
                     else
                     {
-                        if (fileIndex == 0)
-                        {
-                            MoveOneForwardDiagonallyLeft();
-                        }
-                        if (fileIndex == 7)
-                        {
-                            MoveOneForwardDiagonallyRight();
-                        }
-                        else
-                        {
-                            MoveOneForwardDiagonallyRight();
-                            MoveOneForwardDiagonallyLeft();
-                        }
+                        MoveOneBackwardsDiagonallyLeft();
+                        MoveOneBackwardsDiagonallyRight();
+                    }
+                }
+                else
+                {
+                    if (fileIndex == 0)
+                    {
+                        MoveOneForwardDiagonallyLeft();
+
+                    }
+                    else if (fileIndex == 7)
+                    {
+                        MoveOneForwardDiagonallyRight();
+                    }
+                    else
+                    {
+                        MoveOneForwardDiagonallyLeft();
+                        MoveOneForwardDiagonallyRight();
                     }
                 }
             }
@@ -130,7 +132,7 @@ namespace Chess.Model.Pieces
                 MoveDiagonally(x, y);
             }
 
-            void MoveDiagonally(int x, int y) // wykorzystać funkcję do napisania bardziej ogólnej? (wektor) TODO
+            void MoveDiagonally(int x, int y) // wykorzystać funkcję do napisania bardziej ogólnej? (wektor) TODO       !!!!!
             {
                 newField = board[fileIndex + x][rankIndex + y];
                 if (newField.Content == null)
