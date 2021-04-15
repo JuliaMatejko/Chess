@@ -35,43 +35,64 @@ namespace Chess.Model.Pieces
 
         protected List<string> MovePiece(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {
+            
             MoveForward();
 
             void MoveForward()
             {
-                bool moveInBoardBoundaries = rankIndex < Board.boardSize - 1;
-                MoveOne(0, 1, moveInBoardBoundaries);
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+
+
+                if (IsWhite) //dla bialych dziala
+                {
+                    while (rank < Board.boardSize - 1 && canMove)
+                    {
+                        MoveOne(0, 1, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (rank > 0 && canMove)
+                    {
+                        MoveOne(0, 1, ref file, ref rank, ref canMove);
+                    }
+                }
             }
 
 
-            void MoveOne(int x_white, int y_white, bool moveInBoardBoundaries) // przyjmuje argumenty(wektor), odpowiednio interpretuje dla koloru gracza, pobiera pole z planszy i sprawdza je: 1. czy jest wolne, jeśli tak to dodaje jego koordynaty do listy dostępnych pól i funkcja kontynuuje swoje działanie dla kolejnego pola przesuniętego o ten sam wektor
-            {                                       //inde
+            void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove) // przyjmuje argumenty(wektor), odpowiednio interpretuje dla koloru gracza, pobiera pole z planszy i sprawdza je: 1. czy jest wolne, jeśli tak to dodaje jego koordynaty do listy dostępnych pól i funkcja kontynuuje swoje działanie dla kolejnego pola przesuniętego o ten sam wektor
+            {
                 int x = IsWhite ? x_white : -x_white;
                 int y = IsWhite ? y_white : -y_white;
-                int newFileIndex = fileIndex + x;
-                int newRankIndex = rankIndex + y;
 
-                while (moveInBoardBoundaries)
+                newField = board[file + x][rank + y];
+                if (newField.Content == null)
                 {
-                    newField = board[newFileIndex][newRankIndex];
-                    if (newField.Content == null)
-                    {
-                        positions.Add(Board.Files[newFileIndex] + Board.Ranks[newRankIndex]);
-                        fileIndex = newFileIndex;
-                        rankIndex = newFileIndex;
-                        MoveOne(x, y, moveInBoardBoundaries);
-                    }
-                    if (newField.Content != null && newField.Content.GetType() != typeof(King))
-                    {
-                        bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                    positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
+                    file += x;
+                    rank += y;
+                }
+                else                                                                                                    //if (newField.Content != null && newField.Content.GetType() != typeof(King)) //newField.Content != null 
+                {
+                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                    if (newField.Content.GetType() != typeof(King))
+                    { 
                         if (z)
                         {
-                            positions.Add(Board.Files[newFileIndex] + Board.Ranks[newRankIndex]);
+                            positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
                         }
-
                     }
+                    else                                                                                                        // newField.Content.GetType() == typeof(King)
+                    {
+                        if (z)
+                        {
+                            //set king in check?
+                        }
+                    }
+                    canMove = false;
                 }
-                
             }
 
             return positions;

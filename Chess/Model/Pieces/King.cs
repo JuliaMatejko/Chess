@@ -18,7 +18,7 @@ namespace Chess.Model.Pieces
         protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
         {
             //type of moves: vertical, horizontal, diagonal, not in line of attack,special: castle
-            KingMove(positions, fileIndex, rankIndex, newField, board);
+            MovePiece(positions, fileIndex, rankIndex, newField, board);
             //Move validation! not in line of attack();
             //CastleKingRookMove(); czy powinien byc w tej klasie?
 
