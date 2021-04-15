@@ -5,6 +5,7 @@ namespace Chess.Model.Pieces
 {
     class Rook : Piece
     {
+        public bool IsFirstMove { get; set; } = true;
         public Rook(bool iswhite, string position)
         {
             IsWhite = iswhite;

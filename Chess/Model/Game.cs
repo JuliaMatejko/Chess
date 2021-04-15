@@ -47,7 +47,7 @@ namespace Chess.Model
         }
 
         public static void SetStartingBoard(Board board) // set pieces at starting position on the board
-        {
+        {/*
             for (int i = 0; i < Board.boardSize; i++)
             {
                 Fields[Board.Files[i] + "2"].Content = new Pawn(true, Board.Files[i] + "2");  // set white pawns
@@ -69,7 +69,7 @@ namespace Chess.Model
             Fields["c8"].Content = new Bishop(false, "c8");     // set black bishops
             Fields["f8"].Content = new Bishop(false, "f8");
             Fields["d1"].Content = new Queen(true, "d1");       // set white queen
-            Fields["d8"].Content = new Queen(false, "d8");      // set black queen
+            Fields["d8"].Content = new Queen(false, "d8");      // set black queen*/
             Fields["e1"].Content = new King(true, "e1");        // set white king
             Fields["e8"].Content = new King(false, "e8");       // set black king
         }

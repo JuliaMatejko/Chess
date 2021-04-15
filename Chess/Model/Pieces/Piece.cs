@@ -14,7 +14,7 @@ namespace Chess.Model.Pieces
             get => ReturnAvailablePieceMoves(Position, Game.board);    // fields available for piece to move in ongoing round
         }
         private List<string> nextAvailablePositions;
-        public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "kw", "kb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb"};
+        public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "kw", "kb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb" };
 
         protected List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
         {
@@ -33,5 +33,48 @@ namespace Chess.Model.Pieces
 
         protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions);
 
+        protected List<string> MovePiece(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
+        {
+            MoveForward();
+
+            void MoveForward()
+            {
+                bool moveInBoardBoundaries = rankIndex < Board.boardSize - 1;
+                MoveOne(0, 1, moveInBoardBoundaries);
+            }
+
+
+            void MoveOne(int x_white, int y_white, bool moveInBoardBoundaries) // przyjmuje argumenty(wektor), odpowiednio interpretuje dla koloru gracza, pobiera pole z planszy i sprawdza je: 1. czy jest wolne, jeśli tak to dodaje jego koordynaty do listy dostępnych pól i funkcja kontynuuje swoje działanie dla kolejnego pola przesuniętego o ten sam wektor
+            {                                       //inde
+                int x = IsWhite ? x_white : -x_white;
+                int y = IsWhite ? y_white : -y_white;
+                int newFileIndex = fileIndex + x;
+                int newRankIndex = rankIndex + y;
+
+                while (moveInBoardBoundaries)
+                {
+                    newField = board[newFileIndex][newRankIndex];
+                    if (newField.Content == null)
+                    {
+                        positions.Add(Board.Files[newFileIndex] + Board.Ranks[newRankIndex]);
+                        fileIndex = newFileIndex;
+                        rankIndex = newFileIndex;
+                        MoveOne(x, y, moveInBoardBoundaries);
+                    }
+                    if (newField.Content != null && newField.Content.GetType() != typeof(King))
+                    {
+                        bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                        if (z)
+                        {
+                            positions.Add(Board.Files[newFileIndex] + Board.Ranks[newRankIndex]);
+                        }
+
+                    }
+                }
+                
+            }
+
+            return positions;
+        }
     }
 }

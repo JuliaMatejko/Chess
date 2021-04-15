@@ -35,6 +35,22 @@ namespace Chess.Controller
                     pawn.IsFirstMove = false;
                 }
             }
+            if (piece.GetType() == typeof(King)) //works? yup
+            {
+                King king = (King)piece;
+                if (king.IsFirstMove)
+                {
+                    king.IsFirstMove = false;
+                }
+            }
+            if (piece.GetType() == typeof(Rook)) //works? yup
+            {
+                Rook rook = (Rook)piece;
+                if (rook.IsFirstMove)
+                {
+                    rook.IsFirstMove = false;
+                }
+            }
             //changing piece.Position // jakos to zautomatyzowac? funkcja? referencja? jak? TODO
             piece.Position = move.NewPosition;
 
