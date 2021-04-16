@@ -38,6 +38,14 @@ namespace Chess.Model.Pieces
             
             MoveForward();
             MoveBack();
+            MoveLeft();
+            MoveRight();
+
+            MoveRightForward();
+            MoveLeftBackwards();
+            MoveLeftForward();
+            MoveRightBackwards();
+
             void MoveForward()
             {
                 bool canMove = true;
@@ -94,9 +102,129 @@ namespace Chess.Model.Pieces
 
             void MoveLeft()
             {
-
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+                if (IsWhite)
+                {
+                    while (file > 0 && canMove)
+                    {
+                        MoveOne(-1, 0, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (file < Board.boardSize - 1 && canMove)
+                    {
+                        MoveOne(-1, 0, ref file, ref rank, ref canMove);
+                    }
+                }
             }
-            
+
+            void MoveRight()
+            {
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+                if (IsWhite)
+                {
+                    while (file < Board.boardSize - 1 && canMove)
+                    {
+                        MoveOne(1, 0, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (file > 0 && canMove)
+                    {
+                        MoveOne(1, 0, ref file, ref rank, ref canMove);
+                    }
+                }
+            }
+
+            void MoveRightForward()
+            {
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+                if (IsWhite)
+                {
+                    while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
+                    {
+                        MoveOne(1, 1, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (file > 0 && rank > 0 && canMove)
+                    {
+                        MoveOne(1, 1, ref file, ref rank, ref canMove);
+                    }
+                }
+            }
+
+            void MoveLeftBackwards()
+            {
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+                if (IsWhite)
+                {
+                    while (file > 0 && rank > 0 && canMove)   
+                    {
+                        MoveOne(-1, -1, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
+                    {
+                        MoveOne(-1, -1, ref file, ref rank, ref canMove);
+                    }
+                }
+            }
+
+            void MoveLeftForward()
+            {
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+                if (IsWhite)
+                {
+                    while (file > 0 && rank < Board.boardSize - 1 && canMove)
+                    {
+                        MoveOne(-1, 1, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (file < Board.boardSize - 1 && rank > 0 && canMove)
+                    {
+                        MoveOne(-1, 1, ref file, ref rank, ref canMove);
+                    }
+                }
+            }
+
+            void MoveRightBackwards()
+            {
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+                if (IsWhite)
+                {
+                    while (file < Board.boardSize - 1 && rank > 0 && canMove)
+                    {
+                        MoveOne(1, -1, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (file > 0 && rank < Board.boardSize - 1 && canMove)  
+                    {
+                        MoveOne(1, -1, ref file, ref rank, ref canMove);
+                    }
+                }
+            }
 
             void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove) // przyjmuje argumenty(wektor), odpowiednio interpretuje dla koloru gracza, pobiera pole z planszy i sprawdza je: 1. czy jest wolne, jeśli tak to dodaje jego koordynaty do listy dostępnych pól i funkcja kontynuuje swoje działanie dla kolejnego pola przesuniętego o ten sam wektor
             {
