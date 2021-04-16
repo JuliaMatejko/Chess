@@ -37,15 +37,14 @@ namespace Chess.Model.Pieces
         {
             
             MoveForward();
-
+            MoveBack();
             void MoveForward()
             {
                 bool canMove = true;
                 int rank = rankIndex;
                 int file = fileIndex;
-
-
-                if (IsWhite) //dla bialych dziala
+                //bool movesInBoardBoundaries = IsWhite ? rank < Board.boardSize - 1 : rank > 0;    nie działa , problem z rank? -> wartość się nie zmienia? sprawdź
+                if (IsWhite)
                 {
                     while (rank < Board.boardSize - 1 && canMove)
                     {
@@ -59,8 +58,45 @@ namespace Chess.Model.Pieces
                         MoveOne(0, 1, ref file, ref rank, ref canMove);
                     }
                 }
+               // while (movesInBoardBoundaries && canMove)
+               // {
+               //     MoveOne(0, 1, ref file, ref rank, ref canMove);
+                //}
+            }
+            
+            void MoveBack()
+            {
+                bool canMove = true;
+                int rank = rankIndex;
+                int file = fileIndex;
+                //bool movesInBoardBoundaries = IsWhite ? rank > 0 : rank < (Board.boardSize - 1);          nie działa , problem z rank? -> wartość się nie zmienia? sprawdź
+
+                if (IsWhite)
+                {
+                    while (rank > 0 && canMove)
+                    {
+                        MoveOne(0, -1, ref file, ref rank, ref canMove);
+                    }
+                }
+                else
+                {
+                    while (rank < Board.boardSize - 1 && canMove)
+                    {
+                        MoveOne(0, -1, ref file, ref rank, ref canMove);
+                    }
+                }
+
+                //while (movesInBoardBoundaries && canMove)
+                //{
+                   // MoveOne(0, -1, ref file, ref rank, ref canMove);
+                //}
             }
 
+            void MoveLeft()
+            {
+
+            }
+            
 
             void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove) // przyjmuje argumenty(wektor), odpowiednio interpretuje dla koloru gracza, pobiera pole z planszy i sprawdza je: 1. czy jest wolne, jeśli tak to dodaje jego koordynaty do listy dostępnych pól i funkcja kontynuuje swoje działanie dla kolejnego pola przesuniętego o ten sam wektor
             {

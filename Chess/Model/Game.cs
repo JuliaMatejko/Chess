@@ -70,7 +70,7 @@ namespace Chess.Model
             Fields["f8"].Content = new Bishop(false, "f8");
             Fields["d1"].Content = new Queen(true, "d1");       // set white queen
             Fields["d8"].Content = new Queen(false, "d8");      // set black queen*/
-            Fields["e1"].Content = new King(true, "e1");        // set white king
+            Fields["d1"].Content = new King(true, "d1");        // set white king
             Fields["e8"].Content = new King(false, "e8");       // set black king
         }
 
