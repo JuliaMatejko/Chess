@@ -7,6 +7,5 @@ namespace Chess
         {
             Game.StartGame();
         }
-
     }
 }

@@ -14,12 +14,12 @@ namespace Chess.Model.Pieces
             Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
-            MoveForward(fileIndex, rankIndex, newField, board, positions);
-            MoveBack(fileIndex, rankIndex, newField, board, positions);
-            MoveLeft(fileIndex, rankIndex, newField, board, positions);
-            MoveRight(fileIndex, rankIndex, newField, board, positions);
+            MoveForward(fileIndex, rankIndex, board, positions);
+            MoveBack(fileIndex, rankIndex, board, positions);
+            MoveLeft(fileIndex, rankIndex, board, positions);
+            MoveRight(fileIndex, rankIndex, board, positions);
             return positions;
         }
     }

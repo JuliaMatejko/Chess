@@ -15,15 +15,15 @@ namespace Chess.Model.Pieces
         {
             int fileIndex = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
             int rankIndex = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
-            Field newField = null;
+            
             List<string> positions = new List<string>();
-            positions.AddRange(ReturnCorrectPieceMoves(fileIndex, rankIndex, newField, board, positions));
+            positions.AddRange(ReturnCorrectPieceMoves(fileIndex, rankIndex, board, positions));
             return positions;
         }
 
-        protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions);
+        protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions);
 
-        protected void MoveForward(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveForward(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -32,19 +32,19 @@ namespace Chess.Model.Pieces
             {
                 while (rank < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(0, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(0, 1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (rank > 0 && canMove)
                 {
-                    MoveOne(0, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(0, 1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveBack(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveBack(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -53,19 +53,19 @@ namespace Chess.Model.Pieces
             {
                 while (rank > 0 && canMove)
                 {
-                    MoveOne(0, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(0, -1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (rank < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(0, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(0, -1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveLeft(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveLeft(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -74,19 +74,19 @@ namespace Chess.Model.Pieces
             {
                 while (file > 0 && canMove)
                 {
-                    MoveOne(-1, 0, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(-1, 0, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (file < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(-1, 0, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(-1, 0, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveRight(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveRight(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -95,19 +95,19 @@ namespace Chess.Model.Pieces
             {
                 while (file < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(1, 0, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(1, 0, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (file > 0 && canMove)
                 {
-                    MoveOne(1, 0, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(1, 0, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveRightForward(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveRightForward(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -116,19 +116,19 @@ namespace Chess.Model.Pieces
             {
                 while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(1, 1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (file > 0 && rank > 0 && canMove)
                 {
-                    MoveOne(1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(1, 1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveLeftBackwards(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveLeftBackwards(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -137,19 +137,19 @@ namespace Chess.Model.Pieces
             {
                 while (file > 0 && rank > 0 && canMove)
                 {
-                    MoveOne(-1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(-1, -1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(-1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(-1, -1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveLeftForward(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveLeftForward(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -158,19 +158,19 @@ namespace Chess.Model.Pieces
             {
                 while (file > 0 && rank < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(-1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(-1, 1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (file < Board.boardSize - 1 && rank > 0 && canMove)
                 {
-                    MoveOne(-1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(-1, 1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveRightBackwards(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected void MoveRightBackwards(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -179,23 +179,23 @@ namespace Chess.Model.Pieces
             {
                 while (file < Board.boardSize - 1 && rank > 0 && canMove)
                 {
-                    MoveOne(1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(1, -1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
             else
             {
                 while (file > 0 && rank < Board.boardSize - 1 && canMove)
                 {
-                    MoveOne(1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                    MoveOne(1, -1, ref file, ref rank, ref canMove, board, positions);
                 }
             }
         }
 
-        protected void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove, Field newField, Board board, List<string> positions)
+        protected void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove, Board board, List<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
-            newField = board[file + x][rank + y];
+            Field newField = board[file + x][rank + y];
             if (newField.Content == null)
             {
                 positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
@@ -221,3 +221,4 @@ namespace Chess.Model.Pieces
         }
     }
 }
+

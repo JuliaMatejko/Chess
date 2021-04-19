@@ -16,15 +16,15 @@ namespace Chess.Model.Pieces
             Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
-            StandardPawnMove(positions, fileIndex, rankIndex, newField, board);
+            StandardPawnMove(positions, fileIndex, rankIndex, board);
             //EnPassantPawnMove(); TODO
             //PromotionPawnMove(); TODO
             return positions;
         }
 
-        List<string> StandardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
+        List<string> StandardPawnMove(List<string> positions, int fileIndex, int rankIndex, Board board)
         {   
             if (IsWhite)
             {

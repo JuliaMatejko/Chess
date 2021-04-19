@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Chess.Model.Pieces
 {
@@ -15,18 +14,15 @@ namespace Chess.Model.Pieces
             Name = iswhite == true ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
-            //type of moves: vertical, horizontal, diagonal, not in line of attack,special: castle
-            KingMove(positions, fileIndex, rankIndex, newField, board);
-            //Move validation! not in line of attack();
-            //CastleKingRookMove(); czy powinien byc w tej klasie?
-
+            KingMove(positions, fileIndex, rankIndex, board);
+            //CastleKingSideMove(); czy powinien byc w tej klasie?
+            //CastleQueenSideMove();
             return positions;
-
         }
 
-        List<string> KingMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
+        List<string> KingMove(List<string> positions, int fileIndex, int rankIndex, Board board)
         {
             if (rankIndex < Board.boardSize - 1)
             {
@@ -118,46 +114,22 @@ namespace Chess.Model.Pieces
                 }
             }
             return positions;
-
-            void MoveOne(int x_white, int y_white)//, int x_black, int y_black)
-            {
-                int x = IsWhite ? x_white : -x_white;
-                int y = IsWhite ? y_white : -y_white;
-                CheckSquare(x, y);
-            }
-            void MoveOneForwardDiagonallyLeft() => MoveKing(-1, 1, fileIndex, rankIndex, newField, board, positions);
-            void MoveOneBackwardsDiagonallyLeft() => MoveKing(-1, -1, fileIndex, rankIndex, newField, board, positions);
-            void MoveOneForwardDiagonallyRight() => MoveKing(1, 1, fileIndex, rankIndex, newField, board, positions);
-            void MoveOneBackwardsDiagonallyRight() => MoveKing(1, -1, fileIndex, rankIndex, newField, board, positions);
-            void MoveOneForward() => MoveKing(0, 1, fileIndex, rankIndex, newField, board, positions);
-            void MoveOneBackwards() => MoveKing(0, -1, fileIndex, rankIndex, newField, board, positions);
-            void MoveOneRight() => MoveKing(1, 0, fileIndex, rankIndex, newField, board, positions);
-            void MoveOneLeft() => MoveKing(-1, 0, fileIndex, rankIndex, newField, board, positions);
-
-            void CheckSquare(int x, int y)
-            {
-                newField = board[fileIndex + x][rankIndex + y];
-                if (newField.Content == null)
-                {
-                    positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                }
-                if (newField.Content != null && newField.Content.GetType() != typeof(King))
-                {
-                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
-                    if (z)
-                    {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                    }
-                }
-            }
+            void MoveOneForwardDiagonallyLeft() => MoveKing(-1, 1, fileIndex, rankIndex, board, positions);
+            void MoveOneBackwardsDiagonallyLeft() => MoveKing(-1, -1, fileIndex, rankIndex, board, positions);
+            void MoveOneForwardDiagonallyRight() => MoveKing(1, 1, fileIndex, rankIndex, board, positions);
+            void MoveOneBackwardsDiagonallyRight() => MoveKing(1, -1, fileIndex, rankIndex, board, positions);
+            void MoveOneForward() => MoveKing(0, 1, fileIndex, rankIndex, board, positions);
+            void MoveOneBackwards() => MoveKing(0, -1, fileIndex, rankIndex, board, positions);
+            void MoveOneRight() => MoveKing(1, 0, fileIndex, rankIndex, board, positions);
+            void MoveOneLeft() => MoveKing(-1, 0, fileIndex, rankIndex, board, positions);
         }
 
-        void MoveKing(int x_white, int y_white, int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        void MoveKing(int x_white, int y_white, int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
             
-            newField = board[fileIndex + x][rankIndex + y];
+            Field newField = board[fileIndex + x][rankIndex + y];
 
             if (newField.Content == null)
             {
@@ -170,8 +142,7 @@ namespace Chess.Model.Pieces
                 {
                     positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
                 }
-            }
-             
+            } 
         }
     }
 }
