@@ -10,8 +10,59 @@
         static public Sides CurrentPlayer { get; set; } =  Sides.White;
         static public bool IsAWin { get; set; } = false;
         static public bool IsADraw { get; set; } = false;
+        static public bool[,] WhiteControlledSquares => new bool[,] { { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false }};// => SetControlledSquares(Game.board);
+        static public bool[,] BlackControlledSquares => new bool[,] { { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false },
+                                                                      { false, false, false, false, false, false, false, false }};
+
+        static bool[,] SetControlledSquares()
+        {
+            /*
+             Sprawdzam każdą figurę, jej dostępne ruchy, jeśli zawiera dane pole to zmieniam jego wartość na true, jesli nie to false i tak z każdą figurą, pomijam pola z wartością null
+            Robię to osobno dla białych i czarnych.
 
 
+            var arr = board[i][j].Content.NextAvailablePositions
+            foreach( string position in arr)
+            {
+                
+            }
+             */
+            bool[,] controlledSquares = new bool[8,8];
+            
+            for (int i = 0; i < Board.boardSize; i++)
+            {
+                for (int j = 0; j < Board.boardSize; j++)
+                {
+                    if (Game.board[i][j].Content != null)
+                    {
+                        
+
+                        if (Game.board[i][j].Content.NextAvailablePositions.)
+                        {
+                            controlledSquares[i, j] = true;
+                        }
+                        else
+                        {
+                            controlledSquares[i, j] = false;
+                        }
+                    }
+                }
+            }
+            return controlledSquares;
+        }
         public static void ChangeTurns() // ograniczyć mozliwosc ruszania bierek przeciwnika
         {
             CurrentPlayer = CurrentPlayer == Sides.White ? CurrentPlayer = Sides.Black

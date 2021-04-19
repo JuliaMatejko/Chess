@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Chess.Controller
 {
-    class BoardController // nie do konca rozumiem czym jest controller, doczytac, poprzenosić members jesli trzeba
+    class BoardController
     {
         public static void MakeAMove()
         {
@@ -22,12 +22,12 @@ namespace Chess.Controller
 
             while (!MoveValidator.MoveIsPossible(piece, move))
             {
-                Console.Write($" It's not a valid move. Choose a differnt piece or/and field: "); //to do --> more specific? uzyj zmiennej w miejsce komunikatu o bledzie
+                Console.Write($" It's not a valid move. Choose a differnt piece or/and field: ");
                 chosenMove = Console.ReadLine();
                 move = StringToMove(chosenMove);
                 piece = FindPiece(move.PieceName, move.CurrentPosition);
             }
-            if (piece.GetType() == typeof(Pawn)) //works? yup
+            if (piece.GetType() == typeof(Pawn))
             {
                 Pawn pawn = (Pawn)piece;
                 if (pawn.IsFirstMove)
@@ -35,7 +35,7 @@ namespace Chess.Controller
                     pawn.IsFirstMove = false;
                 }
             }
-            if (piece.GetType() == typeof(King)) //works? yup
+            if (piece.GetType() == typeof(King))
             {
                 King king = (King)piece;
                 if (king.IsFirstMove)
@@ -43,7 +43,7 @@ namespace Chess.Controller
                     king.IsFirstMove = false;
                 }
             }
-            if (piece.GetType() == typeof(Rook)) //works? yup
+            if (piece.GetType() == typeof(Rook))
             {
                 Rook rook = (Rook)piece;
                 if (rook.IsFirstMove)
@@ -51,17 +51,13 @@ namespace Chess.Controller
                     rook.IsFirstMove = false;
                 }
             }
-            //changing piece.Position // jakos to zautomatyzowac? funkcja? referencja? jak? TODO
             piece.Position = move.NewPosition;
-
-            //changing field content
             Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
             Game.Fields[move.CurrentPosition].Content = null;
         }
 
         static bool UserInputIsValid(string chosenmove)
         {
-
             if (chosenmove.Length == 8 && chosenmove[2] == ' ' && chosenmove[5] == ' ')
             {
                 Move move = StringToMove(chosenmove);
@@ -75,6 +71,7 @@ namespace Chess.Controller
             }
             return false;
         }
+
         static Move StringToMove(string str)
         {
             string[] substrings = str.Split(" ");
@@ -85,15 +82,15 @@ namespace Chess.Controller
         {
             Piece piece = Game.Fields[currentposition].Content;
             
-            if (piece == null) // empty field
+            if (piece == null)
             {
                 return null;
             }
-            else if (piece.Name == piecename) // found piece
+            else if (piece.Name == piecename)
             {
                 return piece;
             }
-            return null; // found different piece on chosen position
+            return null;
         }
     }     
 }

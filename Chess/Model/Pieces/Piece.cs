@@ -6,14 +6,9 @@ namespace Chess.Model.Pieces
     abstract class Piece
     {
         public bool IsWhite { get; set; }
-        public string Name { get; set; }    // piece representation on the board/ in the future: przekazywane do kontrolera i wyswietlane odpowiednio w warstw. prezentacji?
-        public string Position { get; set; } //field.name board[][].Name
-        public List<string> NextAvailablePositions
-        {
-            set => nextAvailablePositions = value;
-            get => ReturnAvailablePieceMoves(Position, Game.board);    // fields available for piece to move in ongoing round
-        }
-        private List<string> nextAvailablePositions;
+        public string Name { get; set; }
+        public string Position { get; set; }
+        public List<string> NextAvailablePositions => ReturnAvailablePieceMoves(Position, Game.board);
         public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "kw", "kb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb" };
 
         protected List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
@@ -23,243 +18,206 @@ namespace Chess.Model.Pieces
             Field newField = null;
             List<string> positions = new List<string>();
             positions.AddRange(ReturnCorrectPieceMoves(fileIndex, rankIndex, newField, board, positions));
-            /* foreach (var item in positions)
-             {
-                 Console.WriteLine(item);
-             }*/
             return positions;
-
         }
 
         protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions);
 
-        protected List<string> MovePiece(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
+        protected void MoveForward(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
         {
-            
-            MoveForward();
-            MoveBack();
-            MoveLeft();
-            MoveRight();
-
-            MoveRightForward();
-            MoveLeftBackwards();
-            MoveLeftForward();
-            MoveRightBackwards();
-
-            void MoveForward()
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
             {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                //bool movesInBoardBoundaries = IsWhite ? rank < Board.boardSize - 1 : rank > 0;    nie działa , problem z rank? -> wartość się nie zmienia? sprawdź
-                if (IsWhite)
+                while (rank < Board.boardSize - 1 && canMove)
                 {
-                    while (rank < Board.boardSize - 1 && canMove)
-                    {
-                        MoveOne(0, 1, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (rank > 0 && canMove)
-                    {
-                        MoveOne(0, 1, ref file, ref rank, ref canMove);
-                    }
-                }
-               // while (movesInBoardBoundaries && canMove)
-               // {
-               //     MoveOne(0, 1, ref file, ref rank, ref canMove);
-                //}
-            }
-            
-            void MoveBack()
-            {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                //bool movesInBoardBoundaries = IsWhite ? rank > 0 : rank < (Board.boardSize - 1);          nie działa , problem z rank? -> wartość się nie zmienia? sprawdź
-
-                if (IsWhite)
-                {
-                    while (rank > 0 && canMove)
-                    {
-                        MoveOne(0, -1, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (rank < Board.boardSize - 1 && canMove)
-                    {
-                        MoveOne(0, -1, ref file, ref rank, ref canMove);
-                    }
-                }
-
-                //while (movesInBoardBoundaries && canMove)
-                //{
-                   // MoveOne(0, -1, ref file, ref rank, ref canMove);
-                //}
-            }
-
-            void MoveLeft()
-            {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                if (IsWhite)
-                {
-                    while (file > 0 && canMove)
-                    {
-                        MoveOne(-1, 0, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (file < Board.boardSize - 1 && canMove)
-                    {
-                        MoveOne(-1, 0, ref file, ref rank, ref canMove);
-                    }
+                    MoveOne(0, 1, ref file, ref rank, ref canMove, newField, board, positions);
                 }
             }
-
-            void MoveRight()
+            else
             {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                if (IsWhite)
+                while (rank > 0 && canMove)
                 {
-                    while (file < Board.boardSize - 1 && canMove)
-                    {
-                        MoveOne(1, 0, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (file > 0 && canMove)
-                    {
-                        MoveOne(1, 0, ref file, ref rank, ref canMove);
-                    }
+                    MoveOne(0, 1, ref file, ref rank, ref canMove, newField, board, positions);
                 }
             }
+        }
 
-            void MoveRightForward()
+        protected void MoveBack(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
             {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                if (IsWhite)
+                while (rank > 0 && canMove)
                 {
-                    while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
-                    {
-                        MoveOne(1, 1, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (file > 0 && rank > 0 && canMove)
-                    {
-                        MoveOne(1, 1, ref file, ref rank, ref canMove);
-                    }
+                    MoveOne(0, -1, ref file, ref rank, ref canMove, newField, board, positions);
                 }
             }
-
-            void MoveLeftBackwards()
+            else
             {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                if (IsWhite)
+                while (rank < Board.boardSize - 1 && canMove)
                 {
-                    while (file > 0 && rank > 0 && canMove)   
-                    {
-                        MoveOne(-1, -1, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
-                    {
-                        MoveOne(-1, -1, ref file, ref rank, ref canMove);
-                    }
+                    MoveOne(0, -1, ref file, ref rank, ref canMove, newField, board, positions);
                 }
             }
+        }
 
-            void MoveLeftForward()
+        protected void MoveLeft(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
             {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                if (IsWhite)
+                while (file > 0 && canMove)
                 {
-                    while (file > 0 && rank < Board.boardSize - 1 && canMove)
-                    {
-                        MoveOne(-1, 1, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (file < Board.boardSize - 1 && rank > 0 && canMove)
-                    {
-                        MoveOne(-1, 1, ref file, ref rank, ref canMove);
-                    }
+                    MoveOne(-1, 0, ref file, ref rank, ref canMove, newField, board, positions);
                 }
             }
-
-            void MoveRightBackwards()
+            else
             {
-                bool canMove = true;
-                int rank = rankIndex;
-                int file = fileIndex;
-                if (IsWhite)
+                while (file < Board.boardSize - 1 && canMove)
                 {
-                    while (file < Board.boardSize - 1 && rank > 0 && canMove)
-                    {
-                        MoveOne(1, -1, ref file, ref rank, ref canMove);
-                    }
-                }
-                else
-                {
-                    while (file > 0 && rank < Board.boardSize - 1 && canMove)  
-                    {
-                        MoveOne(1, -1, ref file, ref rank, ref canMove);
-                    }
+                    MoveOne(-1, 0, ref file, ref rank, ref canMove, newField, board, positions);
                 }
             }
+        }
 
-            void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove) // przyjmuje argumenty(wektor), odpowiednio interpretuje dla koloru gracza, pobiera pole z planszy i sprawdza je: 1. czy jest wolne, jeśli tak to dodaje jego koordynaty do listy dostępnych pól i funkcja kontynuuje swoje działanie dla kolejnego pola przesuniętego o ten sam wektor
+        protected void MoveRight(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
             {
-                int x = IsWhite ? x_white : -x_white;
-                int y = IsWhite ? y_white : -y_white;
-
-                newField = board[file + x][rank + y];
-                if (newField.Content == null)
+                while (file < Board.boardSize - 1 && canMove)
                 {
-                    positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
-                    file += x;
-                    rank += y;
+                    MoveOne(1, 0, ref file, ref rank, ref canMove, newField, board, positions);
                 }
-                else                                                                                                    //if (newField.Content != null && newField.Content.GetType() != typeof(King)) //newField.Content != null 
+            }
+            else
+            {
+                while (file > 0 && canMove)
                 {
-                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                    MoveOne(1, 0, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+        }
+
+        protected void MoveRightForward(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
+            {
+                while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
+                {
+                    MoveOne(1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+            else
+            {
+                while (file > 0 && rank > 0 && canMove)
+                {
+                    MoveOne(1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+        }
+
+        protected void MoveLeftBackwards(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
+            {
+                while (file > 0 && rank > 0 && canMove)
+                {
+                    MoveOne(-1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+            else
+            {
+                while (file < Board.boardSize - 1 && rank < Board.boardSize - 1 && canMove)
+                {
+                    MoveOne(-1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+        }
+
+        protected void MoveLeftForward(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
+            {
+                while (file > 0 && rank < Board.boardSize - 1 && canMove)
+                {
+                    MoveOne(-1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+            else
+            {
+                while (file < Board.boardSize - 1 && rank > 0 && canMove)
+                {
+                    MoveOne(-1, 1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+        }
+
+        protected void MoveRightBackwards(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            bool canMove = true;
+            int rank = rankIndex;
+            int file = fileIndex;
+            if (IsWhite)
+            {
+                while (file < Board.boardSize - 1 && rank > 0 && canMove)
+                {
+                    MoveOne(1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+            else
+            {
+                while (file > 0 && rank < Board.boardSize - 1 && canMove)
+                {
+                    MoveOne(1, -1, ref file, ref rank, ref canMove, newField, board, positions);
+                }
+            }
+        }
+
+        protected void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove, Field newField, Board board, List<string> positions)
+        {
+            int x = IsWhite ? x_white : -x_white;
+            int y = IsWhite ? y_white : -y_white;
+            newField = board[file + x][rank + y];
+            if (newField.Content == null)
+            {
+                positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
+                file += x;
+                rank += y;
+            }
+            else
+            {
+                bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                if (z)
+                {
                     if (newField.Content.GetType() != typeof(King))
-                    { 
-                        if (z)
-                        {
-                            positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
-                        }
-                    }
-                    else                                                                                                        // newField.Content.GetType() == typeof(King)
                     {
-                        if (z)
-                        {
-                            //set king in check?
-                        }
+                        positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
                     }
-                    canMove = false;
+                    else
+                    {
+                        //set king in check TO DO
+                    }
                 }
+                canMove = false;
             }
-
-            return positions;
         }
     }
 }

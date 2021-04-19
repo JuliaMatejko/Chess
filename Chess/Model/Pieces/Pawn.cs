@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Chess.Model.Pieces
 {
@@ -13,41 +12,17 @@ namespace Chess.Model.Pieces
             IsWhite = iswhite;
             Position = position;
             Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
-            NextAvailablePositions = ReturnAvailablePieceMoves(Position, Game.board);
         }
 
         protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
         {
-            ForwardPawnMove(positions, fileIndex, rankIndex, newField, board);
-            DiagonalForwardPawnMove(positions, fileIndex, rankIndex, newField, board);
+            StandardPawnMove(positions, fileIndex, rankIndex, newField, board);
             //EnPassantPawnMove(); TODO
             //PromotionPawnMove(); TODO
             return positions;
-            /*
-             * Pawns have the most complex rules of movement:
-              1.  A pawn moves straight forward one square, if that square is vacant.    a2 -> a3
-              2. If it has not yet moved, a pawn also has the option of moving two squares straight forward, provided both squares are vacant.   a2 -> a4
-              3. Pawns cannot move backwards. a2 -/-> a1
-
-             4. A pawn, unlike other pieces, captures differently from how it moves. A pawn can capture an enemy piece on either of the two squares diagonally in front of the pawn 
-                (but cannot move to those squares if they are vacant).
-             5. The pawn is also involved in the two special moves en passant and promotion
-                    - promotion:
-                        If a player advances a pawn to its eighth rank, the pawn is then promoted (converted) to a queen, rook, bishop, or knight of the same color
-                        at the choice of the player (a queen is usually chosen). The choice is not limited to previously captured pieces.
-                    - en passant:
-                        When a pawn advances two squares from its original square and ends the turn adjacent to a pawn of the opponent's on the same rank, it may be captured by
-                        that pawn of the opponent's, as if it had moved only one square forward. This capture is only legal on the opponent's next move immediately following 
-                        the first pawn's advance.
-
-
-            Ad 1. Ad 2. obecna pozycja +1 if its first move, obecna pozycja +1 lub +2 (granicą jest boardSize)
-
-             
-            */
         }
 
-        List<string> ForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
+        List<string> StandardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
         {   
             if (IsWhite)
             {
@@ -58,6 +33,19 @@ namespace Chess.Model.Pieces
                 if (rankIndex < Board.boardSize - 1)
                 {
                     MoveOneForward();
+                    if (fileIndex == 0)
+                    {
+                        MoveOneForwardDiagonallyRight();
+                    }
+                    else if (fileIndex == 7)
+                    {
+                        MoveOneForwardDiagonallyLeft();
+                    }
+                    else
+                    {
+                        MoveOneForwardDiagonallyRight();
+                        MoveOneForwardDiagonallyLeft();
+                    }
                 }
                 return positions;
             }
@@ -70,149 +58,52 @@ namespace Chess.Model.Pieces
                 if (rankIndex > 0)
                 {
                     MoveOneForward();
-                }
-                return positions;
-            }
-
-            void MoveOneForward()
-            {
-                int y = IsWhite ? 1 : -1;
-                newField = board[fileIndex][rankIndex + y];
-                if (newField.Content == null)
-                {
-                    positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
-                }
-            }
-
-            void MoveTwoForward()
-            {
-                int y = IsWhite ? 2 : -2;
-                newField = board[fileIndex][rankIndex + y];
-                if (newField.Content == null)
-                {
-                    positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
-                }
-            }
-        }
-        
-        List<string> DiagonalForwardPawnMove(List<string> positions, int fileIndex, int rankIndex, Field newField, Board board)
-        {
-            if (IsWhite)
-            {
-                if (rankIndex < Board.boardSize - 1)
-                {
                     if (fileIndex == 0)
                     {
-                        MoveOneForwardDiagonallyRight(); // to do: można jeszcze bardziej uogólnic i wykorzystać tą funkcję dla innych figur?
+                        MoveOneForwardDiagonallyLeft();
                     }
                     else if (fileIndex == 7)
                     {
-                        MoveOneForwardDiagonallyLeft();
+                        MoveOneForwardDiagonallyRight();
                     }
                     else
                     {
-                        MoveOneForwardDiagonallyRight();
                         MoveOneForwardDiagonallyLeft();
+                        MoveOneForwardDiagonallyRight();
                     }
                 }
                 return positions;
+            }
+            void MoveOneForward() => MovePawn(0, 1, fileIndex, rankIndex, newField, board, positions);
+            void MoveTwoForward() => MovePawn(0, 2, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneForwardDiagonallyRight() => MovePawn(1, 1, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneForwardDiagonallyLeft() => MovePawn(-1, 1, fileIndex, rankIndex, newField, board, positions);
+        }
+
+        void MovePawn(int x_white, int y_white, int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
+        {
+            int x = IsWhite ? x_white : -x_white;
+            int y = IsWhite ? y_white : -y_white;
+            newField = board[fileIndex + x][rankIndex + y];
+            if (newField.Content == null)
+            {
+                positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
             }
             else
             {
-                if (rankIndex > 0)
+                bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                if (z)
                 {
-                    if (fileIndex == 0)
+                    if (newField.Content.GetType() != typeof(King))
                     {
-                        MoveOneForwardDiagonallyLeft();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveOneForwardDiagonallyRight();
+                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
                     }
                     else
                     {
-                        MoveOneForwardDiagonallyLeft();
-                        MoveOneForwardDiagonallyRight();
-                    }
-                }
-                return positions;
-            }
-
-            void MoveOneForwardDiagonallyRight() // from the 'piece position of view' - black moves left on the board view
-            {
-                int x = IsWhite ? 1 : -1;
-                int y = IsWhite ? 1 : -1;
-                newField = board[fileIndex + x][rankIndex + y];
-                if (newField.Content != null && newField.Content.GetType() != typeof(King))
-                {
-                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
-                    if (z)
-                    {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                        //set king in check? TO DO
                     }
                 }
             }
-
-            void MoveOneForwardDiagonallyLeft() // from the 'piece position of view' - black moves right on the board view
-            {
-                int x = IsWhite ? -1 : 1;
-                int y = IsWhite ? 1 : -1;
-                newField = board[fileIndex + x][rankIndex + y];
-                if (newField.Content != null && newField.Content.GetType() != typeof(King))
-                {
-                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
-                    if (z)
-                    {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                    }
-                }
-            }
-        }   
+        }
     }
-    //TODO :
-    // test and implement ^ v !
-    //EnPassantCaptureMove()
-    //PromotionMove()
-
-    /* ARCHIVE
-void WhiteMoveOneForwardDiagonallyRight()
-{
-    field = board[file + 1][rank + 1];
-    if (field.Content != null && !(field.Content.IsWhite))
-    {
-        newposition = Board.Files[file + 1] + Board.Ranks[rank + 1];
-        positions.Add(newposition);
-    }
-}
-
-void WhiteMoveOneForwardDiagonallyLeft()
-{
-    field = board[file - 1][rank + 1];
-    if (field.Content != null && !(field.Content.IsWhite))
-    {
-        newposition = Board.Files[file - 1] + Board.Ranks[rank + 1];
-        positions.Add(newposition);
-    }
-}
-
-void BlackMoveOneForwardDiagonallyRight()
-{
-    field = board[file + 1][rank - 1];
-    if (field.Content != null && field.Content.IsWhite)
-    {
-        newposition = Board.Files[file + 1] + Board.Ranks[rank - 1];
-        positions.Add(newposition);
-    }
-}
-
-void BlackMoveOneForwardDiagonallyLeft() //można jeszcze uprościć i połączyć funkcje
-{
-    field = board[file - 1][rank - 1];
-    if (field.Content != null && field.Content.IsWhite)
-    {
-        newposition = Board.Files[file - 1] + Board.Ranks[rank - 1];
-        positions.Add(newposition);
-    }
-}*/
-
 }
