@@ -1,17 +1,22 @@
 ﻿using Chess.Model;
 using Chess.Model.Pieces;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Chess
 {
-    class MoveValidator // service which role is validating moves 
+    class MoveValidator
     { 
         public static bool MoveIsPossible(Piece piece, Move move)
         {
             if (PieceOnChosenPositionDoesExist(piece) && ChosenPieceIsCurrentPlayersPiece(piece))
             {
-                return MoveIsCorrectPieceMove(piece, move);
+                if (piece.GetType() == typeof(King))
+                {
+                    return MoveIsCorrectKingMove(piece, move);
+                }
+                else
+                {
+                    return MoveIsCorrectPieceMove(piece, move);
+                } 
             }
             return false;
         }
@@ -19,6 +24,49 @@ namespace Chess
         static bool MoveIsCorrectPieceMove(Piece piece, Move move)
         {
             return piece.NextAvailablePositions.Contains(move.NewPosition);
+        }
+
+        static bool MoveIsCorrectKingMove(Piece king, Move move)
+        {
+            if (king.NextAvailablePositions.Contains(move.NewPosition) && KingNewPositionIsSafe(move.NewPosition))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        static bool KingNewPositionIsSafe(string newposition)
+        {
+            for (int i = 0; i < Board.boardSize; i++)
+            {
+                for (int j = 0; j < Board.boardSize; j++)
+                {
+                    Piece piece = Game.board[i][j].Content;
+                    if (piece != null)
+                    {
+                        bool isOponentsPiece = GameState.CurrentPlayer == GameState.Sides.White ? !piece.IsWhite : piece.IsWhite;
+                        if (isOponentsPiece)
+                        {
+                            if (piece.GetType() == typeof(Pawn))
+                            {
+                                Pawn pawn = (Pawn)piece;
+                                if (pawn.ControlledSquares.Contains(newposition))
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                if (piece.NextAvailablePositions.Contains(newposition))
+                                {
+                                    return false;
+                                }
+                            } 
+                        }
+                    }
+                }
+            }
+            return true;
         }
         /*
         static bool AbsolutePin(Move move) //! .... TO DO the pinned piece cannot legally move out of the line of attack (as moving it would expose the king to check).
@@ -46,21 +94,5 @@ namespace Chess
         {
             return piece != null;
         }
-
-        /*
-            Sprawdzani ruchów:
-            - przyjmij string (pw e2 e4) v
-            - przekształć na obiekt Move ( piecename, currentPosition, newposition) v
-            - prześlij do MoveValidatora
-                - sprawdź czy piece o podanej nazwie i pozycji istnieje na planszy ( albo piece o podanych właściwościach Piece.Position, Piece.Name) v
-                - sprawdź czy figura którą chce ruszyć gracz należy do niego v
-                - sprawdź czy ruch jest legalny:
-                   - tutaj wejdą różne metody zależne od figury ( będą dodawały możliwe ruchy do piece.NextAvailablePositions  lub odejmowały z niego)
-                        ...
-                - sprawdź czy piece nie musi chronić króla ( absolute pin) więc nie może się ruszyć)
-                - sprawdź czy możliwy jest ruch na newposition ( czy piece.NextAvailablePositions zawiera newposition) (move is possible) END
-                
-
-         */
     }
 }

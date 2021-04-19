@@ -125,14 +125,14 @@ namespace Chess.Model.Pieces
                 int y = IsWhite ? y_white : -y_white;
                 CheckSquare(x, y);
             }
-            void MoveOneForwardDiagonallyLeft() => MoveOne(-1, 1);
-            void MoveOneBackwardsDiagonallyLeft() => MoveOne(-1, -1);
-            void MoveOneForwardDiagonallyRight() => MoveOne(1, 1);
-            void MoveOneBackwardsDiagonallyRight() => MoveOne(1, -1);
-            void MoveOneForward() => MoveOne(0, 1);
-            void MoveOneBackwards() => MoveOne(0, -1);
-            void MoveOneRight() => MoveOne(1, 0);
-            void MoveOneLeft() => MoveOne(-1, 0);
+            void MoveOneForwardDiagonallyLeft() => MoveKing(-1, 1, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneBackwardsDiagonallyLeft() => MoveKing(-1, -1, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneForwardDiagonallyRight() => MoveKing(1, 1, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneBackwardsDiagonallyRight() => MoveKing(1, -1, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneForward() => MoveKing(0, 1, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneBackwards() => MoveKing(0, -1, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneRight() => MoveKing(1, 0, fileIndex, rankIndex, newField, board, positions);
+            void MoveOneLeft() => MoveKing(-1, 0, fileIndex, rankIndex, newField, board, positions);
 
             void CheckSquare(int x, int y)
             {
@@ -156,25 +156,22 @@ namespace Chess.Model.Pieces
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
-            bool[,] oponentControlledSquares = IsWhite ? GameState.BlackControlledSquares : GameState.WhiteControlledSquares;
+            
             newField = board[fileIndex + x][rankIndex + y];
-            // TODO : król nie powinien móc się ruszyć na pole które jest atakowane przez figurę przeciwnika 
-            // ( jeśli NextAvailablePositions którejś z figur przeciwnika zawiera pole na które chce się ruszyć król)
-            if (!oponentControlledSquares[fileIndex + x, rankIndex + y])
+
+            if (newField.Content == null)
             {
-                if (newField.Content == null)
+                positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+            }
+            else
+            {
+                bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                if (z && newField.Content.GetType() != typeof(King))
                 {
                     positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
                 }
-                else
-                {
-                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
-                    if (z && newField.Content.GetType() != typeof(King))
-                    {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                    }
-                }
-            } 
+            }
+             
         }
     }
 }

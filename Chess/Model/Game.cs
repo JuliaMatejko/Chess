@@ -17,9 +17,8 @@ namespace Chess.Model
             Console.WriteLine("");
             Console.WriteLine(" To make a move, type a piece, current piece position and new piece position separated by a space, ex. 'pw e2 e4'");
             Board.CreateABoard(board);
-            SetStartingBoard(board);
+            SetStartingBoard();
             BoardView.PrintBoard(board);
-
 
             while (!GameState.IsAWin && !GameState.IsADraw)
             {
@@ -46,7 +45,7 @@ namespace Chess.Model
             }
         }
 
-        public static void SetStartingBoard(Board board) // set pieces at starting position on the board
+        public static void SetStartingBoard() // set pieces at starting position on the board
         {
             for (int i = 0; i < Board.boardSize; i++)
             {
@@ -74,10 +73,9 @@ namespace Chess.Model
             Fields["e8"].Content = new King(false, "e8");       // set black king
         }
 
-        static Dictionary<string, Field> SetFieldDictionary(Board board)    // przenieść do board?
+        static Dictionary<string, Field> SetFieldDictionary(Board board)
         {
             Dictionary<string, Field> dictionary = new Dictionary<string, Field>();
-
             int count = 0;
             for (int i = 0; i < Board.boardSize; i++)
             {

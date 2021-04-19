@@ -14,7 +14,7 @@ namespace Chess.Model.Pieces
             Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions) //ta funkcja  jest wogóle potzrebna? narazie teylko otrzymuje i przekazuje argumenty
+        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Field newField, Board board, List<string> positions)
         {
             MoveForward(fileIndex, rankIndex, newField, board, positions);
             MoveBack(fileIndex, rankIndex, newField, board, positions);

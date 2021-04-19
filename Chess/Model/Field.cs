@@ -15,6 +15,5 @@ namespace Chess.Model
             Rank = rank;
             Content = content;
         }
-
     }
 }
