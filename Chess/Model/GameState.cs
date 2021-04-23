@@ -36,7 +36,7 @@
             return false; // todo: implement the logic
         }
 
-        static bool PlayerResigned()
+        static bool PlayerResigned() // TO DO
         {
             return false; // todo: implement the logic
         }
@@ -52,7 +52,7 @@
             {
                 IsADraw = true;
             }
-            else if (PlayersAgreedToADraw()) // automatic draw, important, must have
+            else if (PlayersAgreedToADraw()) // automatic draw, important, must have    TO DO
             {
                 IsADraw = true;
             }

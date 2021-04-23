@@ -9,7 +9,7 @@ namespace Chess.Model.Pieces
         public string Name { get; set; }
         public string Position { get; set; }
         public List<string> NextAvailablePositions => ReturnAvailablePieceMoves(Position, Game.board);
-        public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "kw", "kb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb" };
+        public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "Nw", "Nb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb" };
 
         protected List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
         {

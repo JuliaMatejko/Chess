@@ -4,7 +4,7 @@ namespace Chess.Model.Pieces
 {
     class Knight : Piece
     {
-        static public new string[] PieceNames => new string[] { "kw", "kb" };
+        static public new string[] PieceNames => new string[] { "Nw", "Nb" };
 
         public Knight(bool iswhite, string position)
         {

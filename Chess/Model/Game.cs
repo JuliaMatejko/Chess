@@ -15,7 +15,7 @@ namespace Chess.Model
         {
             Console.WriteLine(" Let's play chess!");
             Console.WriteLine("");
-            Console.WriteLine(" To make a move, type a piece, current piece position and new piece position separated by a space, ex. 'pw e2 e4'");
+            Console.WriteLine(" To make a move, type a piece, current piece position and new piece position separated by a space, ex. 'pw e2 e4'"); // explain, how to promote pawn, castle queen and king side, resign, propose a draw... TO DO
             Board.CreateABoard(board);
             SetStartingBoard();
             BoardView.PrintBoard(board);
@@ -54,7 +54,7 @@ namespace Chess.Model
             for (int i = 0; i < Board.boardSize; i++)
             {
                 Fields[Board.Files[i] + "7"].Content = new Pawn(false, Board.Files[i] + "7");  // set black pawns 
-            }
+            }/*
             Fields["a1"].Content = new Rook(true, "a1");        // set white rooks
             Fields["h1"].Content = new Rook(true, "h1");
             Fields["a8"].Content = new Rook(false, "a8");       // set black rooks
@@ -70,7 +70,7 @@ namespace Chess.Model
             Fields["d1"].Content = new Queen(true, "d1");       // set white queen
             Fields["d8"].Content = new Queen(false, "d8");      // set black queen
             Fields["e1"].Content = new King(true, "e1");        // set white king
-            Fields["e8"].Content = new King(false, "e8");       // set black king
+            Fields["e8"].Content = new King(false, "e8");       // set black king*/
         }
 
         static Dictionary<string, Field> SetFieldDictionary(Board board)

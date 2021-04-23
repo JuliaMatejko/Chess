@@ -108,6 +108,29 @@ namespace Chess.Model.Pieces
             }
         }
         
+        public void PawnPromotion(Move move)
+        {
+            /*
+                - Bishop, Knight, Rook or Queen? 'piece currentpos newpos B|N|R|Q' for ex. 'pw a7 a8 Q' --> zmienić funkcję sprawdzającą ruch TO DO
+             */
+            switch (move.PromotionTo)
+            {
+                case "Q":
+                    Game.Fields[move.NewPosition].Content = new Queen(IsWhite, move.NewPosition);
+                    break;
+                case "N":
+                    Game.Fields[move.NewPosition].Content = new Knight(IsWhite, move.NewPosition);
+                    break;
+                case "R":
+                    Game.Fields[move.NewPosition].Content = new Rook(IsWhite, move.NewPosition);
+                    break;
+                case "B":
+                    Game.Fields[move.NewPosition].Content = new Bishop(IsWhite, move.NewPosition);
+                    break;
+            }
+            Game.Fields[move.CurrentPosition].Content = null;
+        }
+
         List<string> ReturnControlledSquares(string currentposition)
         {
             int fileIndex = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));

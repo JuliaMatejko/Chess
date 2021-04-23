@@ -53,7 +53,7 @@ namespace Chess.View
         public static void PrintBoardLayout()
         {
             Console.WriteLine("   +---------------------------------------+");
-            Console.WriteLine(" 8 | Rb | kb | Bb | Qb | Kb | Bb | kb | Rb |");
+            Console.WriteLine(" 8 | Rb | Nb | Bb | Qb | Kb | Bb | Nb | Rb |");
             Console.WriteLine("   |----+----+----+----+----+----+----+----|");
             Console.WriteLine(" 7 | pb | pb | pb | pb | pb | pb | pb | pb |");
             Console.WriteLine("   |----+----+----+----+----+----+----+----|");
@@ -67,7 +67,7 @@ namespace Chess.View
             Console.WriteLine("   |----+----+----+----+----+----+----+----|");
             Console.WriteLine(" 2 | pw | pw | pw | pw | pw | pw | pw | pw |");
             Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 1 | Rw | kw | Bw | Qw | Kw | Bw | kw | Rw |");
+            Console.WriteLine(" 1 | Rw | Nw | Bw | Qw | Kw | Bw | Nw | Rw |");
             Console.WriteLine("   +---------------------------------------+");
             Console.WriteLine("     a    b    c    d    e    f    g    h   ");
         }

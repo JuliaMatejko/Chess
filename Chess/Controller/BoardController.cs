@@ -33,27 +33,43 @@ namespace Chess.Controller
                 if (pawn.IsFirstMove)
                 {
                     pawn.IsFirstMove = false;
+                    piece.Position = move.NewPosition;
+                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
+                    Game.Fields[move.CurrentPosition].Content = null;
                 }
-            }
-            if (piece.GetType() == typeof(King))
-            {
-                King king = (King)piece;
-                if (king.IsFirstMove)
+                else if ((pawn.IsWhite && pawn.Position[1] == '7') || (!pawn.IsWhite && pawn.Position[1] == '2'))
                 {
-                    king.IsFirstMove = false;
+                    pawn.PawnPromotion(move);
                 }
-            }
-            if (piece.GetType() == typeof(Rook))
-            {
-                Rook rook = (Rook)piece;
-                if (rook.IsFirstMove)
+                else
                 {
-                    rook.IsFirstMove = false;
-                }
+                    piece.Position = move.NewPosition;
+                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
+                    Game.Fields[move.CurrentPosition].Content = null;
+                } 
             }
-            piece.Position = move.NewPosition;
-            Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
-            Game.Fields[move.CurrentPosition].Content = null;
+            else
+            {
+                if (piece.GetType() == typeof(King))
+                {
+                    King king = (King)piece;
+                    if (king.IsFirstMove)
+                    {
+                        king.IsFirstMove = false;
+                    }
+                }
+                if (piece.GetType() == typeof(Rook))
+                {
+                    Rook rook = (Rook)piece;
+                    if (rook.IsFirstMove)
+                    {
+                        rook.IsFirstMove = false;
+                    }
+                }
+                piece.Position = move.NewPosition;
+                Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
+                Game.Fields[move.CurrentPosition].Content = null;
+            } 
         }
 
         static bool UserInputIsValid(string chosenmove)
@@ -61,12 +77,27 @@ namespace Chess.Controller
             if (chosenmove.Length == 8 && chosenmove[2] == ' ' && chosenmove[5] == ' ')
             {
                 Move move = StringToMove(chosenmove);
-
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)
-                    && Board.Positions.Contains(move.CurrentPosition))
+                    && !((move.PieceName == "pw" && move.CurrentPosition[1] == '7') || (move.PieceName == "pb" && move.CurrentPosition[1] == '2'))
+                    && Board.Positions.Contains(move.NewPosition))
                 {
                     return true;
+                }
+            }
+            else if (chosenmove.Length == 10 && chosenmove[2] == ' ' && chosenmove[5] == ' ' && chosenmove[8] == ' ')
+            {
+                string[] piecesToPromote = { "Q", "N", "R", "B" };
+                Move move = StringToMove(chosenmove);
+                if (Piece.PieceNames.Contains(move.PieceName)
+                    && Board.Positions.Contains(move.CurrentPosition)
+                    && Board.Positions.Contains(move.NewPosition)
+                    && piecesToPromote.Contains(move.PromotionTo))
+                {
+                    if (true)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -75,7 +106,14 @@ namespace Chess.Controller
         static Move StringToMove(string str)
         {
             string[] substrings = str.Split(" ");
-            return new Move(substrings[0], substrings[1], substrings[2]);
+            if (str.Length == 8)
+            {
+                return new Move(substrings[0], substrings[1], substrings[2]);
+            }
+            else
+            {
+                return new Move(substrings[0], substrings[1], substrings[2], substrings[3]);
+            }
         }
 
         static Piece FindPiece(string piecename, string currentposition)
