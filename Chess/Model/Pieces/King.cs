@@ -16,13 +16,13 @@ namespace Chess.Model.Pieces
 
         protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
-            KingMove(positions, fileIndex, rankIndex, board);
-            //CastleKingSideMove(); czy powinien byc w tej klasie?
+            KingMove(fileIndex, rankIndex, board, positions);
+            //CastleKingSideMove();
             //CastleQueenSideMove();
             return positions;
         }
 
-        List<string> KingMove(List<string> positions, int fileIndex, int rankIndex, Board board)
+        List<string> KingMove(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             if (rankIndex < Board.boardSize - 1)
             {
@@ -87,6 +87,8 @@ namespace Chess.Model.Pieces
                     }
                     else
                     {
+                        MoveOneRight();
+                        MoveOneLeft();
                         MoveOneBackwardsDiagonallyLeft();
                         MoveOneBackwardsDiagonallyRight();
                     }

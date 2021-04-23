@@ -15,7 +15,6 @@ namespace Chess.Model.Pieces
         {
             int fileIndex = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
             int rankIndex = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
-            
             List<string> positions = new List<string>();
             positions.AddRange(ReturnCorrectPieceMoves(fileIndex, rankIndex, board, positions));
             return positions;

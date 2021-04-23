@@ -90,6 +90,7 @@ namespace Chess
             }
             return false;
         }
+
         static bool PieceOnChosenPositionDoesExist(Piece piece)
         {
             return piece != null;
