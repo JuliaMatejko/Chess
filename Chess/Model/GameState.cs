@@ -1,4 +1,6 @@
-﻿namespace Chess.Model
+﻿using Chess.Model.Pieces;
+
+namespace Chess.Model
 {
     class GameState
     {
@@ -7,14 +9,38 @@
             White = 1,
             Black = 0
         }
-        static public Sides CurrentPlayer { get; set; } =  Sides.White;
+        static public Sides CurrentPlayer { get; set; } = Sides.White;
+        static public Pawn WhitePawnThatCanBeTakenByEnPassantMove { get; set; }
+        static public Pawn BlackPawnThatCanBeTakenByEnPassantMove { get; set; }
         static public bool IsAWin { get; set; } = false;
         static public bool IsADraw { get; set; } = false;
 
         public static void ChangeTurns()
         {
+            ResetEnPassantFlag();
+
             CurrentPlayer = CurrentPlayer == Sides.White ? CurrentPlayer = Sides.Black
                                                          : CurrentPlayer = Sides.White;
+
+            static void ResetEnPassantFlag()
+            {
+                if (CurrentPlayer == Sides.White)
+                {
+                    if (BlackPawnThatCanBeTakenByEnPassantMove != null)
+                    {
+                        BlackPawnThatCanBeTakenByEnPassantMove.CanBeTakenByEnPassantMove = false;
+                        BlackPawnThatCanBeTakenByEnPassantMove = null;
+                    }  
+                }
+                else
+                {
+                    if (WhitePawnThatCanBeTakenByEnPassantMove != null)
+                    {
+                        WhitePawnThatCanBeTakenByEnPassantMove.CanBeTakenByEnPassantMove = false;
+                        WhitePawnThatCanBeTakenByEnPassantMove = null;
+                    }   
+                }
+            }
         }
 
         /* methods checking if it is a win */

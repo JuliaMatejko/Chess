@@ -7,7 +7,7 @@ namespace Chess.Controller
 {
     class BoardController
     {
-        public static void MakeAMove() // divide, refactor this function to smaller functions?
+        public static void MakeAMove() // divide, refactor this function to smaller functions? przeniesc do move validator? to do
         {
             Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
             string chosenMove = Console.ReadLine();
@@ -30,7 +30,23 @@ namespace Chess.Controller
             if (piece.GetType() == typeof(Pawn))
             {
                 Pawn pawn = (Pawn)piece;
-                if (pawn.IsFirstMove)
+                if (pawn.IsFirstMove && Math.Abs(Convert.ToInt32(move.NewPosition[1]) - Convert.ToInt32(move.CurrentPosition[1])) == 2) //check if moved 2 squares, rewrite this? przeniesc do move validator? to do
+                {
+                    pawn.IsFirstMove = false;
+                    pawn.CanBeTakenByEnPassantMove = true;
+                    piece.Position = move.NewPosition;
+                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
+                    Game.Fields[move.CurrentPosition].Content = null;
+                    if (pawn.IsWhite)
+                    {
+                        GameState.WhitePawnThatCanBeTakenByEnPassantMove = pawn;
+                    }
+                    else
+                    {
+                        GameState.BlackPawnThatCanBeTakenByEnPassantMove = pawn;
+                    }
+                }
+                else if (pawn.IsFirstMove)
                 {
                     pawn.IsFirstMove = false;
                     piece.Position = move.NewPosition;
@@ -40,6 +56,15 @@ namespace Chess.Controller
                 else if ((pawn.IsWhite && pawn.Position[1] == '7') || (!pawn.IsWhite && pawn.Position[1] == '2'))
                 {
                     pawn.PawnPromotion(move);
+                }
+                else if((pawn.IsWhite && pawn.Position[1] == '5' && move.NewPosition[0] != pawn.Position[0]) || (!pawn.IsWhite && pawn.Position[1] == '4' && move.NewPosition[0] != pawn.Position[0]))
+                {
+                    piece.Position = move.NewPosition;
+                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
+                    Game.Fields[move.CurrentPosition].Content = null;
+
+                    Game.Fields[move.NewPosition.Substring(0,1)+move.CurrentPosition.Substring(1,1)].Content = null;
+
                 }
                 else
                 {

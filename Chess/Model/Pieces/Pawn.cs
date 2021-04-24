@@ -7,6 +7,7 @@ namespace Chess.Model.Pieces
     {
         public static new string[] PieceNames => new string[] { "pw", "pb" };
         public bool IsFirstMove { get; set; } = true;
+        public bool CanBeTakenByEnPassantMove { get; set; } = false;
         public List<string> ControlledSquares => ReturnControlledSquares(Position);
 
         public Pawn(bool iswhite, string position)
@@ -19,7 +20,7 @@ namespace Chess.Model.Pieces
         protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             StandardPawnMove(fileIndex, rankIndex, board, positions);
-            //EnPassantPawnMove(fileIndex, rankIndex, board, positions);
+            EnPassantPawnMove(fileIndex, rankIndex, positions);
             return positions;
         }
 
@@ -80,74 +81,108 @@ namespace Chess.Model.Pieces
             void MoveOneForwardDiagonallyRight() => MovePawn(1, 1, fileIndex, rankIndex, board, positions);
             void MoveOneForwardDiagonallyLeft() => MovePawn(-1, 1, fileIndex, rankIndex, board, positions);
         }
-        /*
-        List<string> EnPassantPawnMove(int fileIndex, int rankIndex, Board board, List<string> positions)
+        
+        List<string> EnPassantPawnMove(int fileIndex, int rankIndex, List<string> positions) // refactor
         {
             /*
                 Jeśli przeciwnik:
-            - wykonał w poprzednim (!) ruchu ruch pionem
-            - wykonał ruch o 2 pola
+            - wykonał w poprzednim (!) ruchu ruch pionem ///  Iswhite  board[x][4].Content.CanBeTakenByEnPassantMove == true / board[x][3].Content.CanBeTakenByEnPassantMove == true
+            - wykonał ruch o 2 pola v
+            V
             
             i jeśli:
-            - któryś nasz pion znajduje się w tym samym rzędzie
-            - w poprzedniej lub kolejnej kolumnie w stosunku do tego piona przeciwnika
+            - któryś nasz pion znajduje się w tym samym rzędzie //// IsWhite    rankIndex == 4  /   rankIndex == 3
+            - w poprzedniej lub kolejnej kolumnie w stosunku do tego piona przeciwnika  IsWhite     fileIndex == x+1 || fileIndex == x-1
 
             To:
 
             -Pion może zbić pion przeciwnika, poruszając się na pole zaraz za nim ( ta sama kolumna, wyższy rząd)
-             
-             
+            IsWhite     positions.Add(Board.Files[fileIndex + x] + Board.Ranks[5]);     /   positions.Add(Board.Files[fileIndex + x] + Board.Ranks[4]);
+
+             */
+
 
             if (IsWhite)
             {
-                if (rankIndex == 4)
+                if (rankIndex == 4 && GameState.BlackPawnThatCanBeTakenByEnPassantMove != null)
                 {
+                    string oponentPawnFile = Convert.ToString(GameState.BlackPawnThatCanBeTakenByEnPassantMove.Position[0]);
                     if (fileIndex == 0)
                     {
-                        MoveOneForwardDiagonallyRight();
+                        if (oponentPawnFile == Board.Files[fileIndex + 1])
+                        {
+                            EnPassantRight();
+                        } 
                     }
                     else if (fileIndex == 7)
                     {
-                        MoveOneForwardDiagonallyLeft();
+                        if (oponentPawnFile == Board.Files[fileIndex - 1])
+                        {
+                            EnPassantLeft();
+                        }
                     }
                     else
                     {
-                        MoveOneForwardDiagonallyRight();
-                        MoveOneForwardDiagonallyLeft();
+                        if (oponentPawnFile == Board.Files[fileIndex + 1])
+                        {
+                            EnPassantRight();
+                        }
+                        if (oponentPawnFile == Board.Files[fileIndex - 1])
+                        {
+                            EnPassantLeft();
+                        }
                     }
                 }
-                return positions;
             }
             else
             {
-                if (rankIndex == 3)
+                if (rankIndex == 3 && GameState.WhitePawnThatCanBeTakenByEnPassantMove != null)
                 {
+                    string oponentPawnFile = Convert.ToString(GameState.WhitePawnThatCanBeTakenByEnPassantMove.Position[0]);
                     if (fileIndex == 0)
                     {
-                        MoveOneForwardDiagonallyLeft();
+                        if (oponentPawnFile == Board.Files[fileIndex + 1])
+                        {
+                            EnPassantLeft();
+                        }
                     }
                     else if (fileIndex == 7)
                     {
-                        MoveOneForwardDiagonallyRight();
+                        if (oponentPawnFile == Board.Files[fileIndex - 1])
+                        {
+                            EnPassantRight();
+                        }
                     }
                     else
                     {
-                        MoveOneForwardDiagonallyLeft();
-                        MoveOneForwardDiagonallyRight();
+                        if (oponentPawnFile == Board.Files[fileIndex + 1])
+                        {
+                            EnPassantLeft();
+                        }
+                        if (oponentPawnFile == Board.Files[fileIndex - 1])
+                        {
+                            EnPassantRight();
+                        }
                     }
                 }
-                return positions;
             }
-            void MoveOneForwardDiagonallyRight() => MovePawn(1, 1, fileIndex, rankIndex, board, positions);
-            void MoveOneForwardDiagonallyLeft() => MovePawn(-1, 1, fileIndex, rankIndex, board, positions);
-        }*/
+            void EnPassantRight() => EnPassant(1, 1, fileIndex, rankIndex, positions);
+            void EnPassantLeft() => EnPassant(-1, 1, fileIndex, rankIndex, positions);
+
+            void EnPassant(int x_white, int y_white, int fileIndex, int rankIndex, List<string> positions)
+            {
+                int x = IsWhite ? x_white : -x_white;
+                int y = IsWhite ? y_white : -y_white;
+                positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+            }
+            return positions;
+        }
 
         void MovePawn(int x_white, int y_white, int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
             Field newField = board[fileIndex + x][rankIndex + y];
-
             if (x_white == 0)
             {
                 if (y_white == 2)
