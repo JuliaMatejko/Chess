@@ -7,7 +7,7 @@ namespace Chess.Controller
 {
     class BoardController
     {
-        public static void MakeAMove()
+        public static void MakeAMove() // divide, refactor this function to smaller functions?
         {
             Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
             string chosenMove = Console.ReadLine();
@@ -79,8 +79,9 @@ namespace Chess.Controller
                 Move move = StringToMove(chosenmove);
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)
-                    && !((move.PieceName == "pw" && move.CurrentPosition[1] == '7') || (move.PieceName == "pb" && move.CurrentPosition[1] == '2'))
-                    && Board.Positions.Contains(move.NewPosition))
+                    && Board.Positions.Contains(move.NewPosition)
+                    && !((move.PieceName == "pw" && move.CurrentPosition[1] == '7') || (move.PieceName == "pb" && move.CurrentPosition[1] == '2')))
+
                 {
                     return true;
                 }

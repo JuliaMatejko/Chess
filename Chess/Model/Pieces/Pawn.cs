@@ -18,13 +18,12 @@ namespace Chess.Model.Pieces
 
         protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
-            StandardPawnMove(positions, fileIndex, rankIndex, board);
-            //EnPassantPawnMove(); TODO
-            //PromotionPawnMove(); TODO
+            StandardPawnMove(fileIndex, rankIndex, board, positions);
+            //EnPassantPawnMove(fileIndex, rankIndex, board, positions);
             return positions;
         }
 
-        List<string> StandardPawnMove(List<string> positions, int fileIndex, int rankIndex, Board board)
+        List<string> StandardPawnMove(int fileIndex, int rankIndex, Board board, List<string> positions)
         {   
             if (IsWhite)
             {
@@ -81,17 +80,93 @@ namespace Chess.Model.Pieces
             void MoveOneForwardDiagonallyRight() => MovePawn(1, 1, fileIndex, rankIndex, board, positions);
             void MoveOneForwardDiagonallyLeft() => MovePawn(-1, 1, fileIndex, rankIndex, board, positions);
         }
+        /*
+        List<string> EnPassantPawnMove(int fileIndex, int rankIndex, Board board, List<string> positions)
+        {
+            /*
+                Jeśli przeciwnik:
+            - wykonał w poprzednim (!) ruchu ruch pionem
+            - wykonał ruch o 2 pola
+            
+            i jeśli:
+            - któryś nasz pion znajduje się w tym samym rzędzie
+            - w poprzedniej lub kolejnej kolumnie w stosunku do tego piona przeciwnika
+
+            To:
+
+            -Pion może zbić pion przeciwnika, poruszając się na pole zaraz za nim ( ta sama kolumna, wyższy rząd)
+             
+             
+
+            if (IsWhite)
+            {
+                if (rankIndex == 4)
+                {
+                    if (fileIndex == 0)
+                    {
+                        MoveOneForwardDiagonallyRight();
+                    }
+                    else if (fileIndex == 7)
+                    {
+                        MoveOneForwardDiagonallyLeft();
+                    }
+                    else
+                    {
+                        MoveOneForwardDiagonallyRight();
+                        MoveOneForwardDiagonallyLeft();
+                    }
+                }
+                return positions;
+            }
+            else
+            {
+                if (rankIndex == 3)
+                {
+                    if (fileIndex == 0)
+                    {
+                        MoveOneForwardDiagonallyLeft();
+                    }
+                    else if (fileIndex == 7)
+                    {
+                        MoveOneForwardDiagonallyRight();
+                    }
+                    else
+                    {
+                        MoveOneForwardDiagonallyLeft();
+                        MoveOneForwardDiagonallyRight();
+                    }
+                }
+                return positions;
+            }
+            void MoveOneForwardDiagonallyRight() => MovePawn(1, 1, fileIndex, rankIndex, board, positions);
+            void MoveOneForwardDiagonallyLeft() => MovePawn(-1, 1, fileIndex, rankIndex, board, positions);
+        }*/
 
         void MovePawn(int x_white, int y_white, int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
             Field newField = board[fileIndex + x][rankIndex + y];
-            if (newField.Content == null)
+
+            if (x_white == 0)
             {
-                positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                if (y_white == 2)
+                {
+                    int z = IsWhite ? -1 : 1;
+                    if ((board[fileIndex][rankIndex + y + z].Content == null) && (newField.Content == null))
+                    {
+                        positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                    }
+                }
+                if (y_white == 1)
+                {
+                    if (newField.Content == null)
+                    {
+                        positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                    }
+                }
             }
-            else
+            if (newField.Content != null && (x_white == -1 || x_white == 1) && y_white == 1)
             {
                 bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
                 if (z)
@@ -107,11 +182,11 @@ namespace Chess.Model.Pieces
                 }
             }
         }
-        
+
         public void PawnPromotion(Move move)
         {
             /*
-                - Bishop, Knight, Rook or Queen? 'piece currentpos newpos B|N|R|Q' for ex. 'pw a7 a8 Q' --> zmienić funkcję sprawdzającą ruch TO DO
+                - Bishop, Knight, Rook or Queen? 'piece currentpos newpos B|N|R|Q' for ex. 'pw a7 a8 Q'
              */
             switch (move.PromotionTo)
             {
@@ -181,3 +256,4 @@ namespace Chess.Model.Pieces
         }
     }
 }
+
