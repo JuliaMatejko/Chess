@@ -84,24 +84,6 @@ namespace Chess.Model.Pieces
         
         List<string> EnPassantPawnMove(int fileIndex, int rankIndex, List<string> positions) // refactor
         {
-            /*
-                Jeśli przeciwnik:
-            - wykonał w poprzednim (!) ruchu ruch pionem ///  Iswhite  board[x][4].Content.CanBeTakenByEnPassantMove == true / board[x][3].Content.CanBeTakenByEnPassantMove == true
-            - wykonał ruch o 2 pola v
-            V
-            
-            i jeśli:
-            - któryś nasz pion znajduje się w tym samym rzędzie //// IsWhite    rankIndex == 4  /   rankIndex == 3
-            - w poprzedniej lub kolejnej kolumnie w stosunku do tego piona przeciwnika  IsWhite     fileIndex == x+1 || fileIndex == x-1
-
-            To:
-
-            -Pion może zbić pion przeciwnika, poruszając się na pole zaraz za nim ( ta sama kolumna, wyższy rząd)
-            IsWhite     positions.Add(Board.Files[fileIndex + x] + Board.Ranks[5]);     /   positions.Add(Board.Files[fileIndex + x] + Board.Ranks[4]);
-
-             */
-
-
             if (IsWhite)
             {
                 if (rankIndex == 4 && GameState.BlackPawnThatCanBeTakenByEnPassantMove != null)
@@ -232,7 +214,7 @@ namespace Chess.Model.Pieces
                     Game.Fields[move.NewPosition].Content = new Knight(IsWhite, move.NewPosition);
                     break;
                 case "R":
-                    Game.Fields[move.NewPosition].Content = new Rook(IsWhite, move.NewPosition);
+                    Game.Fields[move.NewPosition].Content = new Rook(IsWhite, move.NewPosition, false);
                     break;
                 case "B":
                     Game.Fields[move.NewPosition].Content = new Bishop(IsWhite, move.NewPosition);

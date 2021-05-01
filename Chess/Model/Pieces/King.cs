@@ -5,6 +5,7 @@ namespace Chess.Model.Pieces
     class King : Piece
     {
         public bool IsFirstMove { get; set; } = true;
+        public bool IsInCheck { get; set; } = false; //test
         static public new string[] PieceNames => new string[] { "Kw", "Kb" };
 
         public King(bool iswhite, string position)
@@ -17,9 +18,45 @@ namespace Chess.Model.Pieces
         protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             KingMove(fileIndex, rankIndex, board, positions);
-            //CastleKingSideMove();
-            //CastleQueenSideMove();
+            CastlingMove(fileIndex, rankIndex, board, positions);
             return positions;
+        }
+
+        List<string> CastlingMove(int fileIndex, int rankIndex, Board board, List<string> positions)
+        {
+            if (IsFirstMove && !IsInCheck)
+            {
+                Piece[] pieces = IsWhite ? new Piece[] { board[7][0].Content, board[0][0].Content }
+                                         : new Piece[] { board[7][7].Content, board[0][7].Content };
+                if (pieces[0] != null && pieces[0].GetType() == typeof(Rook))
+                {
+                    Rook rook = (Rook)pieces[0];
+                    if (rook.IsFirstMove)
+                    {
+                        CastleKingSide();
+                    }
+                }
+                if (pieces[1] != null && pieces[1].GetType() == typeof(Rook))
+                {
+                    Rook rook = (Rook)pieces[1];
+                    if (rook.IsFirstMove)
+                    {
+                        CastleQueenSide();
+                    }
+                }
+            }
+            return positions;
+
+            void CastleKingSide() => CastleKingMove(2, fileIndex, rankIndex);
+            void CastleQueenSide() => CastleKingMove(-2, fileIndex, rankIndex);
+            void CastleKingMove(int x, int file, int rank)
+            {
+                int z = x == 2 ? 1 : -1;
+                if (board[file + z][rank].Content == null && board[file + x][rank].Content == null)
+                {
+                    positions.Add(Board.Files[file + x] + Board.Ranks[rank]);
+                }
+            }
         }
 
         List<string> KingMove(int fileIndex, int rankIndex, Board board, List<string> positions)

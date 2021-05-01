@@ -1,5 +1,6 @@
 ﻿using Chess.Model;
 using Chess.Model.Pieces;
+using System;
 
 namespace Chess
 {
@@ -7,7 +8,8 @@ namespace Chess
     { 
         public static bool MoveIsPossible(Piece piece, Move move)
         {
-            if (PieceOnChosenPositionDoesExist(piece) && ChosenPieceIsCurrentPlayersPiece(piece))
+            if (PieceOnChosenPositionDoesExist(piece) 
+                && ChosenPieceIsCurrentPlayersPiece(piece))
             {
                 if (piece.GetType() == typeof(King))
                 {
@@ -28,14 +30,37 @@ namespace Chess
 
         static bool MoveIsCorrectKingMove(Piece king, Move move)
         {
-            if (king.NextAvailablePositions.Contains(move.NewPosition) && KingNewPositionIsSafe(move.NewPosition))
+            if (king.NextAvailablePositions.Contains(move.NewPosition) 
+                && KingNewPositionIsSafe(move.NewPosition))
             {
-                return true;
+                int squaresMoved = Array.IndexOf(Board.Files, move.NewPosition.Substring(0, 1))
+                                   - Array.IndexOf(Board.Files, move.CurrentPosition.Substring(0, 1));
+                if (Math.Abs(squaresMoved) == 2) // king castling
+                {
+                    return CastlingIsPossible(squaresMoved, king.IsWhite);
+                }
+                else
+                {
+                    return true;
+                }
             }
             return false;
+
+            static bool CastlingIsPossible(int squaresmoved, bool iswhite)
+            {
+                string[] positions = iswhite ? new string[] { "f1", "d1" } : new string[] { "f8", "d8" };
+                if (squaresmoved == 2)
+                {
+                    return KingNewPositionIsSafe(positions[0]);
+                }
+                else // squaresmoved == -2
+                {
+                    return KingNewPositionIsSafe(positions[1]);
+                }
+            }
         }
 
-        static bool KingNewPositionIsSafe(string newposition)
+        public static bool KingNewPositionIsSafe(string newposition)
         {
             for (int i = 0; i < Board.boardSize; i++)
             {

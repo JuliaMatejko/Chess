@@ -73,16 +73,41 @@ namespace Chess.Controller
                     Game.Fields[move.CurrentPosition].Content = null;
                 } 
             }
-            else
+            else if (piece.GetType() == typeof(King))
             {
-                if (piece.GetType() == typeof(King))
+                King king = (King)piece;
+                piece.Position = move.NewPosition;
+                Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
+                Game.Fields[move.CurrentPosition].Content = null;
+                if (king.IsFirstMove)
                 {
-                    King king = (King)piece;
-                    if (king.IsFirstMove)
+                    king.IsFirstMove = false;
+                }
+                int squaresMoved = Array.IndexOf(Board.Files, move.NewPosition.Substring(0,1)) - Array.IndexOf(Board.Files, move.CurrentPosition.Substring(0, 1));
+                if (Math.Abs(squaresMoved) == 2)// if king castled
+                {   
+                    if (squaresMoved == 2)
                     {
-                        king.IsFirstMove = false;
+                        string oldPosition = "h" + move.NewPosition.Substring(1, 1);
+                        string newPosition = "f" + move.NewPosition.Substring(1, 1);
+                        Rook rook = (Rook)Game.Fields[oldPosition].Content;
+                        rook.Position = newPosition;
+                        Game.Fields[newPosition].Content = rook;
+                        Game.Fields[oldPosition].Content = null;
+                    }
+                    else
+                    {
+                        string oldPosition = "a" + move.NewPosition.Substring(1, 1);
+                        string newPosition = "d" + move.NewPosition.Substring(1, 1);
+                        Rook rook = (Rook)Game.Fields[oldPosition].Content;
+                        rook.Position = newPosition;
+                        Game.Fields[newPosition].Content = rook;
+                        Game.Fields[oldPosition].Content = null;
                     }
                 }
+            }
+            else
+            { 
                 if (piece.GetType() == typeof(Rook))
                 {
                     Rook rook = (Rook)piece;

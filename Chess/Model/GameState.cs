@@ -1,4 +1,6 @@
 ﻿using Chess.Model.Pieces;
+using System;
+using System.Collections.Generic;
 
 namespace Chess.Model
 {
@@ -21,7 +23,6 @@ namespace Chess.Model
 
             CurrentPlayer = CurrentPlayer == Sides.White ? CurrentPlayer = Sides.Black
                                                          : CurrentPlayer = Sides.White;
-
             static void ResetEnPassantFlag()
             {
                 if (CurrentPlayer == Sides.White)
