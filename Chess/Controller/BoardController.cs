@@ -9,17 +9,53 @@ namespace Chess.Controller
     {
         public static void MakeAMove() // divide, refactor this function to smaller functions? przeniesc do move validator? to do
         {
-            Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
-            string chosenMove = Console.ReadLine();
+            string chosenMove = null;
+            Move move = null;
+            Piece piece = null;
+            Piece pieceCloned = null;
+            Piece newPositionContentCloned = null;
 
+            GetInputAndValidateIt(chosenMove);
+
+            FindPieceAndValidateMove(chosenMove, move, piece);
+
+            ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned); // do deep copy of pieces in case undoing move would be necessary
+
+            ChangeBoard(move, piece);
+
+            while (GameState.CurrentPlayerKingIsInCheck) // Check if after current player moved their pieces, their king is in check (it shouldn't be possible) 
+                                                         // Checks two chess rules: 1. Player has to react when being checked, cannot let king be in check and move other pieces 
+                                                         // 2. If absolute pin occurs, player cannot move their pieces that are being in between their king and oponents pieces line of attack
+            { 
+                UndoBoardChanges(move, pieceCloned, newPositionContentCloned);
+
+                Console.Write($" It's not a valid move. Your king would be in check. Choose a differnt piece or/and field.");
+
+                GetInputAndValidateIt(chosenMove); //instead of this 4, recurrent MakeAMove(), return MakeAMove?
+
+                FindPieceAndValidateMove(chosenMove, move, piece);
+
+                ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned);
+
+                ChangeBoard(move, piece);
+            }
+        }
+
+        static void GetInputAndValidateIt(string chosenMove)
+        {
+            Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
+            chosenMove = Console.ReadLine();
             while (!UserInputIsValid(chosenMove))
             {
-                Console.Write($" It's not a valid move. Choose a differnt piece or/and field: ");
+                Console.Write($" It's not a valid input. Type your move in a correct format: ");
                 chosenMove = Console.ReadLine();
             }
-            Move move = StringToMove(chosenMove);
-            Piece piece = FindPiece(move.PieceName, move.CurrentPosition);
+        }
 
+        static void FindPieceAndValidateMove(string chosenMove, Move move, Piece piece)
+        {
+            move = StringToMove(chosenMove);
+            piece = FindPiece(move.PieceName, move.CurrentPosition);
             while (!MoveValidator.MoveIsPossible(piece, move))
             {
                 Console.Write($" It's not a valid move. Choose a differnt piece or/and field: ");
@@ -27,16 +63,24 @@ namespace Chess.Controller
                 move = StringToMove(chosenMove);
                 piece = FindPiece(move.PieceName, move.CurrentPosition);
             }
+        }
+
+        static void ClonePieceAndNewPositionPiece(string newposition, Piece piece, ref Piece clonedPiece, ref Piece clonedNewPositionContent) // to do: .Clone();
+        {
+            //Piece newPositionContent = Game.Fields[move.NewPosition].Content;
+            clonedNewPositionContent = Game.Fields[newposition].Content.Clone();
+            clonedPiece = piece.Clone();
+        }
+
+        static void ChangeBoard(Move move, Piece piece)
+        {
             if (piece.GetType() == typeof(Pawn))
             {
                 Pawn pawn = (Pawn)piece;
-                if (pawn.IsFirstMove && Math.Abs(Convert.ToInt32(move.NewPosition[1]) - Convert.ToInt32(move.CurrentPosition[1])) == 2) //check if moved 2 squares, rewrite this? przeniesc do move validator? to do
+                if (pawn.IsFirstMove && Math.Abs(Convert.ToInt32(move.NewPosition[1]) - Convert.ToInt32(move.CurrentPosition[1])) == 2) // move two squares
                 {
-                    pawn.IsFirstMove = false;
-                    pawn.CanBeTakenByEnPassantMove = true;
-                    piece.Position = move.NewPosition;
-                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
-                    Game.Fields[move.CurrentPosition].Content = null;
+                    pawn.IsFirstMove = false; // pawn cannot move two squares anymore
+                    pawn.CanBeTakenByEnPassantMove = true; // pawn might be taken en passant in a next move if other necessary conditions will occur
                     if (pawn.IsWhite)
                     {
                         GameState.WhitePawnThatCanBeTakenByEnPassantMove = pawn;
@@ -49,89 +93,96 @@ namespace Chess.Controller
                 else if (pawn.IsFirstMove)
                 {
                     pawn.IsFirstMove = false;
-                    piece.Position = move.NewPosition;
-                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
-                    Game.Fields[move.CurrentPosition].Content = null;
                 }
-                else if ((pawn.IsWhite && pawn.Position[1] == '7') || (!pawn.IsWhite && pawn.Position[1] == '2'))
+                else if ((pawn.IsWhite && pawn.Position[1] == '7') || (!pawn.IsWhite && pawn.Position[1] == '2')) // promote pawn
                 {
-                    pawn.PawnPromotion(move);
+                    PawnPromotion(move, pawn.IsWhite);
                 }
-                else if((pawn.IsWhite && pawn.Position[1] == '5' && move.NewPosition[0] != pawn.Position[0]) || (!pawn.IsWhite && pawn.Position[1] == '4' && move.NewPosition[0] != pawn.Position[0]))
+                else if ((pawn.IsWhite && pawn.Position[1] == '5' && move.NewPosition[0] != pawn.Position[0])
+                         || (!pawn.IsWhite && pawn.Position[1] == '4' && move.NewPosition[0] != pawn.Position[0])) // en passant capture
                 {
-                    piece.Position = move.NewPosition;
-                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
-                    Game.Fields[move.CurrentPosition].Content = null;
-
-                    Game.Fields[move.NewPosition.Substring(0,1)+move.CurrentPosition.Substring(1,1)].Content = null;
-
+                    Game.Fields[move.NewPosition.Substring(0, 1) + move.CurrentPosition.Substring(1, 1)].Content = null;
                 }
-                else
-                {
-                    piece.Position = move.NewPosition;
-                    Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
-                    Game.Fields[move.CurrentPosition].Content = null;
-                } 
             }
             else if (piece.GetType() == typeof(King))
             {
                 King king = (King)piece;
-                piece.Position = move.NewPosition;
-                Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
-                Game.Fields[move.CurrentPosition].Content = null;
                 if (king.IsFirstMove)
                 {
-                    king.IsFirstMove = false;
+                    king.IsFirstMove = false; // king cannot castle anymore
                 }
-                int squaresMoved = Array.IndexOf(Board.Files, move.NewPosition.Substring(0,1)) - Array.IndexOf(Board.Files, move.CurrentPosition.Substring(0, 1));
-                if (Math.Abs(squaresMoved) == 2)// if king castled
-                {   
-                    if (squaresMoved == 2)
+                int squaresMoved = Array.IndexOf(Board.Files, move.NewPosition.Substring(0, 1))
+                                   - Array.IndexOf(Board.Files, move.CurrentPosition.Substring(0, 1));
+                if (Math.Abs(squaresMoved) == 2) // king castled
+                {
+                    string oldPosition;
+                    string newPosition;
+                    Rook rook;
+                    if (squaresMoved == 2) // castled king side
                     {
-                        string oldPosition = "h" + move.NewPosition.Substring(1, 1);
-                        string newPosition = "f" + move.NewPosition.Substring(1, 1);
-                        Rook rook = (Rook)Game.Fields[oldPosition].Content;
-                        rook.Position = newPosition;
-                        Game.Fields[newPosition].Content = rook;
-                        Game.Fields[oldPosition].Content = null;
+                        oldPosition = "h" + move.NewPosition.Substring(1, 1);
+                        newPosition = "f" + move.NewPosition.Substring(1, 1);
                     }
-                    else
+                    else // squaresMoved == -2, castled queen side
                     {
-                        string oldPosition = "a" + move.NewPosition.Substring(1, 1);
-                        string newPosition = "d" + move.NewPosition.Substring(1, 1);
-                        Rook rook = (Rook)Game.Fields[oldPosition].Content;
-                        rook.Position = newPosition;
-                        Game.Fields[newPosition].Content = rook;
-                        Game.Fields[oldPosition].Content = null;
+                        oldPosition = "a" + move.NewPosition.Substring(1, 1);
+                        newPosition = "d" + move.NewPosition.Substring(1, 1);
                     }
+                    rook = (Rook)Game.Fields[oldPosition].Content; // move a rook
+                    rook.Position = newPosition;
+                    Game.Fields[newPosition].Content = rook;
+                    Game.Fields[oldPosition].Content = null;
                 }
             }
-            else
-            { 
-                if (piece.GetType() == typeof(Rook))
+            else if (piece.GetType() == typeof(Rook))
+            {
+                Rook rook = (Rook)piece;
+                if (rook.IsFirstMove)
                 {
-                    Rook rook = (Rook)piece;
-                    if (rook.IsFirstMove)
-                    {
-                        rook.IsFirstMove = false;
-                    }
+                    rook.IsFirstMove = false; // rook cannot castle anymore
                 }
-                piece.Position = move.NewPosition;
-                Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;
-                Game.Fields[move.CurrentPosition].Content = null;
-            } 
+            }
+            piece.Position = move.NewPosition;
+            Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content; // move piece on a new position
+            Game.Fields[move.CurrentPosition].Content = null;
+        }
+        
+        static void UndoBoardChanges(Move move, Piece pieceCloned, Piece newPositionContentCloned)
+        {
+            Game.Fields[move.CurrentPosition].Content = pieceCloned; // move piece on a previous position
+            Game.Fields[move.NewPosition].Content = newPositionContentCloned; // restore a previous NewPosition content
+        }
+
+        static void PawnPromotion(Move move, bool iswhite)
+        {
+            switch (move.PromotionTo)
+            {
+                case "Q":
+                    Game.Fields[move.NewPosition].Content = new Queen(iswhite, move.NewPosition);
+                    break;
+                case "N":
+                    Game.Fields[move.NewPosition].Content = new Knight(iswhite, move.NewPosition);
+                    break;
+                case "R":
+                    Game.Fields[move.NewPosition].Content = new Rook(iswhite, move.NewPosition, false);
+                    break;
+                case "B":
+                    Game.Fields[move.NewPosition].Content = new Bishop(iswhite, move.NewPosition);
+                    break;
+            }
+            Game.Fields[move.CurrentPosition].Content = null;
         }
 
         static bool UserInputIsValid(string chosenmove)
         {
+            Move move = StringToMove(chosenmove);
             if (chosenmove.Length == 8 && chosenmove[2] == ' ' && chosenmove[5] == ' ')
             {
-                Move move = StringToMove(chosenmove);
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)
                     && Board.Positions.Contains(move.NewPosition)
-                    && !((move.PieceName == "pw" && move.CurrentPosition[1] == '7') || (move.PieceName == "pb" && move.CurrentPosition[1] == '2')))
-
+                    && !((move.PieceName == "pw" && move.CurrentPosition[1] == '7')
+                          || (move.PieceName == "pb" && move.CurrentPosition[1] == '2')))
                 {
                     return true;
                 }
@@ -139,16 +190,12 @@ namespace Chess.Controller
             else if (chosenmove.Length == 10 && chosenmove[2] == ' ' && chosenmove[5] == ' ' && chosenmove[8] == ' ')
             {
                 string[] piecesToPromote = { "Q", "N", "R", "B" };
-                Move move = StringToMove(chosenmove);
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)
                     && Board.Positions.Contains(move.NewPosition)
                     && piecesToPromote.Contains(move.PromotionTo))
                 {
-                    if (true)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
             return false;

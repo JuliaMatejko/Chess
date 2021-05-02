@@ -43,7 +43,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveBack(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveBackwards(int fileIndex, int rankIndex, Board board, List<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -168,6 +168,8 @@ namespace Chess.Model.Pieces
                 }
             }
         }
+
+        internal abstract Piece Clone();//to do, if null return null
 
         protected void MoveRightBackwards(int fileIndex, int rankIndex, Board board, List<string> positions)
         {

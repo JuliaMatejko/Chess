@@ -14,13 +14,15 @@ namespace Chess.Model
         static public Sides CurrentPlayer { get; set; } = Sides.White;
         static public Pawn WhitePawnThatCanBeTakenByEnPassantMove { get; set; }
         static public Pawn BlackPawnThatCanBeTakenByEnPassantMove { get; set; }
+        static public bool WhiteKingIsInCheck { get; set; }//todo: set value
+        static public bool BlackKingIsInCheck { get; set; }//todo: set value
+        static public bool CurrentPlayerKingIsInCheck => CurrentPlayer == Sides.White ? WhiteKingIsInCheck : BlackKingIsInCheck;
         static public bool IsAWin { get; set; } = false;
         static public bool IsADraw { get; set; } = false;
 
         public static void ChangeTurns()
         {
             ResetEnPassantFlag();
-
             CurrentPlayer = CurrentPlayer == Sides.White ? CurrentPlayer = Sides.Black
                                                          : CurrentPlayer = Sides.White;
             static void ResetEnPassantFlag()

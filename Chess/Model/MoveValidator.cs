@@ -93,16 +93,7 @@ namespace Chess
             }
             return true;
         }
-        /*
-        static bool AbsolutePin(Move move) //! .... TO DO the pinned piece cannot legally move out of the line of attack (as moving it would expose the king to check).
-        {
-                if (true)
-                {
-                    return true;
-                }
-                return false;
-            }
-        */
+        
         static bool ChosenPieceIsCurrentPlayersPiece(Piece piece)
         {
             if (piece.IsWhite && GameState.CurrentPlayer == GameState.Sides.White)
