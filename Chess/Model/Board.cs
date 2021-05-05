@@ -17,7 +17,6 @@ namespace Chess.Model
                        {h1, h2, ..., h7, h8}
                      }
          */
-
         public const int boardSize = 8;
         static public string[] Files => new string[boardSize] { "a", "b", "c", "d", "e", "f", "g", "h" };
         static public string[] Ranks => new string[boardSize] { "1", "2", "3", "4", "5", "6", "7", "8" };

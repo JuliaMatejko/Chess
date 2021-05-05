@@ -5,7 +5,6 @@ namespace Chess.Model.Pieces
     class King : Piece
     {
         public bool IsFirstMove { get; set; } = true;
-        public bool IsInCheck { get; set; } = false; //test
         static public new string[] PieceNames => new string[] { "Kw", "Kb" };
 
         public King(bool iswhite, string position)
@@ -15,16 +14,17 @@ namespace Chess.Model.Pieces
             Name = iswhite == true ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected override HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             KingMove(fileIndex, rankIndex, board, positions);
             CastlingMove(fileIndex, rankIndex, board, positions);
             return positions;
         }
 
-        List<string> CastlingMove(int fileIndex, int rankIndex, Board board, List<string> positions)
+        HashSet<string> CastlingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
-            if (IsFirstMove && !IsInCheck)
+            bool kingIsNotInCheck = IsWhite ? !GameState.WhiteKingIsInCheck : !GameState.BlackKingIsInCheck;
+            if (IsFirstMove && kingIsNotInCheck)
             {
                 Piece[] pieces = IsWhite ? new Piece[] { board[7][0].Content, board[0][0].Content }
                                          : new Piece[] { board[7][7].Content, board[0][7].Content };
@@ -59,7 +59,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        List<string> KingMove(int fileIndex, int rankIndex, Board board, List<string> positions)
+        HashSet<string> KingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             if (rankIndex < Board.boardSize - 1)
             {
@@ -163,11 +163,10 @@ namespace Chess.Model.Pieces
             void MoveOneLeft() => MoveKing(-1, 0, fileIndex, rankIndex, board, positions);
         }
 
-        void MoveKing(int x_white, int y_white, int fileIndex, int rankIndex, Board board, List<string> positions)
+        void MoveKing(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
-            
             Field newField = board[fileIndex + x][rankIndex + y];
 
             if (newField.Content == null)

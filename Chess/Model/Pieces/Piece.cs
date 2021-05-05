@@ -3,26 +3,31 @@ using System.Collections.Generic;
 
 namespace Chess.Model.Pieces
 {
-    abstract class Piece
+    abstract class Piece : ICloneable
     {
         public bool IsWhite { get; set; }
         public string Name { get; set; }
         public string Position { get; set; }
-        public List<string> NextAvailablePositions => ReturnAvailablePieceMoves(Position, Game.board);
+        public HashSet<string> NextAvailablePositions { get; set; }
         public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "Nw", "Nb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb" };
 
-        protected List<string> ReturnAvailablePieceMoves(string currentposition, Board board)
+        public HashSet<string> ReturnAvailablePieceMoves(string currentposition, Board board)
         {
             int fileIndex = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
             int rankIndex = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
-            List<string> positions = new List<string>();
-            positions.AddRange(ReturnCorrectPieceMoves(fileIndex, rankIndex, board, positions));
+            HashSet<string> positions = new HashSet<string>();
+            positions = ReturnCorrectPieceMoves(fileIndex, rankIndex, board, positions);
             return positions;
         }
 
-        protected abstract List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions);
+        protected abstract HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions);
 
-        protected void MoveForward(int fileIndex, int rankIndex, Board board, List<string> positions)
+        public object Clone()
+        {
+            return this != null ? MemberwiseClone() : null;
+        }
+
+        protected void MoveForward(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -43,7 +48,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveBackwards(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveBackwards(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -64,7 +69,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveLeft(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveLeft(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -85,7 +90,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveRight(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveRight(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -106,7 +111,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveRightForward(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveRightForward(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -127,7 +132,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveLeftBackwards(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveLeftBackwards(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -148,7 +153,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveLeftForward(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveLeftForward(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -169,9 +174,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        internal abstract Piece Clone();//to do, if null return null
-
-        protected void MoveRightBackwards(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected void MoveRightBackwards(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool canMove = true;
             int rank = rankIndex;
@@ -192,7 +195,7 @@ namespace Chess.Model.Pieces
             }
         }
 
-        protected void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove, Board board, List<string> positions)
+        protected void MoveOne(int x_white, int y_white, ref int file, ref int rank, ref bool canMove, Board board, HashSet<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
@@ -214,7 +217,14 @@ namespace Chess.Model.Pieces
                     }
                     else
                     {
-                        //set king in check TO DO
+                        if (IsWhite)
+                        {
+                            GameState.BlackKingIsInCheck = true;
+                        }
+                        else
+                        {
+                            GameState.WhiteKingIsInCheck = true;
+                        }
                     }
                 }
                 canMove = false;

@@ -13,13 +13,13 @@ namespace Chess.Model.Pieces
             Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected override HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             KnightMove(fileIndex, rankIndex, board, positions);
             return positions;
         }
 
-        List<string> KnightMove(int fileIndex, int rankIndex, Board board, List<string> positions)
+        HashSet<string> KnightMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             if (rankIndex < Board.boardSize - 2)
             {
@@ -167,13 +167,11 @@ namespace Chess.Model.Pieces
             void MoveTwoLeftOneBackwards() => MoveKnight(-2, -1, fileIndex, rankIndex, board, positions);
         }
 
-        void MoveKnight(int x_white, int y_white, int fileIndex, int rankIndex, Board board, List<string> positions)
+        void MoveKnight(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
-
             Field newField = board[fileIndex + x][rankIndex + y];
-
             if (newField.Content == null)
             {
                 positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
@@ -185,11 +183,18 @@ namespace Chess.Model.Pieces
                 {
                     if (newField.Content.GetType() != typeof(King))
                     {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[fileIndex + y]);
+                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
                     }
                     else
                     {
-                        //set king in check TO DO
+                        if (IsWhite)
+                        {
+                            GameState.BlackKingIsInCheck = true;
+                        }
+                        else
+                        {
+                            GameState.WhiteKingIsInCheck = true;
+                        }
                     }
                 }
             }

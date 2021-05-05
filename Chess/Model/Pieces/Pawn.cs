@@ -8,7 +8,7 @@ namespace Chess.Model.Pieces
         public static new string[] PieceNames => new string[] { "pw", "pb" };
         public bool IsFirstMove { get; set; } = true;
         public bool CanBeTakenByEnPassantMove { get; set; } = false;
-        public List<string> ControlledSquares => ReturnControlledSquares(Position);
+        public HashSet<string> ControlledSquares { get; set; } = new HashSet<string>();
 
         public Pawn(bool iswhite, string position)
         {
@@ -17,14 +17,14 @@ namespace Chess.Model.Pieces
             Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected override HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             StandardPawnMove(fileIndex, rankIndex, board, positions);
             EnPassantPawnMove(fileIndex, rankIndex, positions);
             return positions;
         }
 
-        List<string> StandardPawnMove(int fileIndex, int rankIndex, Board board, List<string> positions)
+        HashSet<string> StandardPawnMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {   
             if (IsWhite)
             {
@@ -82,26 +82,20 @@ namespace Chess.Model.Pieces
             void MoveOneForwardDiagonallyLeft() => MovePawn(-1, 1, fileIndex, rankIndex, board, positions);
         }
         
-        List<string> EnPassantPawnMove(int fileIndex, int rankIndex, List<string> positions) // refactor
+        HashSet<string> EnPassantPawnMove(int fileIndex, int rankIndex, HashSet<string> positions)
         {
             if (IsWhite)
             {
                 if (rankIndex == 4 && GameState.BlackPawnThatCanBeTakenByEnPassantMove != null)
                 {
                     string oponentPawnFile = Convert.ToString(GameState.BlackPawnThatCanBeTakenByEnPassantMove.Position[0]);
-                    if (fileIndex == 0)
-                    {
-                        if (oponentPawnFile == Board.Files[fileIndex + 1])
-                        {
-                            EnPassantRight();
-                        } 
+                    if (fileIndex == 0 && oponentPawnFile == Board.Files[fileIndex + 1])
+                    { 
+                        EnPassantRight();
                     }
-                    else if (fileIndex == 7)
+                    else if (fileIndex == 7 && oponentPawnFile == Board.Files[fileIndex - 1])
                     {
-                        if (oponentPawnFile == Board.Files[fileIndex - 1])
-                        {
-                            EnPassantLeft();
-                        }
+                        EnPassantLeft();
                     }
                     else
                     {
@@ -121,19 +115,13 @@ namespace Chess.Model.Pieces
                 if (rankIndex == 3 && GameState.WhitePawnThatCanBeTakenByEnPassantMove != null)
                 {
                     string oponentPawnFile = Convert.ToString(GameState.WhitePawnThatCanBeTakenByEnPassantMove.Position[0]);
-                    if (fileIndex == 0)
+                    if (fileIndex == 0 && oponentPawnFile == Board.Files[fileIndex + 1])
                     {
-                        if (oponentPawnFile == Board.Files[fileIndex + 1])
-                        {
-                            EnPassantLeft();
-                        }
+                        EnPassantLeft();
                     }
-                    else if (fileIndex == 7)
+                    else if (fileIndex == 7 && oponentPawnFile == Board.Files[fileIndex - 1])
                     {
-                        if (oponentPawnFile == Board.Files[fileIndex - 1])
-                        {
-                            EnPassantRight();
-                        }
+                        EnPassantRight();
                     }
                     else
                     {
@@ -151,7 +139,7 @@ namespace Chess.Model.Pieces
             void EnPassantRight() => EnPassant(1, 1, fileIndex, rankIndex, positions);
             void EnPassantLeft() => EnPassant(-1, 1, fileIndex, rankIndex, positions);
 
-            void EnPassant(int x_white, int y_white, int fileIndex, int rankIndex, List<string> positions)
+            void EnPassant(int x_white, int y_white, int fileIndex, int rankIndex, HashSet<string> positions)
             {
                 int x = IsWhite ? x_white : -x_white;
                 int y = IsWhite ? y_white : -y_white;
@@ -160,7 +148,7 @@ namespace Chess.Model.Pieces
             return positions;
         }
 
-        void MovePawn(int x_white, int y_white, int fileIndex, int rankIndex, Board board, List<string> positions)
+        void MovePawn(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
@@ -183,70 +171,32 @@ namespace Chess.Model.Pieces
                     }
                 }
             }
-            if (newField.Content != null && (x_white == -1 || x_white == 1) && y_white == 1)
+            if ((x_white == -1 || x_white == 1) && y_white == 1)
             {
-                bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
-                if (z)
+                ControlledSquares.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                if (newField.Content != null)
                 {
-                    if (newField.Content.GetType() != typeof(King))
+                    bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
+                    if (z)
                     {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                    }
-                    else
-                    {
-                        //set king in check TO DO
+                        if (newField.Content.GetType() != typeof(King))
+                        {
+                            positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                        }
+                        else
+                        {
+                            if (IsWhite)
+                            {
+                                GameState.BlackKingIsInCheck = true;
+                            }
+                            else
+                            {
+                                GameState.WhiteKingIsInCheck = true;
+                            }
+                        }
                     }
                 }
             }
-        }
-
-        List<string> ReturnControlledSquares(string currentposition)
-        {
-            int fileIndex = Array.IndexOf(Board.Files, Convert.ToString(currentposition[0]));
-            int rankIndex = Array.IndexOf(Board.Ranks, Convert.ToString(currentposition[1]));
-            List<string> positions = new List<string>();
-            int x = IsWhite ? 1 : -1;
-            int y = IsWhite ? 1 : -1;
-            if (IsWhite)
-            {
-                if (rankIndex < Board.boardSize - 1)
-                {
-                    if (fileIndex == 0)
-                    {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        positions.Add(Board.Files[fileIndex - x] + Board.Ranks[rankIndex + y]);
-                    }
-                    else
-                    {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                        positions.Add(Board.Files[fileIndex - x] + Board.Ranks[rankIndex + y]);
-                    }
-                }
-                return positions;
-            }
-            else
-            {
-                if (rankIndex > 0)
-                {
-                    if (fileIndex == 0)
-                    {
-                        positions.Add(Board.Files[fileIndex - x] + Board.Ranks[rankIndex + y]);
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                    }
-                    else
-                    {
-                        positions.Add(Board.Files[fileIndex - x] + Board.Ranks[rankIndex + y]);
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
-                    }
-                }  
-            }
-            return positions;
         }
     }
 }

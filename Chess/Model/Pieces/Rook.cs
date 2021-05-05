@@ -22,7 +22,7 @@ namespace Chess.Model.Pieces
             IsFirstMove = isfirstmove;
         }
 
-        protected override List<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, List<string> positions)
+        protected override HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             MoveForward(fileIndex, rankIndex, board, positions);
             MoveBackwards(fileIndex, rankIndex, board, positions);

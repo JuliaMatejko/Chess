@@ -23,6 +23,7 @@ namespace Chess.Model
             Console.WriteLine(" 5. To propose a draw, type 'draw'");//to do: implement
             Board.CreateABoard(board);
             SetStartingBoard();
+            BoardController.RefreshAttackedSquares();
             BoardView.PrintBoard(board);
 
             while (!IsAWin && !IsADraw)

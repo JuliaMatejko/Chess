@@ -15,46 +15,40 @@ namespace Chess.Controller
             Piece pieceCloned = null;
             Piece newPositionContentCloned = null;
 
-            GetInputAndValidateIt(chosenMove);
-
-            FindPieceAndValidateMove(chosenMove, move, piece);
-
-            ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned); // do deep copy of pieces in case undoing move would be necessary
-
+            GetInputAndValidateIt(ref chosenMove, ref move);
+            FindPieceAndValidateMove(ref chosenMove, ref move, ref piece);
+            ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned);
             ChangeBoard(move, piece);
+            GameState.ResetKingCheckFlag();
+            RefreshAttackedSquares();
 
             while (GameState.CurrentPlayerKingIsInCheck) // Check if after current player moved their pieces, their king is in check (it shouldn't be possible) 
                                                          // Checks two chess rules: 1. Player has to react when being checked, cannot let king be in check and move other pieces 
                                                          // 2. If absolute pin occurs, player cannot move their pieces that are being in between their king and oponents pieces line of attack
             { 
                 UndoBoardChanges(move, pieceCloned, newPositionContentCloned);
+                GameState.ResetKingCheckFlag();
+                RefreshAttackedSquares();
 
-                Console.Write($" It's not a valid move. Your king would be in check. Choose a differnt piece or/and field.");
+                Console.WriteLine($" It's not a valid move. Your king would be in check. Choose a differnt piece or/and field.");
 
-                GetInputAndValidateIt(chosenMove); //instead of this 4, recurrent MakeAMove(), return MakeAMove?
-
-                FindPieceAndValidateMove(chosenMove, move, piece);
-
-                ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned);
-
-                ChangeBoard(move, piece);
+                MakeAMove();
             }
         }
 
-        static void GetInputAndValidateIt(string chosenMove)
+        static void GetInputAndValidateIt(ref string chosenMove, ref Move move)
         {
             Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
             chosenMove = Console.ReadLine();
-            while (!UserInputIsValid(chosenMove))
+            while (!UserInputIsValid(chosenMove, ref move))
             {
                 Console.Write($" It's not a valid input. Type your move in a correct format: ");
                 chosenMove = Console.ReadLine();
             }
         }
 
-        static void FindPieceAndValidateMove(string chosenMove, Move move, Piece piece)
+        static void FindPieceAndValidateMove(ref string chosenMove, ref Move move, ref Piece piece)
         {
-            move = StringToMove(chosenMove);
             piece = FindPiece(move.PieceName, move.CurrentPosition);
             while (!MoveValidator.MoveIsPossible(piece, move))
             {
@@ -65,11 +59,18 @@ namespace Chess.Controller
             }
         }
 
-        static void ClonePieceAndNewPositionPiece(string newposition, Piece piece, ref Piece clonedPiece, ref Piece clonedNewPositionContent) // to do: .Clone();
+        static void ClonePieceAndNewPositionPiece(string newposition, Piece piece, ref Piece clonedPiece, ref Piece clonedNewPositionContent)
         {
-            //Piece newPositionContent = Game.Fields[move.NewPosition].Content;
-            clonedNewPositionContent = Game.Fields[newposition].Content.Clone();
-            clonedPiece = piece.Clone();
+            clonedNewPositionContent = Game.Fields[newposition].Content;
+            if (clonedNewPositionContent != null)
+            {
+                clonedNewPositionContent = (Piece)clonedNewPositionContent.Clone();
+            }
+            else
+            {
+                clonedNewPositionContent = null;
+            }
+            clonedPiece = (Piece)piece.Clone();
         }
 
         static void ChangeBoard(Move move, Piece piece)
@@ -146,7 +147,22 @@ namespace Chess.Controller
             Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content; // move piece on a new position
             Game.Fields[move.CurrentPosition].Content = null;
         }
-        
+
+        public static void RefreshAttackedSquares()// to do przenies
+        {
+            for (int i = 0; i < Board.boardSize; i++)
+            {
+                for (int j = 0; j < Board.boardSize; j++)
+                {
+                    Piece piece = Game.board[i][j].Content;
+                    if (piece != null)
+                    {
+                        piece.NextAvailablePositions = piece.ReturnAvailablePieceMoves(piece.Position, Game.board);
+                    }
+                }
+            }
+        }
+
         static void UndoBoardChanges(Move move, Piece pieceCloned, Piece newPositionContentCloned)
         {
             Game.Fields[move.CurrentPosition].Content = pieceCloned; // move piece on a previous position
@@ -173,11 +189,11 @@ namespace Chess.Controller
             Game.Fields[move.CurrentPosition].Content = null;
         }
 
-        static bool UserInputIsValid(string chosenmove)
+        static bool UserInputIsValid(string chosenmove, ref Move move)
         {
-            Move move = StringToMove(chosenmove);
             if (chosenmove.Length == 8 && chosenmove[2] == ' ' && chosenmove[5] == ' ')
             {
+                move = StringToMove(chosenmove);
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)
                     && Board.Positions.Contains(move.NewPosition)
@@ -189,6 +205,7 @@ namespace Chess.Controller
             }
             else if (chosenmove.Length == 10 && chosenmove[2] == ' ' && chosenmove[5] == ' ' && chosenmove[8] == ' ')
             {
+                move = StringToMove(chosenmove);
                 string[] piecesToPromote = { "Q", "N", "R", "B" };
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)

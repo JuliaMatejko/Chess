@@ -8,17 +8,10 @@ namespace Chess
     { 
         public static bool MoveIsPossible(Piece piece, Move move)
         {
-            if (PieceOnChosenPositionDoesExist(piece) 
-                && ChosenPieceIsCurrentPlayersPiece(piece))
+            if (piece != null && ChosenPieceIsCurrentPlayersPiece(piece))
             {
-                if (piece.GetType() == typeof(King))
-                {
-                    return MoveIsCorrectKingMove(piece, move);
-                }
-                else
-                {
-                    return MoveIsCorrectPieceMove(piece, move);
-                } 
+                return piece.GetType() == typeof(King) ? MoveIsCorrectKingMove(piece, move) 
+                                                       : MoveIsCorrectPieceMove(piece, move);
             }
             return false;
         }
@@ -35,28 +28,15 @@ namespace Chess
             {
                 int squaresMoved = Array.IndexOf(Board.Files, move.NewPosition.Substring(0, 1))
                                    - Array.IndexOf(Board.Files, move.CurrentPosition.Substring(0, 1));
-                if (Math.Abs(squaresMoved) == 2) // king castling
-                {
-                    return CastlingIsPossible(squaresMoved, king.IsWhite);
-                }
-                else
-                {
-                    return true;
-                }
+                return Math.Abs(squaresMoved) != 2 || CastlingIsPossible(squaresMoved, king.IsWhite);
             }
             return false;
 
             static bool CastlingIsPossible(int squaresmoved, bool iswhite)
             {
                 string[] positions = iswhite ? new string[] { "f1", "d1" } : new string[] { "f8", "d8" };
-                if (squaresmoved == 2)
-                {
-                    return KingNewPositionIsSafe(positions[0]);
-                }
-                else // squaresmoved == -2
-                {
-                    return KingNewPositionIsSafe(positions[1]);
-                }
+                return squaresmoved == 2 ? KingNewPositionIsSafe(positions[0]) 
+                                         : KingNewPositionIsSafe(positions[1]);
             }
         }
 
@@ -69,7 +49,8 @@ namespace Chess
                     Piece piece = Game.board[i][j].Content;
                     if (piece != null)
                     {
-                        bool isOponentsPiece = GameState.CurrentPlayer == GameState.Sides.White ? !piece.IsWhite : piece.IsWhite;
+                        bool isOponentsPiece = GameState.CurrentPlayer
+                                               == GameState.Sides.White ? !piece.IsWhite : piece.IsWhite;
                         if (isOponentsPiece)
                         {
                             if (piece.GetType() == typeof(Pawn))
@@ -96,20 +77,8 @@ namespace Chess
         
         static bool ChosenPieceIsCurrentPlayersPiece(Piece piece)
         {
-            if (piece.IsWhite && GameState.CurrentPlayer == GameState.Sides.White)
-            {
-                return true;
-            }
-            else if (!(piece.IsWhite) && GameState.CurrentPlayer == GameState.Sides.Black)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        static bool PieceOnChosenPositionDoesExist(Piece piece)
-        {
-            return piece != null;
+            return (piece.IsWhite && GameState.CurrentPlayer == GameState.Sides.White)
+                    || (!piece.IsWhite && GameState.CurrentPlayer == GameState.Sides.Black);
         }
     }
 }
