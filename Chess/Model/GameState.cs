@@ -9,37 +9,39 @@ namespace Chess.Model
             White = 1,
             Black = 0
         }
-        static public Sides CurrentPlayer { get; set; } = Sides.White;
-        static public Pawn WhitePawnThatCanBeTakenByEnPassantMove { get; set; }
-        static public Pawn BlackPawnThatCanBeTakenByEnPassantMove { get; set; }
-        static public bool WhiteKingIsInCheck { get; set; } = false;
-        static public bool BlackKingIsInCheck { get; set; } = false;
-        static public bool CurrentPlayerKingIsInCheck => CurrentPlayer == Sides.White ? WhiteKingIsInCheck : BlackKingIsInCheck;
-        static public bool IsAWin { get; set; } = false;
-        static public bool IsADraw { get; set; } = false;
+        public static Sides CurrentPlayer { get; set; } = Sides.White;
+        public static Pawn WhitePawnThatCanBeTakenByEnPassantMove { get; set; }
+        public static Pawn BlackPawnThatCanBeTakenByEnPassantMove { get; set; }
+        public static bool WhiteKingIsInCheck { get; set; } = false;
+        public static bool BlackKingIsInCheck { get; set; } = false;
+        public static bool CurrentPlayerKingIsInCheck => CurrentPlayer == Sides.White ? WhiteKingIsInCheck : BlackKingIsInCheck;
+        public static bool IsAWin => WinConditionMet();
+        public static bool IsADraw { get; set; } = false;
+        public static bool PlayerResigned { get; set; } = false;
+        public static bool IsACheckmate { get; set; } = false;
 
         public static void ChangeTurns()
         {
-            ResetEnPassantFlag();
             CurrentPlayer = CurrentPlayer == Sides.White ? CurrentPlayer = Sides.Black
                                                          : CurrentPlayer = Sides.White;
-            static void ResetEnPassantFlag()
+        }
+
+        public static void ResetEnPassantFlag()
+        {
+            if (CurrentPlayer == Sides.White)
             {
-                if (CurrentPlayer == Sides.White)
+                if (BlackPawnThatCanBeTakenByEnPassantMove != null)
                 {
-                    if (BlackPawnThatCanBeTakenByEnPassantMove != null)
-                    {
-                        BlackPawnThatCanBeTakenByEnPassantMove.CanBeTakenByEnPassantMove = false;
-                        BlackPawnThatCanBeTakenByEnPassantMove = null;
-                    }  
+                    BlackPawnThatCanBeTakenByEnPassantMove.CanBeTakenByEnPassantMove = false;
+                    BlackPawnThatCanBeTakenByEnPassantMove = null;
                 }
-                else
+            }
+            else
+            {
+                if (WhitePawnThatCanBeTakenByEnPassantMove != null)
                 {
-                    if (WhitePawnThatCanBeTakenByEnPassantMove != null)
-                    {
-                        WhitePawnThatCanBeTakenByEnPassantMove.CanBeTakenByEnPassantMove = false;
-                        WhitePawnThatCanBeTakenByEnPassantMove = null;
-                    }   
+                    WhitePawnThatCanBeTakenByEnPassantMove.CanBeTakenByEnPassantMove = false;
+                    WhitePawnThatCanBeTakenByEnPassantMove = null;
                 }
             }
         }
@@ -57,28 +59,21 @@ namespace Chess.Model
         }
 
         /* methods checking if it is a win */
-        public static void WinConditionMet() // todo
+        
+        public static bool WinConditionMet() // todo
         {
-            if (IsACheckmate())
-            {
-                IsAWin = true;
-            }
-            if (PlayerResigned())
-            {
-                IsAWin = true;
-            }
-            IsAWin = false;
+            return IsACheckmate || PlayerResigned;
         }
 
-        static bool IsACheckmate()
+        /*static bool IsACheckmate()
         {
             return false; // todo: implement the logic
-        }
+        }*/
 
-        static bool PlayerResigned() // TO DO
+        /*public static void PlayerResigned() // TO DO
         {
-            return false; // todo: implement the logic
-        }
+            IsAWin = true; // todo: implement the logic
+        }*/
 
         /* methods checking if it is a draw */
         public static void DrawConditionMet() // todo

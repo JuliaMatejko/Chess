@@ -19,7 +19,7 @@ namespace Chess.Model
             Console.WriteLine(" 1. To make a move, type a piece, current piece position and new piece position separated by a space, ex. 'pw e2 e4'");
             Console.WriteLine(" 2. To promote a pawn, type, ex. 'pw e7 e8 Q'. You can choose B|N|R|Q, where each letter corresponds to: B - bishop, N - knight, R - rook, Q - queen");
             Console.WriteLine(" 3. To castle, just move your king two squares and rook will go on the right place");
-            Console.WriteLine(" 4. To resign, type 'resign'");//to do: implement
+            Console.WriteLine(" 4. To resign, type 'resign'");
             Console.WriteLine(" 5. To propose a draw, type 'draw'");//to do: implement
             Board.CreateABoard(board);
             SetStartingBoard();
@@ -29,25 +29,34 @@ namespace Chess.Model
             while (!IsAWin && !IsADraw)
             {
                 BoardController.MakeAMove();
-                BoardView.PrintBoard(board);
-                WinConditionMet();
-                DrawConditionMet();
-
-                if (!IsAWin && !IsADraw)
+                if (PlayerResigned)
                 {
+                    Console.Write($" {CurrentPlayer} resigned.");
                     ChangeTurns();
+                    Console.WriteLine($" {CurrentPlayer} won the game!"); //end of the program
                 }
                 else
                 {
-                    if (IsAWin)
+                    BoardView.PrintBoard(board);
+                    DrawConditionMet();
+                    if (!IsAWin && !IsADraw)
                     {
-                        Console.WriteLine($" {CurrentPlayer} won the game!");
+                        ResetEnPassantFlag();
+                        ChangeTurns();
                     }
-                    else if (IsADraw)
+                    else
                     {
-                        Console.WriteLine(" It's a draw!");
+                        if (IsAWin)
+                        {
+                            Console.WriteLine($" {CurrentPlayer} won the game!"); //end of the program
+                        }
+                        else if (IsADraw)
+                        {
+                            Console.WriteLine(" It's a draw!"); //end of the program
+                        }
                     }
                 }
+                
             }
         }
 

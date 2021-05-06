@@ -7,7 +7,7 @@ namespace Chess.Controller
 {
     class BoardController
     {
-        public static void MakeAMove() // divide, refactor this function to smaller functions? przeniesc do move validator? to do
+        public static void MakeAMove()
         {
             string chosenMove = null;
             Move move = null;
@@ -16,23 +16,22 @@ namespace Chess.Controller
             Piece newPositionContentCloned = null;
 
             GetInputAndValidateIt(ref chosenMove, ref move);
-            FindPieceAndValidateMove(ref chosenMove, ref move, ref piece);
-            ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned);
-            ChangeBoard(move, piece);
-            GameState.ResetKingCheckFlag();
-            RefreshAttackedSquares();
-
-            while (GameState.CurrentPlayerKingIsInCheck) // Check if after current player moved their pieces, their king is in check (it shouldn't be possible) 
-                                                         // Checks two chess rules: 1. Player has to react when being checked, cannot let king be in check and move other pieces 
-                                                         // 2. If absolute pin occurs, player cannot move their pieces that are being in between their king and oponents pieces line of attack
-            { 
-                UndoBoardChanges(move, pieceCloned, newPositionContentCloned);
+            if (!GameState.PlayerResigned)
+            {
+                FindPieceAndValidateMove(ref chosenMove, ref move, ref piece);
+                ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned);
+                ChangeBoard(move, piece);
                 GameState.ResetKingCheckFlag();
                 RefreshAttackedSquares();
 
-                Console.WriteLine($" It's not a valid move. Your king would be in check. Choose a differnt piece or/and field.");
-
-                MakeAMove();
+                while (GameState.CurrentPlayerKingIsInCheck)
+                {
+                    UndoBoardChanges(move, pieceCloned, newPositionContentCloned);
+                    GameState.ResetKingCheckFlag();
+                    RefreshAttackedSquares();
+                    Console.WriteLine($" It's not a valid move. Your king would be in check. Choose a differnt piece or/and field.");
+                    MakeAMove();
+                }
             }
         }
 
@@ -215,6 +214,15 @@ namespace Chess.Controller
                     return true;
                 }
             }
+            else if (chosenmove == "resign")
+            {
+                GameState.PlayerResigned = true;
+                return true;
+            }
+            /*else if (chosenmove == "draw")
+            {
+
+            }*/
             return false;
         }
 
