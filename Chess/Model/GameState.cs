@@ -1,4 +1,5 @@
 ﻿using Chess.Model.Pieces;
+using System;
 
 namespace Chess.Model
 {
@@ -16,9 +17,12 @@ namespace Chess.Model
         public static bool BlackKingIsInCheck { get; set; } = false;
         public static bool CurrentPlayerKingIsInCheck => CurrentPlayer == Sides.White ? WhiteKingIsInCheck : BlackKingIsInCheck;
         public static bool IsAWin => WinConditionMet();
-        public static bool IsADraw { get; set; } = false;
-        public static bool PlayerResigned { get; set; } = false;
+        public static bool IsADraw => DrawConditionMet();
+        public static bool PlayerResigned { get; set; } = false; // to do: implementation may change in the future so that the resignation is not only possible for the current player 
+        public static bool PlayerOfferedADraw { get; set; } = false; // to do: implementation may change in the future so that offering a draw is not only possible for the current player
         public static bool IsACheckmate { get; set; } = false;
+        public static bool PlayersAgreedToADraw { get; set; } = false;
+
 
         public static void ChangeTurns()
         {
@@ -76,9 +80,9 @@ namespace Chess.Model
         }*/
 
         /* methods checking if it is a draw */
-        public static void DrawConditionMet() // todo
+        public static bool DrawConditionMet() // todo
         {
-            if (IsAStalemate()) // automatic draw, important, must have
+           /* if (IsAStalemate()) // automatic draw, important, must have
             {
                 IsADraw = true;
             }
@@ -86,7 +90,7 @@ namespace Chess.Model
             {
                 IsADraw = true;
             }
-            else if (PlayersAgreedToADraw()) // automatic draw, important, must have    TO DO
+            if (PlayersAgreedToADraw) // automatic draw, important, must have    TO DO
             {
                 IsADraw = true;
             }
@@ -106,8 +110,8 @@ namespace Chess.Model
             {
                 IsADraw = true;
             }
-
-            IsADraw = false;
+            */
+            return PlayersAgreedToADraw;
         }
 
         static bool IsAStalemate()
@@ -116,11 +120,6 @@ namespace Chess.Model
         }
 
         static bool IsADeadPosition()
-        {
-            return false; // todo: implement the logic
-        }
-
-        static bool PlayersAgreedToADraw()
         {
             return false; // todo: implement the logic
         }

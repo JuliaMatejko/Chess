@@ -16,7 +16,7 @@ namespace Chess.Controller
             Piece newPositionContentCloned = null;
 
             GetInputAndValidateIt(ref chosenMove, ref move);
-            if (!GameState.PlayerResigned)
+            if (!GameState.PlayerResigned && !GameState.PlayerOfferedADraw)
             {
                 FindPieceAndValidateMove(ref chosenMove, ref move, ref piece);
                 ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned);
@@ -33,8 +33,33 @@ namespace Chess.Controller
                     MakeAMove();
                 }
             }
+            else if (GameState.PlayerOfferedADraw)
+            {
+                if (OponentAcceptsADraw())
+                {
+                    GameState.PlayersAgreedToADraw = true;
+                }
+                else
+                {
+                    GameState.PlayerOfferedADraw = false;
+                    Console.WriteLine(" Draw denied. Make a move or resign");
+                    MakeAMove();
+                }
+            }
         }
 
+        static bool OponentAcceptsADraw()
+        {
+            Console.Write($" {GameState.CurrentPlayer} offers a draw. Accept a draw? [yes|no]: ");
+            string acceptADraw = Console.ReadLine();
+            while (!(acceptADraw == "yes" || acceptADraw == "no"))
+            {
+                Console.Write($"Wrong response. Accept a draw? Type 'yes' to agree to draw or 'no' to continue the game: ");
+                acceptADraw = Console.ReadLine();
+            }
+            return acceptADraw == "yes"; 
+        }
+        
         static void GetInputAndValidateIt(ref string chosenMove, ref Move move)
         {
             Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
@@ -219,10 +244,11 @@ namespace Chess.Controller
                 GameState.PlayerResigned = true;
                 return true;
             }
-            /*else if (chosenmove == "draw")
+            else if (chosenmove == "draw")
             {
-
-            }*/
+                GameState.PlayerOfferedADraw = true;
+                return true;
+            }
             return false;
         }
 
