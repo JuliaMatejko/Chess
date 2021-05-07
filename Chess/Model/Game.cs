@@ -30,9 +30,10 @@ namespace Chess.Model
             while (!IsAWin && !IsADraw)
             {
                 BoardController.MakeAMove();
+                BoardController.RefreshAttackedSquares();
                 if (PlayersAgreedToADraw)
                 {
-                    Console.WriteLine(" Players agreed to a draw");
+                    Console.WriteLine(" Players agreed to a draw.");
                     Console.WriteLine(" It's a draw!"); // end of the program
                 }
                 else if (PlayerResigned)
@@ -40,6 +41,11 @@ namespace Chess.Model
                     Console.Write($" {CurrentPlayer} resigned.");
                     ChangeTurns();
                     Console.WriteLine($" {CurrentPlayer} won the game!"); // end of the program
+                }
+                else if (IsAStalemate)
+                {
+                    Console.WriteLine(" Stalemate.");
+                    Console.WriteLine(" It's a draw!"); // end of the program
                 }
                 else
                 {

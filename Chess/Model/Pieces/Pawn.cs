@@ -160,20 +160,20 @@ namespace Chess.Model.Pieces
                     int z = IsWhite ? -1 : 1;
                     if ((board[fileIndex][rankIndex + y + z].Content == null) && (newField.Content == null))
                     {
-                        positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                        positions.Add(newField.Name);
                     }
                 }
                 if (y_white == 1)
                 {
                     if (newField.Content == null)
                     {
-                        positions.Add(Board.Files[fileIndex] + Board.Ranks[rankIndex + y]);
+                        positions.Add(newField.Name);
                     }
                 }
             }
             if ((x_white == -1 || x_white == 1) && y_white == 1)
             {
-                ControlledSquares.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                ControlledSquares.Add(newField.Name);
                 if (newField.Content != null)
                 {
                     bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
@@ -181,7 +181,7 @@ namespace Chess.Model.Pieces
                     {
                         if (newField.Content.GetType() != typeof(King))
                         {
-                            positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                            positions.Add(newField.Name);
                         }
                         else
                         {

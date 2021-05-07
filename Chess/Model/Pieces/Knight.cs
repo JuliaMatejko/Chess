@@ -174,7 +174,7 @@ namespace Chess.Model.Pieces
             Field newField = board[fileIndex + x][rankIndex + y];
             if (newField.Content == null)
             {
-                positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                positions.Add(newField.Name);
             }
             else
             {
@@ -183,7 +183,7 @@ namespace Chess.Model.Pieces
                 {
                     if (newField.Content.GetType() != typeof(King))
                     {
-                        positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                        positions.Add(newField.Name);
                     }
                     else
                     {

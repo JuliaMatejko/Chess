@@ -8,7 +8,7 @@ namespace Chess.Model.Pieces
         public bool IsWhite { get; set; }
         public string Name { get; set; }
         public string Position { get; set; }
-        public HashSet<string> NextAvailablePositions { get; set; }
+        public HashSet<string> NextAvailablePositions { get; set; } = new HashSet<string>();
         public static string[] PieceNames => new string[] { "pw", "pb", "Rw", "Rb", "Nw", "Nb", "Bw", "Bb", "Qw", "Qb", "Kw", "Kb" };
 
         public HashSet<string> ReturnAvailablePieceMoves(string currentposition, Board board)
@@ -202,7 +202,7 @@ namespace Chess.Model.Pieces
             Field newField = board[file + x][rank + y];
             if (newField.Content == null)
             {
-                positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
+                positions.Add(newField.Name);
                 file += x;
                 rank += y;
             }
@@ -213,7 +213,7 @@ namespace Chess.Model.Pieces
                 {
                     if (newField.Content.GetType() != typeof(King))
                     {
-                        positions.Add(Board.Files[file + x] + Board.Ranks[rank + y]);
+                        positions.Add(newField.Name);
                     }
                     else
                     {

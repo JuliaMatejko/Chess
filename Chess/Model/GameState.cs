@@ -1,5 +1,4 @@
 ﻿using Chess.Model.Pieces;
-using System;
 
 namespace Chess.Model
 {
@@ -18,10 +17,12 @@ namespace Chess.Model
         public static bool CurrentPlayerKingIsInCheck => CurrentPlayer == Sides.White ? WhiteKingIsInCheck : BlackKingIsInCheck;
         public static bool IsAWin => WinConditionMet();
         public static bool IsADraw => DrawConditionMet();
+        // flags
         public static bool PlayerResigned { get; set; } = false; // to do: implementation may change in the future so that the resignation is not only possible for the current player 
         public static bool PlayerOfferedADraw { get; set; } = false; // to do: implementation may change in the future so that offering a draw is not only possible for the current player
-        public static bool IsACheckmate { get; set; } = false;
         public static bool PlayersAgreedToADraw { get; set; } = false;
+        public static bool IsAStalemate => StalemateOccured();
+        public static bool IsACheckmate { get; set; } = false;
 
 
         public static void ChangeTurns()
@@ -74,23 +75,11 @@ namespace Chess.Model
             return false; // todo: implement the logic
         }*/
 
-        /*public static void PlayerResigned() // TO DO
-        {
-            IsAWin = true; // todo: implement the logic
-        }*/
-
         /* methods checking if it is a draw */
         public static bool DrawConditionMet() // todo
         {
-           /* if (IsAStalemate()) // automatic draw, important, must have
-            {
-                IsADraw = true;
-            }
-            else if (IsADeadPosition()) // automatic draw
-            {
-                IsADraw = true;
-            }
-            if (PlayersAgreedToADraw) // automatic draw, important, must have    TO DO
+           /*
+            if (IsADeadPosition()) // automatic draw
             {
                 IsADraw = true;
             }
@@ -111,12 +100,28 @@ namespace Chess.Model
                 IsADraw = true;
             }
             */
-            return PlayersAgreedToADraw;
+            return PlayersAgreedToADraw || IsAStalemate;
         }
 
-        static bool IsAStalemate()
+        static bool StalemateOccured() // not optimal, create list of pieces for both players? to do
         {
-            return false; // todo: implement the logic
+            for (int i = 0; i < Board.boardSize; i++)
+            {
+                for (int j = 0; j < Board.boardSize; j++)
+                {
+                    Piece piece = Game.board[i][j].Content;
+                    
+                    if (piece != null) 
+                    {
+                        bool isOponentsPiece = CurrentPlayer == Sides.White ? !piece.IsWhite : piece.IsWhite;
+                        if (isOponentsPiece && piece.NextAvailablePositions.Count != 0)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         static bool IsADeadPosition()

@@ -54,9 +54,46 @@ namespace Chess.Model.Pieces
                 int z = x == 2 ? 1 : -1;
                 if (board[file + z][rank].Content == null && board[file + x][rank].Content == null)
                 {
-                    positions.Add(Board.Files[file + x] + Board.Ranks[rank]);
+                    if (KingNewPositionIsSafe(Board.Files[file + x] + Board.Ranks[rank]))
+                    {
+                        positions.Add(Board.Files[file + x] + Board.Ranks[rank]);
+                    } 
                 }
             }
+        }
+
+        bool KingNewPositionIsSafe(string newposition) // not optimal to do: make array of attacked squares?
+        {
+            for (int i = 0; i < Board.boardSize; i++)
+            {
+                for (int j = 0; j < Board.boardSize; j++)
+                {
+                    Piece piece = Game.board[i][j].Content;
+                    if (piece != null)
+                    {
+                        bool isOponentsPiece = IsWhite ? !piece.IsWhite : piece.IsWhite;
+                        if (isOponentsPiece)
+                        {
+                            if (piece.GetType() == typeof(Pawn))
+                            {
+                                Pawn pawn = (Pawn)piece;
+                                if (pawn.ControlledSquares.Contains(newposition))
+                                {
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                if (piece.NextAvailablePositions.Contains(newposition))
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
         }
 
         HashSet<string> KingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
@@ -171,14 +208,20 @@ namespace Chess.Model.Pieces
 
             if (newField.Content == null)
             {
-                positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                if (KingNewPositionIsSafe(newField.Name))
+                {
+                    positions.Add(newField.Name);
+                }
             }
             else
             {
                 bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
                 if (z && newField.Content.GetType() != typeof(King))
                 {
-                    positions.Add(Board.Files[fileIndex + x] + Board.Ranks[rankIndex + y]);
+                    if (KingNewPositionIsSafe(newField.Name))
+                    {
+                        positions.Add(newField.Name);
+                    }
                 }
             } 
         }
