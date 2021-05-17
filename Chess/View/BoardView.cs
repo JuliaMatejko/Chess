@@ -9,10 +9,10 @@ namespace Chess.View
         {
             Console.WriteLine("");
             Console.WriteLine("   +---------------------------------------+");
-            for (int j = 7; j >= 0; j--)
+            for (var j = 7; j >= 0; j--)
             {
                 Console.Write($" {j + 1} |");
-                for (int i = 0; i <= 7; i++)
+                for (var i = 0; i <= 7; i++)
                 {
                     if (i != 7)
                     {
@@ -48,28 +48,6 @@ namespace Chess.View
                 }
             }
             Console.WriteLine("");
-        }
-
-        public static void PrintBoardLayout()
-        {
-            Console.WriteLine("   +---------------------------------------+");
-            Console.WriteLine(" 8 | Rb | Nb | Bb | Qb | Kb | Bb | Nb | Rb |");
-            Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 7 | pb | pb | pb | pb | pb | pb | pb | pb |");
-            Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 6 |    |    |    |    |    |    |    |    |");
-            Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 5 |    |    |    |    |    |    |    |    |");
-            Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 4 |    |    |    |    |    |    |    |    |");
-            Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 3 |    |    |    |    |    |    |    |    |");
-            Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 2 | pw | pw | pw | pw | pw | pw | pw | pw |");
-            Console.WriteLine("   |----+----+----+----+----+----+----+----|");
-            Console.WriteLine(" 1 | Rw | Nw | Bw | Qw | Kw | Bw | Nw | Rw |");
-            Console.WriteLine("   +---------------------------------------+");
-            Console.WriteLine("     a    b    c    d    e    f    g    h   ");
         }
     }
 }

@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Chess.Model.Pieces
 {
     class Pawn : Piece
     {
-        public static new string[] PieceNames => new string[] { "pw", "pb" };
         public bool IsFirstMove { get; set; } = true;
         public bool CanBeTakenByEnPassantMove { get; set; } = false;
-        public HashSet<string> ControlledSquares { get; set; } = new HashSet<string>();
+        private static new string[] PieceNames { get; } = new string[] { "pw", "pb" };
 
-        public Pawn(bool iswhite, string position)
+        public Pawn(bool isWhite, string position)
         {
-            IsWhite = iswhite;
+            IsWhite = isWhite;
             Position = position;
-            Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
+            Name = isWhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
         protected override HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
@@ -24,7 +22,7 @@ namespace Chess.Model.Pieces
             return positions;
         }
 
-        HashSet<string> StandardPawnMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
+        private HashSet<string> StandardPawnMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {   
             if (IsWhite)
             {
@@ -32,24 +30,23 @@ namespace Chess.Model.Pieces
                 {
                     MoveTwoForward();
                 }
-                if (rankIndex < Board.boardSize - 1)
+                if (rankIndex < Board.BoardSize - 1)
                 {
                     MoveOneForward();
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveOneForwardDiagonallyRight();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveOneForwardDiagonallyLeft();
-                    }
-                    else
-                    {
-                        MoveOneForwardDiagonallyRight();
-                        MoveOneForwardDiagonallyLeft();
+                        case 0:
+                            MoveOneForwardDiagonallyRight();
+                            break;
+                        case 7:
+                            MoveOneForwardDiagonallyLeft();
+                            break;
+                        default:
+                            MoveOneForwardDiagonallyRight();
+                            MoveOneForwardDiagonallyLeft();
+                            break;
                     }
                 }
-                return positions;
             }
             else
             {
@@ -60,35 +57,36 @@ namespace Chess.Model.Pieces
                 if (rankIndex > 0)
                 {
                     MoveOneForward();
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveOneForwardDiagonallyLeft();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveOneForwardDiagonallyRight();
-                    }
-                    else
-                    {
-                        MoveOneForwardDiagonallyLeft();
-                        MoveOneForwardDiagonallyRight();
+                        case 0:
+                            MoveOneForwardDiagonallyLeft();
+                            break;
+                        case 7:
+                            MoveOneForwardDiagonallyRight();
+                            break;
+                        default:
+                            MoveOneForwardDiagonallyLeft();
+                            MoveOneForwardDiagonallyRight();
+                            break;
                     }
                 }
-                return positions;
             }
+            return positions;
+
             void MoveOneForward() => MovePawn(0, 1, fileIndex, rankIndex, board, positions);
             void MoveTwoForward() => MovePawn(0, 2, fileIndex, rankIndex, board, positions);
             void MoveOneForwardDiagonallyRight() => MovePawn(1, 1, fileIndex, rankIndex, board, positions);
             void MoveOneForwardDiagonallyLeft() => MovePawn(-1, 1, fileIndex, rankIndex, board, positions);
         }
-        
-        HashSet<string> EnPassantPawnMove(int fileIndex, int rankIndex, HashSet<string> positions)
+
+        private HashSet<string> EnPassantPawnMove(int fileIndex, int rankIndex, HashSet<string> positions)
         {
             if (IsWhite)
             {
                 if (rankIndex == 4 && GameState.BlackPawnThatCanBeTakenByEnPassantMove != null)
                 {
-                    string oponentPawnFile = Convert.ToString(GameState.BlackPawnThatCanBeTakenByEnPassantMove.Position[0]);
+                    string oponentPawnFile = GameState.BlackPawnThatCanBeTakenByEnPassantMove.Position[0].ToString();
                     if (fileIndex == 0 && oponentPawnFile == Board.Files[fileIndex + 1])
                     { 
                         EnPassantRight();
@@ -114,7 +112,7 @@ namespace Chess.Model.Pieces
             {
                 if (rankIndex == 3 && GameState.WhitePawnThatCanBeTakenByEnPassantMove != null)
                 {
-                    string oponentPawnFile = Convert.ToString(GameState.WhitePawnThatCanBeTakenByEnPassantMove.Position[0]);
+                    string oponentPawnFile = GameState.WhitePawnThatCanBeTakenByEnPassantMove.Position[0].ToString();
                     if (fileIndex == 0 && oponentPawnFile == Board.Files[fileIndex + 1])
                     {
                         EnPassantLeft();
@@ -148,11 +146,12 @@ namespace Chess.Model.Pieces
             return positions;
         }
 
-        void MovePawn(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
+        private void MovePawn(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
             Field newField = board[fileIndex + x][rankIndex + y];
+
             if (x_white == 0)
             {
                 if (y_white == 2)
@@ -174,6 +173,7 @@ namespace Chess.Model.Pieces
             if ((x_white == -1 || x_white == 1) && y_white == 1)
             {
                 ControlledSquares.Add(newField.Name);
+
                 if (newField.Content != null)
                 {
                     bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
@@ -193,6 +193,7 @@ namespace Chess.Model.Pieces
                             {
                                 GameState.WhiteKingIsInCheck = true;
                             }
+                            GameState.CurrentPlayerPiecesAttackingTheKing.Add(this);
                         }
                     }
                 }

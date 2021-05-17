@@ -5,13 +5,13 @@ namespace Chess.Model.Pieces
     class King : Piece
     {
         public bool IsFirstMove { get; set; } = true;
-        static public new string[] PieceNames => new string[] { "Kw", "Kb" };
+        private static new string[] PieceNames { get; } = new string[] { "Kw", "Kb" };
 
-        public King(bool iswhite, string position)
+        public King(bool isWhite, string position)
         {
-            IsWhite = iswhite;
+            IsWhite = isWhite;
             Position = position;
-            Name = iswhite == true ? Name = PieceNames[0] : Name = PieceNames[1];
+            Name = isWhite == true ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
         protected override HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
@@ -21,7 +21,7 @@ namespace Chess.Model.Pieces
             return positions;
         }
 
-        HashSet<string> CastlingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
+        private HashSet<string> CastlingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             bool kingIsNotInCheck = IsWhite ? !GameState.WhiteKingIsInCheck : !GameState.BlackKingIsInCheck;
             if (IsFirstMove && kingIsNotInCheck)
@@ -49,46 +49,34 @@ namespace Chess.Model.Pieces
 
             void CastleKingSide() => CastleKingMove(2, fileIndex, rankIndex);
             void CastleQueenSide() => CastleKingMove(-2, fileIndex, rankIndex);
+
             void CastleKingMove(int x, int file, int rank)
             {
                 int z = x == 2 ? 1 : -1;
                 if (board[file + z][rank].Content == null && board[file + x][rank].Content == null)
                 {
-                    if (KingNewPositionIsSafe(Board.Files[file + x] + Board.Ranks[rank]))
+                    string kingNewPosition = Board.Files[file + x] + Board.Ranks[rank];
+                    if (KingNewPositionIsSafe(kingNewPosition))
                     {
-                        positions.Add(Board.Files[file + x] + Board.Ranks[rank]);
-                    } 
+                        positions.Add(kingNewPosition);
+                    }
                 }
             }
         }
 
-        bool KingNewPositionIsSafe(string newposition) // not optimal to do: make array of attacked squares?
+        private bool KingNewPositionIsSafe(string newPosition)
         {
-            for (int i = 0; i < Board.boardSize; i++)
+            for (var i = 0; i < Board.BoardSize; i++)
             {
-                for (int j = 0; j < Board.boardSize; j++)
+                for (var j = 0; j < Board.BoardSize; j++)
                 {
-                    Piece piece = Game.board[i][j].Content;
+                    Piece piece = Game.Board[i][j].Content;
                     if (piece != null)
                     {
                         bool isOponentsPiece = IsWhite ? !piece.IsWhite : piece.IsWhite;
-                        if (isOponentsPiece)
+                        if (isOponentsPiece && piece.ControlledSquares.Contains(newPosition))
                         {
-                            if (piece.GetType() == typeof(Pawn))
-                            {
-                                Pawn pawn = (Pawn)piece;
-                                if (pawn.ControlledSquares.Contains(newposition))
-                                {
-                                    return false;
-                                }
-                            }
-                            else
-                            {
-                                if (piece.NextAvailablePositions.Contains(newposition))
-                                {
-                                    return false;
-                                }
-                            }
+                            return false;
                         }
                     }
                 }
@@ -96,51 +84,50 @@ namespace Chess.Model.Pieces
             return true;
         }
 
-        HashSet<string> KingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
+        private HashSet<string> KingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
-            if (rankIndex < Board.boardSize - 1)
+            if (rankIndex < Board.BoardSize - 1)
             {
                 if (IsWhite)
                 {
                     MoveOneForward();
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveOneRight();
-                        MoveOneForwardDiagonallyRight();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveOneLeft();
-                        MoveOneForwardDiagonallyLeft();
-                    }
-                    else
-                    {
-                        MoveOneRight();
-                        MoveOneLeft();
-                        MoveOneForwardDiagonallyLeft();
-                        MoveOneForwardDiagonallyRight();
+                        case 0:
+                            MoveOneRight();
+                            MoveOneForwardDiagonallyRight();
+                            break;
+                        case 7:
+                            MoveOneLeft();
+                            MoveOneForwardDiagonallyLeft();
+                            break;
+                        default:
+                            MoveOneRight();
+                            MoveOneLeft();
+                            MoveOneForwardDiagonallyLeft();
+                            MoveOneForwardDiagonallyRight();
+                            break;
                     }
                 }
                 else
                 {
                     MoveOneBackwards();
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveOneLeft();
-                        MoveOneBackwardsDiagonallyLeft();
-
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveOneRight();
-                        MoveOneBackwardsDiagonallyRight();
-                    }
-                    else
-                    {
-                        MoveOneRight();
-                        MoveOneLeft();
-                        MoveOneBackwardsDiagonallyLeft();
-                        MoveOneBackwardsDiagonallyRight();
+                        case 0:
+                            MoveOneLeft();
+                            MoveOneBackwardsDiagonallyLeft();
+                            break;
+                        case 7:
+                            MoveOneRight();
+                            MoveOneBackwardsDiagonallyRight();
+                            break;
+                        default:
+                            MoveOneRight();
+                            MoveOneLeft();
+                            MoveOneBackwardsDiagonallyLeft();
+                            MoveOneBackwardsDiagonallyRight();
+                            break;
                     }
                 }
             }
@@ -149,47 +136,48 @@ namespace Chess.Model.Pieces
                 if (IsWhite)
                 {
                     MoveOneBackwards();
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveOneRight();
-                        MoveOneBackwardsDiagonallyLeft();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveOneLeft();
-                        MoveOneBackwardsDiagonallyRight();
-                    }
-                    else
-                    {
-                        MoveOneRight();
-                        MoveOneLeft();
-                        MoveOneBackwardsDiagonallyLeft();
-                        MoveOneBackwardsDiagonallyRight();
+                        case 0:
+                            MoveOneRight();
+                            MoveOneBackwardsDiagonallyLeft();
+                            break;
+                        case 7:
+                            MoveOneLeft();
+                            MoveOneBackwardsDiagonallyRight();
+                            break;
+                        default:
+                            MoveOneRight();
+                            MoveOneLeft();
+                            MoveOneBackwardsDiagonallyLeft();
+                            MoveOneBackwardsDiagonallyRight();
+                            break;
                     }
                 }
                 else
                 {
                     MoveOneForward();
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveOneLeft();
-                        MoveOneForwardDiagonallyLeft();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveOneRight();
-                        MoveOneForwardDiagonallyRight();
-                    }
-                    else
-                    {
-                        MoveOneRight();
-                        MoveOneLeft();
-                        MoveOneForwardDiagonallyLeft();
-                        MoveOneForwardDiagonallyRight();
+                        case 0:
+                            MoveOneLeft();
+                            MoveOneForwardDiagonallyLeft();
+                            break;
+                        case 7:
+                            MoveOneRight();
+                            MoveOneForwardDiagonallyRight();
+                            break;
+                        default:
+                            MoveOneRight();
+                            MoveOneLeft();
+                            MoveOneForwardDiagonallyLeft();
+                            MoveOneForwardDiagonallyRight();
+                            break;
                     }
                 }
             }
             return positions;
+
             void MoveOneForwardDiagonallyLeft() => MoveKing(-1, 1, fileIndex, rankIndex, board, positions);
             void MoveOneBackwardsDiagonallyLeft() => MoveKing(-1, -1, fileIndex, rankIndex, board, positions);
             void MoveOneForwardDiagonallyRight() => MoveKing(1, 1, fileIndex, rankIndex, board, positions);
@@ -200,11 +188,13 @@ namespace Chess.Model.Pieces
             void MoveOneLeft() => MoveKing(-1, 0, fileIndex, rankIndex, board, positions);
         }
 
-        void MoveKing(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
+        private void MoveKing(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
             Field newField = board[fileIndex + x][rankIndex + y];
+
+            ControlledSquares.Add(newField.Name);
 
             if (newField.Content == null)
             {
@@ -221,7 +211,7 @@ namespace Chess.Model.Pieces
                     if (KingNewPositionIsSafe(newField.Name))
                     {
                         positions.Add(newField.Name);
-                    }
+                    }  
                 }
             } 
         }

@@ -4,13 +4,13 @@ namespace Chess.Model.Pieces
 {
     class Knight : Piece
     {
-        static public new string[] PieceNames => new string[] { "Nw", "Nb" };
+        private static new string[] PieceNames { get; } = new string[] { "Nw", "Nb" };
 
-        public Knight(bool iswhite, string position)
+        public Knight(bool isWhite, string position)
         {
-            IsWhite = iswhite;
+            IsWhite = isWhite;
             Position = position;
-            Name = iswhite ? Name = PieceNames[0] : Name = PieceNames[1];
+            Name = isWhite ? Name = PieceNames[0] : Name = PieceNames[1];
         }
 
         protected override HashSet<string> ReturnCorrectPieceMoves(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
@@ -19,73 +19,68 @@ namespace Chess.Model.Pieces
             return positions;
         }
 
-        HashSet<string> KnightMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
+        private HashSet<string> KnightMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
-            if (rankIndex < Board.boardSize - 2)
+            if (rankIndex < Board.BoardSize - 2)
             {
                 if (IsWhite)
                 {
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveTwoForwardOneRight();
-                        MoveTwoRightOneForward();
-                    }
-                    else if(fileIndex == 1)
-                    {
-                        MoveTwoForwardOneRight();
-                        MoveTwoRightOneForward();
-                        MoveTwoForwardOneLeft();
-                    }
-                    else if (fileIndex == 6)
-                    {
-                        MoveTwoForwardOneLeft();
-                        MoveTwoLeftOneForward();
-                        MoveTwoForwardOneRight();
-                    }
-                    else if(fileIndex == 7)
-                    {
-                        MoveTwoForwardOneLeft();
-                        MoveTwoLeftOneForward();
-                    }
-                    else
-                    {
-                        MoveTwoForwardOneRight();
-                        MoveTwoForwardOneLeft();
-                        MoveTwoRightOneForward();
-                        MoveTwoLeftOneForward();
+                        case 0:
+                            MoveTwoForwardOneRight();
+                            MoveTwoRightOneForward();
+                            break;
+                        case 1:
+                            MoveTwoForwardOneRight();
+                            MoveTwoRightOneForward();
+                            MoveTwoForwardOneLeft();
+                            break;
+                        case 6:
+                            MoveTwoForwardOneLeft();
+                            MoveTwoLeftOneForward();
+                            MoveTwoForwardOneRight();
+                            break;
+                        case 7:
+                            MoveTwoForwardOneLeft();
+                            MoveTwoLeftOneForward();
+                            break;
+                        default:
+                            MoveTwoForwardOneRight();
+                            MoveTwoForwardOneLeft();
+                            MoveTwoRightOneForward();
+                            MoveTwoLeftOneForward();
+                            break;
                     }
                 }
                 else
                 {
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveTwoBackwardsOneLeft();
-                        MoveTwoLeftOneBackwards();
-
-                    }
-                    else if (fileIndex == 1)
-                    {
-                        MoveTwoBackwardsOneLeft();
-                        MoveTwoLeftOneBackwards();
-                        MoveTwoBackwardsOneRight();
-                    }
-                    else if (fileIndex == 6)
-                    {
-                        MoveTwoBackwardsOneRight();
-                        MoveTwoRightOneBackwards();
-                        MoveTwoBackwardsOneLeft();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveTwoBackwardsOneRight();
-                        MoveTwoRightOneBackwards();
-                    }
-                    else
-                    {
-                        MoveTwoBackwardsOneRight();
-                        MoveTwoBackwardsOneLeft();
-                        MoveTwoRightOneBackwards();
-                        MoveTwoLeftOneBackwards();
+                        case 0:
+                            MoveTwoBackwardsOneLeft();
+                            MoveTwoLeftOneBackwards();
+                            break;
+                        case 1:
+                            MoveTwoBackwardsOneLeft();
+                            MoveTwoLeftOneBackwards();
+                            MoveTwoBackwardsOneRight();
+                            break;
+                        case 6:
+                            MoveTwoBackwardsOneRight();
+                            MoveTwoRightOneBackwards();
+                            MoveTwoBackwardsOneLeft();
+                            break;
+                        case 7:
+                            MoveTwoBackwardsOneRight();
+                            MoveTwoRightOneBackwards();
+                            break;
+                        default:
+                            MoveTwoBackwardsOneRight();
+                            MoveTwoBackwardsOneLeft();
+                            MoveTwoRightOneBackwards();
+                            MoveTwoLeftOneBackwards();
+                            break;
                     }
                 }
             }
@@ -93,70 +88,67 @@ namespace Chess.Model.Pieces
             {
                 if (IsWhite)
                 {
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveTwoBackwardsOneRight();
-                        MoveTwoRightOneBackwards();
-                    }
-                    else if (fileIndex == 1)
-                    {
-                        MoveTwoBackwardsOneRight();
-                        MoveTwoRightOneBackwards();
-                        MoveTwoBackwardsOneLeft();
-                    }
-                    else if (fileIndex == 6)
-                    {
-                        MoveTwoBackwardsOneLeft();
-                        MoveTwoLeftOneBackwards();
-                        MoveTwoBackwardsOneRight();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveTwoBackwardsOneLeft();
-                        MoveTwoLeftOneBackwards();
-                    }
-                    else
-                    {
-                        MoveTwoBackwardsOneRight();
-                        MoveTwoBackwardsOneLeft();
-                        MoveTwoRightOneBackwards();
-                        MoveTwoLeftOneBackwards();
+                        case 0:
+                            MoveTwoBackwardsOneRight();
+                            MoveTwoRightOneBackwards();
+                            break;
+                        case 1:
+                            MoveTwoBackwardsOneRight();
+                            MoveTwoRightOneBackwards();
+                            MoveTwoBackwardsOneLeft();
+                            break;
+                        case 6:
+                            MoveTwoBackwardsOneLeft();
+                            MoveTwoLeftOneBackwards();
+                            MoveTwoBackwardsOneRight();
+                            break;
+                        case 7:
+                            MoveTwoBackwardsOneLeft();
+                            MoveTwoLeftOneBackwards();
+                            break;
+                        default:
+                            MoveTwoBackwardsOneRight();
+                            MoveTwoBackwardsOneLeft();
+                            MoveTwoRightOneBackwards();
+                            MoveTwoLeftOneBackwards();
+                            break;
                     }
                 }
                 else
                 {
-                    if (fileIndex == 0)
+                    switch (fileIndex)
                     {
-                        MoveTwoForwardOneLeft();
-                        MoveTwoLeftOneForward();
-                    }
-                    else if (fileIndex == 1)
-                    {
-                        MoveTwoForwardOneLeft();
-                        MoveTwoLeftOneForward();
-                        MoveTwoForwardOneRight();
-                    }
-                    else if (fileIndex == 6)
-                    {
-                        MoveTwoForwardOneRight();
-                        MoveTwoRightOneForward();
-                        MoveTwoForwardOneLeft();
-                    }
-                    else if (fileIndex == 7)
-                    {
-                        MoveTwoForwardOneRight();
-                        MoveTwoRightOneForward();
-                    }
-                    else
-                    {
-                        MoveTwoForwardOneRight();
-                        MoveTwoForwardOneLeft();
-                        MoveTwoRightOneForward();
-                        MoveTwoLeftOneForward();
+                        case 0:
+                            MoveTwoForwardOneLeft();
+                            MoveTwoLeftOneForward();
+                            break;
+                        case 1:
+                            MoveTwoForwardOneLeft();
+                            MoveTwoLeftOneForward();
+                            MoveTwoForwardOneRight();
+                            break;
+                        case 6:
+                            MoveTwoForwardOneRight();
+                            MoveTwoRightOneForward();
+                            MoveTwoForwardOneLeft();
+                            break;
+                        case 7:
+                            MoveTwoForwardOneRight();
+                            MoveTwoRightOneForward();
+                            break;
+                        default:
+                            MoveTwoForwardOneRight();
+                            MoveTwoForwardOneLeft();
+                            MoveTwoRightOneForward();
+                            MoveTwoLeftOneForward();
+                            break;
                     }
                 }
             }
             return positions;
+
             void MoveTwoForwardOneRight() => MoveKnight(1, 2, fileIndex, rankIndex, board, positions);
             void MoveTwoForwardOneLeft() => MoveKnight(-1, 2, fileIndex, rankIndex, board, positions);
             void MoveTwoBackwardsOneRight() => MoveKnight(1, -2, fileIndex, rankIndex, board, positions);
@@ -167,11 +159,14 @@ namespace Chess.Model.Pieces
             void MoveTwoLeftOneBackwards() => MoveKnight(-2, -1, fileIndex, rankIndex, board, positions);
         }
 
-        void MoveKnight(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
+        private void MoveKnight(int x_white, int y_white, int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
             int x = IsWhite ? x_white : -x_white;
             int y = IsWhite ? y_white : -y_white;
             Field newField = board[fileIndex + x][rankIndex + y];
+
+            ControlledSquares.Add(newField.Name);
+
             if (newField.Content == null)
             {
                 positions.Add(newField.Name);
@@ -195,6 +190,7 @@ namespace Chess.Model.Pieces
                         {
                             GameState.WhiteKingIsInCheck = true;
                         }
+                        GameState.CurrentPlayerPiecesAttackingTheKing.Add(this);
                     }
                 }
             }

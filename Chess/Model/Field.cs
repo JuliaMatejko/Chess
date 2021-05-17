@@ -4,15 +4,16 @@ namespace Chess.Model
 {
     class Field
     {
-        public string File { get; set; }
-        public string Rank { get; set; }
-        public string Name => $"{File}{Rank}";
+        public string File { get; }
+        public string Rank { get; }
+        public string Name { get; }
         public Piece Content { get; set; }
 
         public Field(string file, string rank, Piece content)
         {
             File = file;
             Rank = rank;
+            Name = File + Rank;
             Content = content;
         }
     }

@@ -7,19 +7,19 @@
         public string NewPosition { get; set; }
         public string PromotionTo { get; set; }
 
-        public Move(string piecename, string currentposition, string newposition)
+        public Move(string pieceName, string currentPosition, string newPosition)
         {
-            PieceName = piecename;
-            CurrentPosition = currentposition;
-            NewPosition= newposition;
+            PieceName = pieceName;
+            CurrentPosition = currentPosition;
+            NewPosition= newPosition;
         }
 
-        public Move(string piecename, string currentposition, string newposition, string promotionto)
+        public Move(string pieceName, string currentPosition, string newPosition, string promotionTo)
         {
-            PieceName = piecename;
-            CurrentPosition = currentposition;
-            NewPosition = newposition;
-            PromotionTo = promotionto;
+            PieceName = pieceName;
+            CurrentPosition = currentPosition;
+            NewPosition = newPosition;
+            PromotionTo = promotionTo;
         }
     }
 }

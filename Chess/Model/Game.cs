@@ -9,8 +9,8 @@ namespace Chess.Model
 {
     class Game
     {
-        public static Board board = new Board();
-        public static Dictionary<string, Field> Fields => SetFieldDictionary(board);
+        public static Board Board { get; } = Board.CreateABoard();
+        public static Dictionary<string, Field> Fields { get; set; } = CreateFields(Board);
 
         public static void StartGame()
         {
@@ -22,10 +22,9 @@ namespace Chess.Model
             Console.WriteLine(" 3. To castle, just move your king two squares and rook will go on the right place");
             Console.WriteLine(" 4. To resign, type 'resign'");
             Console.WriteLine(" 5. To propose a draw, type 'draw'");
-            Board.CreateABoard(board);
             SetStartingBoard();
             BoardController.RefreshAttackedSquares();
-            BoardView.PrintBoard(board);
+            BoardView.PrintBoard(Board);
 
             while (!IsAWin && !IsADraw)
             {
@@ -34,49 +33,65 @@ namespace Chess.Model
                 if (PlayersAgreedToADraw)
                 {
                     Console.WriteLine(" Players agreed to a draw.");
-                    Console.WriteLine(" It's a draw!"); // end of the program
+                    Console.WriteLine(" It's a draw!");
                 }
                 else if (PlayerResigned)
                 {
                     Console.Write($" {CurrentPlayer} resigned.");
                     ChangeTurns();
-                    Console.WriteLine($" {CurrentPlayer} won the game!"); // end of the program
+                    Console.WriteLine($" {CurrentPlayer} won the game!");
+                }
+                else if (IsACheckmate)
+                {
+                    BoardView.PrintBoard(Board);
+                    Console.WriteLine(" Checkmate.");
+                    Console.WriteLine($" {CurrentPlayer} won the game!");
                 }
                 else if (IsAStalemate)
                 {
+                    BoardView.PrintBoard(Board);
                     Console.WriteLine(" Stalemate.");
-                    Console.WriteLine(" It's a draw!"); // end of the program
+                    Console.WriteLine(" It's a draw!");
                 }
                 else
                 {
-                    BoardView.PrintBoard(board);
-                    if (!IsAWin && !IsADraw)
-                    {
-                        ResetEnPassantFlag();
-                        ChangeTurns();
-                    }
-                    else
-                    {
-                        if (IsAWin)
-                        {
-                            Console.WriteLine($" {CurrentPlayer} won the game!"); // end of the program
-                        }
-                        else if (IsADraw)
-                        {
-                            Console.WriteLine(" It's a draw!"); // end of the program
-                        }
-                    }
-                } 
+                    BoardView.PrintBoard(Board);
+                    ResetEnPassantFlag();
+                    ResetCurrentPiecesAttackingTheKing();
+                    ChangeTurns();
+                }
             }
         }
 
-        public static void SetStartingBoard() // set pieces at starting position on the board
+        public static Dictionary<string, Field> CreateFields(Board board)
         {
-            for (int i = 0; i < Board.boardSize; i++)
+            Dictionary<string, Field> fields = new Dictionary<string, Field>();
+            int i = 0;
+            int j = 0;
+            foreach (string position in Board.Positions)
+            {
+                if (j < Board.BoardSize)
+                {
+                    fields[position] = board[i][j];
+                }
+                else
+                {
+                    j = 0;
+                    i++;
+                    fields[position] = board[i][j];
+                }
+                j++;
+            }
+            return fields;
+        }
+
+        public static void SetStartingBoard() // set pieces on the starting position on the board
+        {
+            for (var i = 0; i < Board.BoardSize; i++)
             {
                 Fields[Board.Files[i] + "2"].Content = new Pawn(true, Board.Files[i] + "2");  // set white pawns
             }
-            for (int i = 0; i < Board.boardSize; i++)
+            for (var i = 0; i < Board.BoardSize; i++)
             {
                 Fields[Board.Files[i] + "7"].Content = new Pawn(false, Board.Files[i] + "7");  // set black pawns 
             }
@@ -93,24 +108,11 @@ namespace Chess.Model
             Fields["c8"].Content = new Bishop(false, "c8");     // set black bishops
             Fields["f8"].Content = new Bishop(false, "f8");
             Fields["d1"].Content = new Queen(true, "d1");       // set white queen
-            Fields["d8"].Content = new Queen(false, "d8");      // set black queen
+            Fields["d8"].Content = new Queen(false, "d8");      // set black queen*/
             Fields["e1"].Content = new King(true, "e1");        // set white king
+            WhiteKing = (King)Fields["e1"].Content;
             Fields["e8"].Content = new King(false, "e8");       // set black king
-        }
-
-        static Dictionary<string, Field> SetFieldDictionary(Board board)
-        {
-            Dictionary<string, Field> dictionary = new Dictionary<string, Field>();
-            int count = 0;
-            for (int i = 0; i < Board.boardSize; i++)
-            {
-                for (int j = 0; j < Board.boardSize; j++)
-                {
-                    dictionary.Add(Board.Positions[count], board[i][j]);
-                    count++;
-                }
-            }
-            return dictionary;
-        }
+            BlackKing = (King)Fields["e8"].Content;
+        }  
     }
 }

@@ -48,7 +48,7 @@ namespace Chess.Controller
             }
         }
 
-        static bool OponentAcceptsADraw()
+        private static bool OponentAcceptsADraw()
         {
             Console.Write($" {GameState.CurrentPlayer} offers a draw. Accept a draw? [yes|no]: ");
             string acceptADraw = Console.ReadLine();
@@ -59,8 +59,8 @@ namespace Chess.Controller
             }
             return acceptADraw == "yes"; 
         }
-        
-        static void GetInputAndValidateIt(ref string chosenMove, ref Move move)
+
+        private static void GetInputAndValidateIt(ref string chosenMove, ref Move move)
         {
             Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
             chosenMove = Console.ReadLine();
@@ -71,7 +71,7 @@ namespace Chess.Controller
             }
         }
 
-        static void FindPieceAndValidateMove(ref string chosenMove, ref Move move, ref Piece piece)
+        private static void FindPieceAndValidateMove(ref string chosenMove, ref Move move, ref Piece piece)
         {
             piece = FindPiece(move.PieceName, move.CurrentPosition);
             while (!MoveValidator.MoveIsPossible(piece, move))
@@ -83,9 +83,9 @@ namespace Chess.Controller
             }
         }
 
-        static void ClonePieceAndNewPositionPiece(string newposition, Piece piece, ref Piece clonedPiece, ref Piece clonedNewPositionContent)
+        private static void ClonePieceAndNewPositionPiece(string newPosition, Piece piece, ref Piece clonedPiece, ref Piece clonedNewPositionContent)
         {
-            clonedNewPositionContent = Game.Fields[newposition].Content;
+            clonedNewPositionContent = Game.Fields[newPosition].Content;
             if (clonedNewPositionContent != null)
             {
                 clonedNewPositionContent = (Piece)clonedNewPositionContent.Clone();
@@ -97,15 +97,15 @@ namespace Chess.Controller
             clonedPiece = (Piece)piece.Clone();
         }
 
-        static void ChangeBoard(Move move, Piece piece)
+        private static void ChangeBoard(Move move, Piece piece)
         {
             if (piece.GetType() == typeof(Pawn))
             {
                 Pawn pawn = (Pawn)piece;
-                if (pawn.IsFirstMove && Math.Abs(Convert.ToInt32(move.NewPosition[1]) - Convert.ToInt32(move.CurrentPosition[1])) == 2) // move two squares
+                if (pawn.IsFirstMove && Math.Abs(Convert.ToInt32(move.NewPosition[1]) - Convert.ToInt32(move.CurrentPosition[1])) == 2)   // pawn moved two squares
                 {
-                    pawn.IsFirstMove = false; // pawn cannot move two squares anymore
-                    pawn.CanBeTakenByEnPassantMove = true; // pawn might be taken en passant in a next move if other necessary conditions will occur
+                    pawn.IsFirstMove = false;   // pawn cannot move two squares anymore
+                    pawn.CanBeTakenByEnPassantMove = true;   // pawn might be taken en passant in a next move if other necessary conditions will occur
                     if (pawn.IsWhite)
                     {
                         GameState.WhitePawnThatCanBeTakenByEnPassantMove = pawn;
@@ -119,14 +119,14 @@ namespace Chess.Controller
                 {
                     pawn.IsFirstMove = false;
                 }
-                else if ((pawn.IsWhite && pawn.Position[1] == '7') || (!pawn.IsWhite && pawn.Position[1] == '2')) // promote pawn
+                else if ((pawn.IsWhite && pawn.Position[1] == '7') || (!pawn.IsWhite && pawn.Position[1] == '2'))   // promote pawn
                 {
                     PawnPromotion(move, pawn.IsWhite);
                 }
                 else if ((pawn.IsWhite && pawn.Position[1] == '5' && move.NewPosition[0] != pawn.Position[0])
-                         || (!pawn.IsWhite && pawn.Position[1] == '4' && move.NewPosition[0] != pawn.Position[0])) // en passant capture
+                         || (!pawn.IsWhite && pawn.Position[1] == '4' && move.NewPosition[0] != pawn.Position[0]))   // en passant capture
                 {
-                    Game.Fields[move.NewPosition.Substring(0, 1) + move.CurrentPosition.Substring(1, 1)].Content = null;
+                    Game.Fields[move.NewPosition[0].ToString() + move.CurrentPosition[1].ToString()].Content = null;
                 }
             }
             else if (piece.GetType() == typeof(King))
@@ -134,26 +134,26 @@ namespace Chess.Controller
                 King king = (King)piece;
                 if (king.IsFirstMove)
                 {
-                    king.IsFirstMove = false; // king cannot castle anymore
+                    king.IsFirstMove = false;   // king cannot castle anymore
                 }
-                int squaresMoved = Array.IndexOf(Board.Files, move.NewPosition.Substring(0, 1))
-                                   - Array.IndexOf(Board.Files, move.CurrentPosition.Substring(0, 1));
-                if (Math.Abs(squaresMoved) == 2) // king castled
+                int squaresMoved = Array.IndexOf(Board.Files, move.NewPosition[0].ToString())
+                                   - Array.IndexOf(Board.Files, move.CurrentPosition[0].ToString());
+                if (Math.Abs(squaresMoved) == 2)   // king castled
                 {
                     string oldPosition;
                     string newPosition;
                     Rook rook;
-                    if (squaresMoved == 2) // castled king side
+                    if (squaresMoved == 2)   // king castled king side
                     {
-                        oldPosition = "h" + move.NewPosition.Substring(1, 1);
-                        newPosition = "f" + move.NewPosition.Substring(1, 1);
+                        oldPosition = "h" + move.NewPosition[1].ToString();
+                        newPosition = "f" + move.NewPosition[1].ToString();
                     }
-                    else // squaresMoved == -2, castled queen side
+                    else   // squaresMoved == -2, king castled queen side
                     {
-                        oldPosition = "a" + move.NewPosition.Substring(1, 1);
-                        newPosition = "d" + move.NewPosition.Substring(1, 1);
+                        oldPosition = "a" + move.NewPosition[1].ToString();
+                        newPosition = "d" + move.NewPosition[1].ToString();
                     }
-                    rook = (Rook)Game.Fields[oldPosition].Content; // move a rook
+                    rook = (Rook)Game.Fields[oldPosition].Content;   // move a rook
                     rook.Position = newPosition;
                     Game.Fields[newPosition].Content = rook;
                     Game.Fields[oldPosition].Content = null;
@@ -164,60 +164,65 @@ namespace Chess.Controller
                 Rook rook = (Rook)piece;
                 if (rook.IsFirstMove)
                 {
-                    rook.IsFirstMove = false; // rook cannot castle anymore
+                    rook.IsFirstMove = false;   // rook cannot castle anymore
                 }
             }
             piece.Position = move.NewPosition;
-            Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content; // move piece on a new position
+            Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;   // move piece on a new position
             Game.Fields[move.CurrentPosition].Content = null;
         }
 
-        public static void RefreshAttackedSquares()// to do przenies
+        public static void RefreshAttackedSquares()
         {
-            for (int i = 0; i < Board.boardSize; i++)
+            for (var i = 0; i < Board.BoardSize; i++)
             {
-                for (int j = 0; j < Board.boardSize; j++)
+                for (var j = 0; j < Board.BoardSize; j++)
                 {
-                    Piece piece = Game.board[i][j].Content;
-                    if (piece != null)
+                    Piece piece = Game.Board[i][j].Content;
+                    if (piece != null && piece.GetType() != typeof(King))
                     {
-                        piece.NextAvailablePositions = piece.ReturnAvailablePieceMoves(piece.Position, Game.board);
+                        piece.ControlledSquares.Clear();
+                        piece.NextAvailablePositions = piece.ReturnAvailablePieceMoves(piece.Position, Game.Board);
                     }
                 }
             }
+            GameState.WhiteKing.ControlledSquares.Clear();
+            GameState.WhiteKing.NextAvailablePositions = GameState.WhiteKing.ReturnAvailablePieceMoves(GameState.WhiteKing.Position, Game.Board);
+            GameState.BlackKing.ControlledSquares.Clear();
+            GameState.BlackKing.NextAvailablePositions = GameState.BlackKing.ReturnAvailablePieceMoves(GameState.BlackKing.Position, Game.Board);
         }
 
-        static void UndoBoardChanges(Move move, Piece pieceCloned, Piece newPositionContentCloned)
+        private static void UndoBoardChanges(Move move, Piece pieceCloned, Piece newPositionContentCloned)
         {
-            Game.Fields[move.CurrentPosition].Content = pieceCloned; // move piece on a previous position
-            Game.Fields[move.NewPosition].Content = newPositionContentCloned; // restore a previous NewPosition content
+            Game.Fields[move.CurrentPosition].Content = pieceCloned;   // move piece on a previous position
+            Game.Fields[move.NewPosition].Content = newPositionContentCloned;   // restore a previous NewPosition content
         }
 
-        static void PawnPromotion(Move move, bool iswhite)
+        private static void PawnPromotion(Move move, bool isWhite)
         {
             switch (move.PromotionTo)
             {
                 case "Q":
-                    Game.Fields[move.NewPosition].Content = new Queen(iswhite, move.NewPosition);
+                    Game.Fields[move.NewPosition].Content = new Queen(isWhite, move.NewPosition);
                     break;
                 case "N":
-                    Game.Fields[move.NewPosition].Content = new Knight(iswhite, move.NewPosition);
+                    Game.Fields[move.NewPosition].Content = new Knight(isWhite, move.NewPosition);
                     break;
                 case "R":
-                    Game.Fields[move.NewPosition].Content = new Rook(iswhite, move.NewPosition, false);
+                    Game.Fields[move.NewPosition].Content = new Rook(isWhite, move.NewPosition, false);
                     break;
                 case "B":
-                    Game.Fields[move.NewPosition].Content = new Bishop(iswhite, move.NewPosition);
+                    Game.Fields[move.NewPosition].Content = new Bishop(isWhite, move.NewPosition);
                     break;
             }
             Game.Fields[move.CurrentPosition].Content = null;
         }
 
-        static bool UserInputIsValid(string chosenmove, ref Move move)
+        private static bool UserInputIsValid(string chosenMove, ref Move move)
         {
-            if (chosenmove.Length == 8 && chosenmove[2] == ' ' && chosenmove[5] == ' ')
+            if (chosenMove.Length == 8 && chosenMove[2] == ' ' && chosenMove[5] == ' ')
             {
-                move = StringToMove(chosenmove);
+                move = StringToMove(chosenMove);
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)
                     && Board.Positions.Contains(move.NewPosition)
@@ -227,9 +232,9 @@ namespace Chess.Controller
                     return true;
                 }
             }
-            else if (chosenmove.Length == 10 && chosenmove[2] == ' ' && chosenmove[5] == ' ' && chosenmove[8] == ' ')
+            else if (chosenMove.Length == 10 && chosenMove[2] == ' ' && chosenMove[5] == ' ' && chosenMove[8] == ' ')
             {
-                move = StringToMove(chosenmove);
+                move = StringToMove(chosenMove);
                 string[] piecesToPromote = { "Q", "N", "R", "B" };
                 if (Piece.PieceNames.Contains(move.PieceName)
                     && Board.Positions.Contains(move.CurrentPosition)
@@ -239,12 +244,12 @@ namespace Chess.Controller
                     return true;
                 }
             }
-            else if (chosenmove == "resign")
+            else if (chosenMove == "resign")
             {
                 GameState.PlayerResigned = true;
                 return true;
             }
-            else if (chosenmove == "draw")
+            else if (chosenMove == "draw")
             {
                 GameState.PlayerOfferedADraw = true;
                 return true;
@@ -252,7 +257,7 @@ namespace Chess.Controller
             return false;
         }
 
-        static Move StringToMove(string str)
+        private static Move StringToMove(string str)
         {
             string[] substrings = str.Split(" ");
             if (str.Length == 8)
@@ -265,15 +270,15 @@ namespace Chess.Controller
             }
         }
 
-        static Piece FindPiece(string piecename, string currentposition)
+        private static Piece FindPiece(string pieceName, string currentPosition)
         {
-            Piece piece = Game.Fields[currentposition].Content;
+            Piece piece = Game.Fields[currentPosition].Content;
             
             if (piece == null)
             {
                 return null;
             }
-            else if (piece.Name == piecename)
+            else if (piece.Name == pieceName)
             {
                 return piece;
             }

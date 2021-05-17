@@ -13,13 +13,13 @@ namespace Chess
             }
             return false;
         }
-        
-        static bool MoveIsCorrectPieceMove(Piece piece, Move move)
+
+        private static bool MoveIsCorrectPieceMove(Piece piece, Move move)
         {
             return piece.NextAvailablePositions.Contains(move.NewPosition);
         }
-        
-        static bool ChosenPieceIsCurrentPlayersPiece(Piece piece)
+
+        private static bool ChosenPieceIsCurrentPlayersPiece(Piece piece)
         {
             return (piece.IsWhite && GameState.CurrentPlayer == GameState.Sides.White)
                     || (!piece.IsWhite && GameState.CurrentPlayer == GameState.Sides.Black);

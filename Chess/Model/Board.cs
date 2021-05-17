@@ -2,52 +2,42 @@
 
 namespace Chess.Model
 {
-    class Board : List<List<Field>> 
+    class Board : List<List<Field>>
     {
-        /* board representation => two dimmentional array
-          
-                     {
-                       {a1, a2, ..., a7, a8},
-                       {b1, b2, ..., b7, b8},
-                       {c1, c2, ..., c7, c8},
-       white side      {d1, d2, ..., d7, d8},   black side
-                       {e1, e2, ..., e7, e8},
-                       {f1, f2, ..., f7, f8},
-                       {g1, g2, ..., g7, g8},
-                       {h1, h2, ..., h7, h8}
-                     }
-         */
-        public const int boardSize = 8;
-        static public string[] Files => new string[boardSize] { "a", "b", "c", "d", "e", "f", "g", "h" };
-        static public string[] Ranks => new string[boardSize] { "1", "2", "3", "4", "5", "6", "7", "8" };
-        static public string[] Positions => CreatePositionNames();
+        public const int BoardSize = 8;
+        public static string[] Files { get; } = new string[BoardSize] { "a", "b", "c", "d", "e", "f", "g", "h" };
+        public static string[] Ranks { get; } = new string[BoardSize] { "1", "2", "3", "4", "5", "6", "7", "8" };
+        public static string[] Positions { get; } = CreatePositionNames();
 
-        static public void CreateABoard(Board board)
+        public static Board CreateABoard()
         {
-            for (int i = 0; i < boardSize; i++)
-            {
-                board.Add(new List<Field>());   // creates column A, B, C,..., H
+            Board board = new Board();
 
-                for (int j = 0; j < boardSize; j++)
+            for (var i = 0; i < BoardSize; i++)
+            {
+                board.Add(new List<Field>());
+
+                for (var j = 0; j < BoardSize; j++)
                 {
-                    board[i].Add(new Field(Files[i], Ranks[j], null));   // creates fields in the column, ex. a1, a2,..., a8
+                    board[i].Add(new Field(Files[i], Ranks[j], null));
                 }
-            } 
+            }
+            return board;
         }
 
-        static string[] CreatePositionNames()
+        private static string[] CreatePositionNames()
         {
-            string[] fieldnames = new string[boardSize * boardSize];
+            string[] fieldNames = new string[BoardSize * BoardSize];
             int count = 0;
-            for (int i = 0; i < boardSize; i++)
+            for (var i = 0; i < BoardSize; i++)
             {
-                for (int j = 0; j < boardSize; j++)
+                for (var j = 0; j < BoardSize; j++)
                 {
-                    fieldnames[count] = Files[i] + Ranks[j];
+                    fieldNames[count] = Files[i] + Ranks[j];
                     count++;
                 }
             }
-            return fieldnames;
+            return fieldNames;
         }
     }
 }
