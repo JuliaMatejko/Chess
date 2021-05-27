@@ -1,6 +1,7 @@
 ﻿using Chess.Model;
 using Chess.Model.Pieces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Chess.Controller
@@ -16,32 +17,32 @@ namespace Chess.Controller
             Piece newPositionContentCloned = null;
 
             GetInputAndValidateIt(ref chosenMove, ref move);
-            if (!GameState.PlayerResigned && !GameState.PlayerOfferedADraw)
+            if (!Program.Game.PlayerResigned && !Program.Game.PlayerOfferedADraw)
             {
                 FindPieceAndValidateMove(ref chosenMove, ref move, ref piece);
-                ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned);
+                ClonePieceAndNewPositionPiece(move.NewPosition, piece, ref pieceCloned, ref newPositionContentCloned, Program.Game.Fields);
                 ChangeBoard(move, piece);
-                GameState.ResetKingCheckFlag();
+                Program.Game.ResetKingCheckFlag();
                 RefreshAttackedSquares();
 
-                while (GameState.CurrentPlayerKingIsInCheck)
+                while (Program.Game.CurrentPlayerKingIsInCheck)
                 {
                     UndoBoardChanges(move, pieceCloned, newPositionContentCloned);
-                    GameState.ResetKingCheckFlag();
+                    Program.Game.ResetKingCheckFlag();
                     RefreshAttackedSquares();
                     Console.WriteLine($" It's not a valid move. Your king would be in check. Choose a differnt piece or/and field.");
                     MakeAMove();
                 }
             }
-            else if (GameState.PlayerOfferedADraw)
+            else if (Program.Game.PlayerOfferedADraw)
             {
                 if (OponentAcceptsADraw())
                 {
-                    GameState.PlayersAgreedToADraw = true;
+                    Program.Game.PlayersAgreedToADraw = true;
                 }
                 else
                 {
-                    GameState.PlayerOfferedADraw = false;
+                    Program.Game.PlayerOfferedADraw = false;
                     Console.WriteLine(" Draw denied. Make a move or resign");
                     MakeAMove();
                 }
@@ -50,7 +51,7 @@ namespace Chess.Controller
 
         private static bool OponentAcceptsADraw()
         {
-            Console.Write($" {GameState.CurrentPlayer} offers a draw. Accept a draw? [yes|no]: ");
+            Console.Write($" {Program.Game.CurrentPlayer} offers a draw. Accept a draw? [yes|no]: ");
             string acceptADraw = Console.ReadLine();
             while (!(acceptADraw == "yes" || acceptADraw == "no"))
             {
@@ -62,7 +63,7 @@ namespace Chess.Controller
 
         private static void GetInputAndValidateIt(ref string chosenMove, ref Move move)
         {
-            Console.Write($" {GameState.CurrentPlayer} turn, make a move: ");
+            Console.Write($" {Program.Game.CurrentPlayer} turn, make a move: ");
             chosenMove = Console.ReadLine();
             while (!UserInputIsValid(chosenMove, ref move))
             {
@@ -74,18 +75,39 @@ namespace Chess.Controller
         private static void FindPieceAndValidateMove(ref string chosenMove, ref Move move, ref Piece piece)
         {
             piece = FindPiece(move.PieceName, move.CurrentPosition);
-            while (!MoveValidator.MoveIsPossible(piece, move))
+            while (!MoveIsPossible(piece, move))
             {
                 Console.Write($" It's not a valid move. Choose a differnt piece or/and field: ");
                 chosenMove = Console.ReadLine();
                 move = StringToMove(chosenMove);
                 piece = FindPiece(move.PieceName, move.CurrentPosition);
             }
+
+            static bool MoveIsPossible(Piece piece, Move move)
+            {
+                if (piece != null && ChosenPieceIsCurrentPlayersPiece(piece))
+                {
+                    return MoveIsCorrectPieceMove(piece, move);
+                }
+                return false;
+
+
+                static bool MoveIsCorrectPieceMove(Piece piece, Move move)
+                {
+                    return piece.NextAvailablePositions.Contains(move.NewPosition);
+                }
+
+                static bool ChosenPieceIsCurrentPlayersPiece(Piece piece)
+                {
+                    return (piece.IsWhite && Program.Game.CurrentPlayer == Game.Sides.White)
+                            || (!piece.IsWhite && Program.Game.CurrentPlayer == Game.Sides.Black);
+                }
+            }
         }
 
-        private static void ClonePieceAndNewPositionPiece(string newPosition, Piece piece, ref Piece clonedPiece, ref Piece clonedNewPositionContent)
+        private static void ClonePieceAndNewPositionPiece(string newPosition, Piece piece, ref Piece clonedPiece, ref Piece clonedNewPositionContent, Dictionary<string, Field> fields)
         {
-            clonedNewPositionContent = Game.Fields[newPosition].Content;
+            clonedNewPositionContent = fields[newPosition].Content;
             if (clonedNewPositionContent != null)
             {
                 clonedNewPositionContent = (Piece)clonedNewPositionContent.Clone();
@@ -108,11 +130,11 @@ namespace Chess.Controller
                     pawn.CanBeTakenByEnPassantMove = true;   // pawn might be taken en passant in a next move if other necessary conditions will occur
                     if (pawn.IsWhite)
                     {
-                        GameState.WhitePawnThatCanBeTakenByEnPassantMove = pawn;
+                        Program.Game.WhitePawnThatCanBeTakenByEnPassantMove = pawn;
                     }
                     else
                     {
-                        GameState.BlackPawnThatCanBeTakenByEnPassantMove = pawn;
+                        Program.Game.BlackPawnThatCanBeTakenByEnPassantMove = pawn;
                     }
                 }
                 else if (pawn.IsFirstMove)
@@ -126,7 +148,7 @@ namespace Chess.Controller
                 else if ((pawn.IsWhite && pawn.Position[1] == '5' && move.NewPosition[0] != pawn.Position[0])
                          || (!pawn.IsWhite && pawn.Position[1] == '4' && move.NewPosition[0] != pawn.Position[0]))   // en passant capture
                 {
-                    Game.Fields[move.NewPosition[0].ToString() + move.CurrentPosition[1].ToString()].Content = null;
+                    Program.Game.Fields[move.NewPosition[0].ToString() + move.CurrentPosition[1].ToString()].Content = null;
                 }
             }
             else if (piece.GetType() == typeof(King))
@@ -153,10 +175,10 @@ namespace Chess.Controller
                         oldPosition = "a" + move.NewPosition[1].ToString();
                         newPosition = "d" + move.NewPosition[1].ToString();
                     }
-                    rook = (Rook)Game.Fields[oldPosition].Content;   // move a rook
+                    rook = (Rook)Program.Game.Fields[oldPosition].Content;   // move a rook
                     rook.Position = newPosition;
-                    Game.Fields[newPosition].Content = rook;
-                    Game.Fields[oldPosition].Content = null;
+                    Program.Game.Fields[newPosition].Content = rook;
+                    Program.Game.Fields[oldPosition].Content = null;
                 }
             }
             else if (piece.GetType() == typeof(Rook))
@@ -168,8 +190,8 @@ namespace Chess.Controller
                 }
             }
             piece.Position = move.NewPosition;
-            Game.Fields[move.NewPosition].Content = Game.Fields[move.CurrentPosition].Content;   // move piece on a new position
-            Game.Fields[move.CurrentPosition].Content = null;
+            Program.Game.Fields[move.NewPosition].Content = Program.Game.Fields[move.CurrentPosition].Content;   // move piece on a new position
+            Program.Game.Fields[move.CurrentPosition].Content = null;
         }
 
         public static void RefreshAttackedSquares()
@@ -178,24 +200,24 @@ namespace Chess.Controller
             {
                 for (var j = 0; j < Board.BoardSize; j++)
                 {
-                    Piece piece = Game.Board[i][j].Content;
+                    Piece piece = Program.Game.Board[i][j].Content;
                     if (piece != null && piece.GetType() != typeof(King))
                     {
                         piece.ControlledSquares.Clear();
-                        piece.NextAvailablePositions = piece.ReturnAvailablePieceMoves(piece.Position, Game.Board);
+                        piece.NextAvailablePositions = piece.ReturnAvailablePieceMoves(piece.Position, Program.Game.Board);
                     }
                 }
             }
-            GameState.WhiteKing.ControlledSquares.Clear();
-            GameState.WhiteKing.NextAvailablePositions = GameState.WhiteKing.ReturnAvailablePieceMoves(GameState.WhiteKing.Position, Game.Board);
-            GameState.BlackKing.ControlledSquares.Clear();
-            GameState.BlackKing.NextAvailablePositions = GameState.BlackKing.ReturnAvailablePieceMoves(GameState.BlackKing.Position, Game.Board);
+            Program.Game.WhiteKing.ControlledSquares.Clear();
+            Program.Game.WhiteKing.NextAvailablePositions = Program.Game.WhiteKing.ReturnAvailablePieceMoves(Program.Game.WhiteKing.Position, Program.Game.Board);
+            Program.Game.BlackKing.ControlledSquares.Clear();
+            Program.Game.BlackKing.NextAvailablePositions = Program.Game.BlackKing.ReturnAvailablePieceMoves(Program.Game.BlackKing.Position, Program.Game.Board);
         }
 
         private static void UndoBoardChanges(Move move, Piece pieceCloned, Piece newPositionContentCloned)
         {
-            Game.Fields[move.CurrentPosition].Content = pieceCloned;   // move piece on a previous position
-            Game.Fields[move.NewPosition].Content = newPositionContentCloned;   // restore a previous NewPosition content
+            Program.Game.Fields[move.CurrentPosition].Content = pieceCloned;   // move piece on a previous position
+            Program.Game.Fields[move.NewPosition].Content = newPositionContentCloned;   // restore a previous NewPosition content
         }
 
         private static void PawnPromotion(Move move, bool isWhite)
@@ -203,19 +225,19 @@ namespace Chess.Controller
             switch (move.PromotionTo)
             {
                 case "Q":
-                    Game.Fields[move.NewPosition].Content = new Queen(isWhite, move.NewPosition);
+                    Program.Game.Fields[move.NewPosition].Content = new Queen(isWhite, move.NewPosition);
                     break;
                 case "N":
-                    Game.Fields[move.NewPosition].Content = new Knight(isWhite, move.NewPosition);
+                    Program.Game.Fields[move.NewPosition].Content = new Knight(isWhite, move.NewPosition);
                     break;
                 case "R":
-                    Game.Fields[move.NewPosition].Content = new Rook(isWhite, move.NewPosition, false);
+                    Program.Game.Fields[move.NewPosition].Content = new Rook(isWhite, move.NewPosition, false);
                     break;
                 case "B":
-                    Game.Fields[move.NewPosition].Content = new Bishop(isWhite, move.NewPosition);
+                    Program.Game.Fields[move.NewPosition].Content = new Bishop(isWhite, move.NewPosition);
                     break;
             }
-            Game.Fields[move.CurrentPosition].Content = null;
+            Program.Game.Fields[move.CurrentPosition].Content = null;
         }
 
         private static bool UserInputIsValid(string chosenMove, ref Move move)
@@ -246,12 +268,12 @@ namespace Chess.Controller
             }
             else if (chosenMove == "resign")
             {
-                GameState.PlayerResigned = true;
+                Program.Game.PlayerResigned = true;
                 return true;
             }
             else if (chosenMove == "draw")
             {
-                GameState.PlayerOfferedADraw = true;
+                Program.Game.PlayerOfferedADraw = true;
                 return true;
             }
             return false;
@@ -272,7 +294,7 @@ namespace Chess.Controller
 
         private static Piece FindPiece(string pieceName, string currentPosition)
         {
-            Piece piece = Game.Fields[currentPosition].Content;
+            Piece piece = Program.Game.Fields[currentPosition].Content;
             
             if (piece == null)
             {

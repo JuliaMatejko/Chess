@@ -2,6 +2,7 @@ using Xunit;
 using Chess.Model.Pieces;
 using Chess.Model;
 using System.Collections.Generic;
+using Chess;
 
 namespace ChessTests.PiecesTests
 {
@@ -228,7 +229,7 @@ namespace ChessTests.PiecesTests
 
             bishop.ReturnAvailablePieceMoves(bishop.Position, board);
 
-            Assert.True(GameState.BlackKingIsInCheck);
+            Assert.True(Program.Game.BlackKingIsInCheck);
         }
 
         [Fact]
@@ -242,7 +243,7 @@ namespace ChessTests.PiecesTests
 
             bishop.ReturnAvailablePieceMoves(bishop.Position, board);
 
-            Assert.Contains(bishop, GameState.CurrentPlayerPiecesAttackingTheKing);
+            Assert.Contains(bishop, Program.Game.CurrentPlayerPiecesAttackingTheKing);
         }
     }
 }

@@ -144,13 +144,13 @@ namespace Chess.Model.Pieces
                     {
                         if (IsWhite)
                         {
-                            GameState.BlackKingIsInCheck = true;
+                            Program.Game.BlackKingIsInCheck = true;
                         }
                         else
                         {
-                            GameState.WhiteKingIsInCheck = true;
+                            Program.Game.WhiteKingIsInCheck = true;
                         }
-                        GameState.CurrentPlayerPiecesAttackingTheKing.Add(this);
+                        Program.Game.CurrentPlayerPiecesAttackingTheKing.Add(this);
 
                         kingInTheWay = true;
                         file += x;

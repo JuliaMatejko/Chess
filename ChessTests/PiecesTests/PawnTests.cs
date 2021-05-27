@@ -1,4 +1,5 @@
-﻿using Chess.Model;
+﻿using Chess;
+using Chess.Model;
 using Chess.Model.Pieces;
 using System.Collections.Generic;
 using Xunit;
@@ -28,8 +29,10 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "a3");
-            pawn.IsFirstMove = false;                               // It is not first move for this pawn, if it is on a3
+            var pawn = new Pawn(true, "a3")
+            {
+                IsFirstMove = false                               // It is not first move for this pawn, if it is on a3
+            };
             fields["a3"].Content = pawn;
             var expectedPositions = new HashSet<string> { "a4" };
 
@@ -45,8 +48,10 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "a3");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(true, "a3")
+            {
+                IsFirstMove = false
+            };
             fields["a3"].Content = pawn;
             fields["a4"].Content = new Bishop(true, "a4");                      // Players piece blocking pawn
             HashSet<string> expectedPositions = new HashSet<string> { };
@@ -76,8 +81,10 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "a3");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(true, "a3")
+            {
+                IsFirstMove = false
+            };
             fields["a3"].Content = pawn;
             var oponentsPiecePosition = "b4";
             fields[oponentsPiecePosition].Content = new Bishop(false, oponentsPiecePosition);                     
@@ -92,8 +99,10 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "h3");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(true, "h3")
+            {
+                IsFirstMove = false
+            };
             fields["h3"].Content = pawn;
             var oponentsPiecePosition = "g4";
             fields[oponentsPiecePosition].Content = new Bishop(false, oponentsPiecePosition);
@@ -108,8 +117,10 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "g3");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(true, "g3")
+            {
+                IsFirstMove = false
+            };
             fields["g3"].Content = pawn;
             fields["g4"].Content = new Pawn(false, "g4");
             fields["f4"].Content = new Bishop(false, "f4");
@@ -126,13 +137,17 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "a5");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(true, "a5")
+            {
+                IsFirstMove = false
+            };
             fields["a5"].Content = pawn;
             var oponentsPawnPosition = "b5";
-            var oponentsPawn = new Pawn(false, oponentsPawnPosition);
-            oponentsPawn.CanBeTakenByEnPassantMove = true;
-            GameState.BlackPawnThatCanBeTakenByEnPassantMove = oponentsPawn;
+            var oponentsPawn = new Pawn(false, oponentsPawnPosition)
+            {
+                CanBeTakenByEnPassantMove = true
+            };
+            Program.Game.BlackPawnThatCanBeTakenByEnPassantMove = oponentsPawn;
             fields[oponentsPawnPosition].Content = oponentsPawn;
             var pawnPositionAfterEnPassantMove = "b6";
 
@@ -146,13 +161,17 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(false, "h4");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(false, "h4")
+            {
+                IsFirstMove = false
+            };
             fields["h4"].Content = pawn;
             var oponentsPawnPosition = "g4";
-            var oponentsPawn = new Pawn(true, oponentsPawnPosition);
-            oponentsPawn.CanBeTakenByEnPassantMove = true;
-            GameState.WhitePawnThatCanBeTakenByEnPassantMove = oponentsPawn;
+            var oponentsPawn = new Pawn(true, oponentsPawnPosition)
+            {
+                CanBeTakenByEnPassantMove = true
+            };
+            Program.Game.WhitePawnThatCanBeTakenByEnPassantMove = oponentsPawn;
             fields[oponentsPawnPosition].Content = oponentsPawn;
             var pawnPositionAfterEnPassantMove = "g3";
 
@@ -166,13 +185,17 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "h5");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(true, "h5")
+            {
+                IsFirstMove = false
+            };
             fields["h5"].Content = pawn;
             var oponentsPawnPosition = "g5";
-            var oponentsPawn = new Pawn(false, oponentsPawnPosition);
-            oponentsPawn.CanBeTakenByEnPassantMove = true;
-            GameState.BlackPawnThatCanBeTakenByEnPassantMove = oponentsPawn;
+            var oponentsPawn = new Pawn(false, oponentsPawnPosition)
+            {
+                CanBeTakenByEnPassantMove = true
+            };
+            Program.Game.BlackPawnThatCanBeTakenByEnPassantMove = oponentsPawn;
             fields[oponentsPawnPosition].Content = oponentsPawn;
             var pawnPositionAfterEnPassantMove = "g6";
 
@@ -186,13 +209,17 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(false, "a4");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(false, "a4")
+            {
+                IsFirstMove = false
+            };
             fields["a4"].Content = pawn;
             var oponentsPawnPosition = "b4";
-            var oponentsPawn = new Pawn(true, oponentsPawnPosition);
-            oponentsPawn.CanBeTakenByEnPassantMove = true;
-            GameState.WhitePawnThatCanBeTakenByEnPassantMove = oponentsPawn;
+            var oponentsPawn = new Pawn(true, oponentsPawnPosition)
+            {
+                CanBeTakenByEnPassantMove = true
+            };
+            Program.Game.WhitePawnThatCanBeTakenByEnPassantMove = oponentsPawn;
             fields[oponentsPawnPosition].Content = oponentsPawn;
             var pawnPositionAfterEnPassantMove = "b3";
 
@@ -206,13 +233,17 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(true, "d5");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(true, "d5")
+            {
+                IsFirstMove = false
+            };
             fields["d5"].Content = pawn;
             var oponentsPawnPosition = "c5";
-            var oponentsPawn = new Pawn(false, oponentsPawnPosition);
-            oponentsPawn.CanBeTakenByEnPassantMove = true;
-            GameState.BlackPawnThatCanBeTakenByEnPassantMove = oponentsPawn;
+            var oponentsPawn = new Pawn(false, oponentsPawnPosition)
+            {
+                CanBeTakenByEnPassantMove = true
+            };
+            Program.Game.BlackPawnThatCanBeTakenByEnPassantMove = oponentsPawn;
             fields[oponentsPawnPosition].Content = oponentsPawn;
             var pawnPositionAfterEnPassantMove = "c6";
 
@@ -226,13 +257,17 @@ namespace ChessTests.PiecesTests
         {
             Board board = Board.CreateABoard();
             Dictionary<string, Field> fields = Game.CreateFields(board);
-            var pawn = new Pawn(false, "f4");
-            pawn.IsFirstMove = false;
+            var pawn = new Pawn(false, "f4")
+            {
+                IsFirstMove = false
+            };
             fields["f4"].Content = pawn;
             var oponentsPawnPosition = "e4";
-            var oponentsPawn = new Pawn(true, oponentsPawnPosition);
-            oponentsPawn.CanBeTakenByEnPassantMove = true;
-            GameState.WhitePawnThatCanBeTakenByEnPassantMove = oponentsPawn;
+            var oponentsPawn = new Pawn(true, oponentsPawnPosition)
+            {
+                CanBeTakenByEnPassantMove = true
+            };
+            Program.Game.WhitePawnThatCanBeTakenByEnPassantMove = oponentsPawn;
             fields[oponentsPawnPosition].Content = oponentsPawn;
             var pawnPositionAfterEnPassantMove = "e3";
 
@@ -269,7 +304,7 @@ namespace ChessTests.PiecesTests
 
             pawn.ReturnAvailablePieceMoves(pawn.Position, board);
 
-            Assert.True(GameState.BlackKingIsInCheck);
+            Assert.True(Program.Game.BlackKingIsInCheck);
         }
         
         [Fact]
@@ -283,7 +318,7 @@ namespace ChessTests.PiecesTests
 
             pawn.ReturnAvailablePieceMoves(pawn.Position, board);
 
-            Assert.Contains(pawn, GameState.CurrentPlayerPiecesAttackingTheKing);
+            Assert.Contains(pawn, Program.Game.CurrentPlayerPiecesAttackingTheKing);
         }
     }
 }

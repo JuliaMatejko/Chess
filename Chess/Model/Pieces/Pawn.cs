@@ -84,9 +84,9 @@ namespace Chess.Model.Pieces
         {
             if (IsWhite)
             {
-                if (rankIndex == 4 && GameState.BlackPawnThatCanBeTakenByEnPassantMove != null)
+                if (rankIndex == 4 && Program.Game.BlackPawnThatCanBeTakenByEnPassantMove != null)
                 {
-                    string oponentPawnFile = GameState.BlackPawnThatCanBeTakenByEnPassantMove.Position[0].ToString();
+                    string oponentPawnFile = Program.Game.BlackPawnThatCanBeTakenByEnPassantMove.Position[0].ToString();
                     if (fileIndex == 0 && oponentPawnFile == Board.Files[fileIndex + 1])
                     { 
                         EnPassantRight();
@@ -110,9 +110,9 @@ namespace Chess.Model.Pieces
             }
             else
             {
-                if (rankIndex == 3 && GameState.WhitePawnThatCanBeTakenByEnPassantMove != null)
+                if (rankIndex == 3 && Program.Game.WhitePawnThatCanBeTakenByEnPassantMove != null)
                 {
-                    string oponentPawnFile = GameState.WhitePawnThatCanBeTakenByEnPassantMove.Position[0].ToString();
+                    string oponentPawnFile = Program.Game.WhitePawnThatCanBeTakenByEnPassantMove.Position[0].ToString();
                     if (fileIndex == 0 && oponentPawnFile == Board.Files[fileIndex + 1])
                     {
                         EnPassantLeft();
@@ -187,13 +187,13 @@ namespace Chess.Model.Pieces
                         {
                             if (IsWhite)
                             {
-                                GameState.BlackKingIsInCheck = true;
+                                Program.Game.BlackKingIsInCheck = true;
                             }
                             else
                             {
-                                GameState.WhiteKingIsInCheck = true;
+                                Program.Game.WhiteKingIsInCheck = true;
                             }
-                            GameState.CurrentPlayerPiecesAttackingTheKing.Add(this);
+                            Program.Game.CurrentPlayerPiecesAttackingTheKing.Add(this);
                         }
                     }
                 }

@@ -1,4 +1,5 @@
-﻿using Chess.Model;
+﻿using Chess;
+using Chess.Model;
 using Chess.Model.Pieces;
 using System.Collections.Generic;
 using Xunit;
@@ -237,7 +238,7 @@ namespace ChessTests.PiecesTests
 
             rook.ReturnAvailablePieceMoves(rook.Position, board);
 
-            Assert.True(GameState.BlackKingIsInCheck);
+            Assert.True(Program.Game.BlackKingIsInCheck);
         }
 
         [Fact]
@@ -251,7 +252,7 @@ namespace ChessTests.PiecesTests
 
             rook.ReturnAvailablePieceMoves(rook.Position, board);
 
-            Assert.Contains(rook, GameState.CurrentPlayerPiecesAttackingTheKing);
+            Assert.Contains(rook, Program.Game.CurrentPlayerPiecesAttackingTheKing);
         }
     }
 }

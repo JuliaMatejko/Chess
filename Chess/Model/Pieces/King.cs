@@ -23,7 +23,7 @@ namespace Chess.Model.Pieces
 
         private HashSet<string> CastlingMove(int fileIndex, int rankIndex, Board board, HashSet<string> positions)
         {
-            bool kingIsNotInCheck = IsWhite ? !GameState.WhiteKingIsInCheck : !GameState.BlackKingIsInCheck;
+            bool kingIsNotInCheck = IsWhite ? !Program.Game.WhiteKingIsInCheck : !Program.Game.BlackKingIsInCheck;
             if (IsFirstMove && kingIsNotInCheck)
             {
                 Piece[] pieces = IsWhite ? new Piece[] { board[7][0].Content, board[0][0].Content }
@@ -56,7 +56,8 @@ namespace Chess.Model.Pieces
                 if (board[file + z][rank].Content == null && board[file + x][rank].Content == null)
                 {
                     string kingNewPosition = Board.Files[file + x] + Board.Ranks[rank];
-                    if (KingNewPositionIsSafe(kingNewPosition))
+                    if (KingNewPositionIsSafe(board[file + z][rank].Name, board)
+                        && KingNewPositionIsSafe(kingNewPosition, board))
                     {
                         positions.Add(kingNewPosition);
                     }
@@ -64,13 +65,13 @@ namespace Chess.Model.Pieces
             }
         }
 
-        private bool KingNewPositionIsSafe(string newPosition)
+        private bool KingNewPositionIsSafe(string newPosition, Board board)
         {
             for (var i = 0; i < Board.BoardSize; i++)
             {
                 for (var j = 0; j < Board.BoardSize; j++)
                 {
-                    Piece piece = Game.Board[i][j].Content;
+                    Piece piece = board[i][j].Content;
                     if (piece != null)
                     {
                         bool isOponentsPiece = IsWhite ? !piece.IsWhite : piece.IsWhite;
@@ -140,11 +141,11 @@ namespace Chess.Model.Pieces
                     {
                         case 0:
                             MoveOneRight();
-                            MoveOneBackwardsDiagonallyLeft();
+                            MoveOneBackwardsDiagonallyRight();
                             break;
                         case 7:
                             MoveOneLeft();
-                            MoveOneBackwardsDiagonallyRight();
+                            MoveOneBackwardsDiagonallyLeft();
                             break;
                         default:
                             MoveOneRight();
@@ -198,7 +199,7 @@ namespace Chess.Model.Pieces
 
             if (newField.Content == null)
             {
-                if (KingNewPositionIsSafe(newField.Name))
+                if (KingNewPositionIsSafe(newField.Name, board))
                 {
                     positions.Add(newField.Name);
                 }
@@ -208,7 +209,7 @@ namespace Chess.Model.Pieces
                 bool z = IsWhite ? !(newField.Content.IsWhite) : newField.Content.IsWhite;
                 if (z && newField.Content.GetType() != typeof(King))
                 {
-                    if (KingNewPositionIsSafe(newField.Name))
+                    if (KingNewPositionIsSafe(newField.Name, board))
                     {
                         positions.Add(newField.Name);
                     }  
